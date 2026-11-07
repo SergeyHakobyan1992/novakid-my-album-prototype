@@ -46,8 +46,8 @@
   const CURRENT = "food";
   const WORDS = [];
   UNITS.forEach((u) => u.w.forEach(([w, e]) => WORDS.push({ id: w, word: w, u: u.id, emo: e })));
-  const WORD_IMG = ["doll", "toy car", "toy train", "ball", "robot", "puzzle", "teddy bear", "bike"];
-  WORDS.forEach((w) => { if (WORD_IMG.includes(w.id)) w.img = `assets/img/words/${w.id.replace(/ /g, "-")}.jpg`; });
+  // word pictures: Gemini sheets cut into tiles (units 1–6); locked units keep emoji
+  WORDS.forEach((w) => { if (!UNITS.find((u) => u.id === w.u).locked) w.img = `assets/img/words/${w.id.replace(/ /g, "-")}.jpg`; });
   const W = (id) => WORDS.find((w) => w.id === id);
   const unitOf = (id) => UNITS.find((u) => u.id === W(id).u);
   const open = (id) => !unitOf(id).locked;
@@ -234,11 +234,12 @@
   }
   function cardHTML(id, opts = {}) {
     const L = lv(id), st = nextStep(id), rec = opts.rec && opts.rec.includes(id), dz = dusty(id);
-    let go = "";
+    let go = ""; // one action button under the card: where the engine sends the child next
     if (!opts.static && L > 0) {
-      if (st.game) go = `<button class="go ${st.k === "review" ? "go-review" : ""}" style="--gc:${GAME[st.game].col}" data-card="${esc(id)}" aria-label="Play ${GAME[st.game].name}">${st.k === "review" ? "🔄" : gameIcon(st.game)}</button>`;
-      else if (st.k === "wait") go = `<button class="go go-wait" data-card="${esc(id)}" aria-label="Come back later">⏳<b>${st.left}</b></button>`;
-      else if (st.k === "teacher") go = `<button class="go go-teacher" data-card="${esc(id)}" aria-label="Tell ${TEACHER}"><img src="${IMG}teacher-anna.jpg" alt=""></button>`;
+      if (st.k === "review") go = `<button class="act act-review" data-card="${esc(id)}" aria-label="Refresh">🔄 PLAY</button>`;
+      else if (st.game) go = `<button class="act act-play" data-card="${esc(id)}" aria-label="Play ${GAME[st.game].name}">▶ PLAY</button>`;
+      else if (st.k === "wait") go = `<button class="act act-wait" data-card="${esc(id)}" aria-label="Come back later">⏳ ${st.left}</button>`;
+      else if (st.k === "teacher") go = `<button class="act act-teacher" data-card="${esc(id)}" aria-label="Tell ${TEACHER}"><img src="${IMG}teacher-anna.jpg" alt="">TELL</button>`;
     }
     return `<div class="wc l${L} ${dz ? "dusty" : ""} ${rec ? "rec" : ""} ${opts.static ? "static" : ""}">
       <button class="face" data-hear="${esc(id)}" aria-label="${L ? esc(W(id).word) : "not met yet"}">${puzzle(id, L)}

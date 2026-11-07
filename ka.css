@@ -585,3 +585,16 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .cards { padding-left: 10px; }
 .cards { gap: 12px 17px; padding: 10px 10px 12px 12px; }
 .ka-stage .wc .go, .wc .spk { width: 23px; height: 23px; }
+/* v11: action button under the card instead of the corner badge */
+.ka-stage .wc .act { margin-top: 3px; width: 100%; height: 19px; border-radius: 10px; border: 1.5px solid #001E26; box-shadow: 0 1.5px 0 #001E26; font: 10.5px "Lilita One", sans-serif; letter-spacing: .03em; color: #fff; display: flex; align-items: center; justify-content: center; gap: 3px; text-shadow: 0 1px 0 rgba(0,0,0,.3); }
+.wc .act-play { background: linear-gradient(#3BE07F, #12A85A); }
+.wc .act-review { background: linear-gradient(#FF8DB5, #E5487E); }
+.wc .act-wait { background: #E3E8EC; color: #4A565C; text-shadow: none; }
+.wc .act-teacher { background: linear-gradient(#B597FF, #7B4FE0); }
+.wc .act-teacher img { width: 14px; height: 14px; border-radius: 50%; object-fit: cover; border: 1px solid #fff; }
+.wc.rec { outline: none; }
+.ka-stage .wc.rec .act { box-shadow: 0 1.5px 0 #001E26, 0 0 0 2.5px #FFB020; }
+.cards { gap: 10px 8px; padding: 10px 6px 12px 12px; }
+.wc.l5 .w { margin-bottom: 2px; }
+.wc.dusty { filter: none; }
+.wc.dusty .face { filter: saturate(.3) brightness(.96); }
