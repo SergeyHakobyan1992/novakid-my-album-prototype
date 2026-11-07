@@ -227,7 +227,7 @@
   function puzzle(id, L) {
     const w = W(id), bg = UNIT_BG[w.u] || "#EEE";
     const art = w.img ? `<image href="${w.img}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>` : `<rect width="100" height="100" fill="${bg}"/><text x="50" y="69" font-size="62" text-anchor="middle">${w.emo}</text>`;
-    return `<svg class="pz" viewBox="-3 -3 106 106" aria-hidden="true">
+    return `<svg class="pz" viewBox="-1.2 -1.2 102.4 102.4" aria-hidden="true">
       ${PZ.map((d, k) => k < L ? `<g clip-path="url(#pz${k})">${art}</g>` : "").join("")}
       ${PZ.map((d, k) => `<path d="${d}" class="${k < L ? "own" : "miss"}"/>`).join("")}
       ${L === 0 ? `<text x="50" y="64" font-size="34" text-anchor="middle" class="q">?</text>` : ""}</svg>`;

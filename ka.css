@@ -574,3 +574,9 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .mini-row.big .wc.static { height: auto; width: 76px; }
 .wc.static .w { font-size: 10px; }
 .wimg { width: 1.15em; height: 1.15em; object-fit: cover; border-radius: .14em; display: inline-block; vertical-align: middle; }
+/* v9: picture fills the card, speaker top-left */
+.wc, .wc.l0, .wc.l1, .wc.l2, .wc.l3, .wc.l4, .wc.l5 { height: auto; padding: 3px 3px 2px; border-radius: 9px; }
+.wc .pz { border-radius: 6px; }
+.wc .w { margin: 1px 0 0; line-height: 1.1; }
+.wc .spk { top: 5px; left: 5px; bottom: auto; width: 15px; height: 15px; font-size: 8px; opacity: .92; z-index: 1; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+.cards { gap: 10px 7px; }
