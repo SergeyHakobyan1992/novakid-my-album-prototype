@@ -208,28 +208,47 @@
       return `L${ax},${ay} C${ax + n[0] * h * 1.4 - dx * 4},${ay + n[1] * h * 1.4 - dy * 4} ${bx + n[0] * h * 1.4 + dx * 4},${by + n[1] * h * 1.4 + dy * 4} ${bx},${by} L${x2},${y2}`;
     };
     const t3 = 100 / 3, T = 2 * t3;
-    // knob directions on shared edges (absolute, so neighbours get matching tab/blank)
-    const K = { v50: [1, 0], h0: [0, 1], h2: [0, -1], v33: [-1, 0], v66: [1, 0] };
-    const P = [
-      `M0,0 L50,0 ${seg(50, 0, 50, 50, K.v50)} ${seg(50, 50, t3, 50, null)} ${seg(t3, 50, 0, 50, K.h0)} Z`,
-      `M50,0 L100,0 L100,50 ${seg(100, 50, T, 50, K.h2)} ${seg(T, 50, 50, 50, null)} ${seg(50, 50, 50, 0, K.v50)} Z`,
-      `M0,50 ${seg(0, 50, t3, 50, K.h0)} ${seg(t3, 50, t3, 100, K.v33)} L0,100 Z`,
-      `M${t3},50 L${T},50 ${seg(T, 50, T, 100, K.v66)} L${t3},100 ${seg(t3, 100, t3, 50, K.v33)} Z`,
-      `M${T},50 ${seg(T, 50, 100, 50, K.h2)} L100,100 L${T},100 ${seg(T, 100, T, 50, K.v66)} Z`,
+    // three cut patterns (knob directions are absolute, so neighbours get a matching tab / blank)
+    const A = [
+      `M0,0 L50,0 ${seg(50, 0, 50, 50, [1, 0])} ${seg(50, 50, t3, 50, null)} ${seg(t3, 50, 0, 50, [0, 1])} Z`,
+      `M50,0 L100,0 L100,50 ${seg(100, 50, T, 50, [0, -1])} ${seg(T, 50, 50, 50, null)} ${seg(50, 50, 50, 0, [1, 0])} Z`,
+      `M0,50 ${seg(0, 50, t3, 50, [0, 1])} ${seg(t3, 50, t3, 100, [-1, 0])} L0,100 Z`,
+      `M${t3},50 L${T},50 ${seg(T, 50, T, 100, [1, 0])} L${t3},100 ${seg(t3, 100, t3, 50, [-1, 0])} Z`,
+      `M${T},50 ${seg(T, 50, 100, 50, [0, -1])} L100,100 L${T},100 ${seg(T, 100, T, 50, [1, 0])} Z`,
     ];
+    const kx = { 20: [1, 0], 40: [-1, 0], 60: [1, 0], 80: [-1, 0] };
+    const B = [0, 20, 40, 60, 80].map((x0) => { const x1 = x0 + 20; return `M${x0},0 L${x1},0 ${x1 === 100 ? "L100,100" : seg(x1, 0, x1, 100, kx[x1])} L${x0},100 ${x0 === 0 ? "L0,0" : seg(x0, 100, x0, 0, kx[x0])} Z`; });
+    const C = [
+      `M0,0 L50,0 ${seg(50, 0, 50, 35, [1, 0])} ${seg(50, 35, 0, 35, [0, 1])} Z`,
+      `M50,0 L100,0 L100,35 ${seg(100, 35, 50, 35, [0, -1])} ${seg(50, 35, 50, 0, [1, 0])} Z`,
+      `M0,35 ${seg(0, 35, 50, 35, [0, 1])} ${seg(50, 35, 50, 70, [-1, 0])} ${seg(50, 70, 0, 70, [0, -1])} Z`,
+      `M50,35 ${seg(50, 35, 100, 35, [0, -1])} L100,70 ${seg(100, 70, 50, 70, [0, 1])} ${seg(50, 70, 50, 35, [-1, 0])} Z`,
+      `M0,70 ${seg(0, 70, 50, 70, [0, -1])} ${seg(50, 70, 100, 70, [0, 1])} L100,100 L0,100 Z`,
+    ];
+    const BASES = [A, B, C];
+    // 8 symmetries of the square → 24 different-looking cards
+    const TF = ["1 0 0 1 0 0", "-1 0 0 1 100 0", "1 0 0 -1 0 100", "-1 0 0 -1 100 100", "0 1 1 0 0 0", "0 1 -1 0 100 0", "0 -1 1 0 0 100", "0 -1 -1 0 100 100"];
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     defs.setAttribute("width", "0"); defs.setAttribute("height", "0"); defs.style.position = "absolute";
-    defs.innerHTML = `<defs>${P.map((d, k) => `<clipPath id="pz${k}"><path d="${d}"/></clipPath>`).join("")}</defs>`;
+    defs.innerHTML = `<defs>${BASES.map((P, b) => TF.map((m, f) => P.map((d, k) => `<clipPath id="pz${b}${f}${k}"><path d="${d}" transform="matrix(${m})"/></clipPath>`).join("")).join("")).join("")}</defs>`;
     document.body.appendChild(defs);
-    return P;
+    return { BASES, TF };
   })();
+  // each word keeps its own cut and its own (random-looking) order in which pieces appear
+  function pzLayout(id) {
+    const h = hash(id + "#pz"), b = h % 3, f = Math.floor(h / 3) % 8;
+    let s = h; const order = [0, 1, 2, 3, 4];
+    for (let i = 4; i > 0; i--) { s = (s * 1103515245 + 12345) & 0x7fffffff; const j = s % (i + 1); [order[i], order[j]] = [order[j], order[i]]; }
+    return { b, f, order };
+  }
   const UNIT_BG = { toys: "#FFE3B8", face: "#FFD6DD", feelings: "#FFF1A8", school: "#D8ECFF", family: "#E6DBFF", food: "#D6F5D0", home: "#EEE", actions: "#EEE", clothes: "#EEE", animals: "#EEE" };
   function puzzle(id, L) {
     const w = W(id), bg = UNIT_BG[w.u] || "#EEE";
     const art = w.img ? `<image href="${w.img}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>` : `<rect width="100" height="100" fill="${bg}"/><text x="50" y="69" font-size="62" text-anchor="middle">${w.emo}</text>`;
+    const { b, f, order } = pzLayout(id), own = order.slice(0, L), m = PZ.TF[f];
     return `<svg class="pz" viewBox="-1.2 -1.2 102.4 102.4" aria-hidden="true">
-      ${PZ.map((d, k) => k < L ? `<g clip-path="url(#pz${k})">${art}</g>` : "").join("")}
-      ${PZ.map((d, k) => `<path d="${d}" class="${k < L ? "own" : "miss"}"/>`).join("")}
+      ${own.map((k) => `<g clip-path="url(#pz${b}${f}${k})">${art}</g>`).join("")}
+      ${PZ.BASES[b].map((d, k) => `<path d="${d}" transform="matrix(${m})" class="${own.includes(k) ? "own" : "miss"}"/>`).join("")}
       ${L === 0 ? `<text x="50" y="64" font-size="34" text-anchor="middle" class="q">?</text>` : ""}</svg>`;
   }
   function cardHTML(id, opts = {}) {
