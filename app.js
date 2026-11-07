@@ -120,6 +120,9 @@
   const lv = (id) => S.lv[id];
   const dusty = (id) => lv(id) >= 4 && S.day - S.rev[id] >= S.iv[id];
   const prim = (t, size, extra = "") => `<span class="t-primary ${extra}" data-text="${esc(t)}" style="font-size:${size}px">${esc(t)}</span>`;
+  // custom UI icons (Gemini sheets cut into round badges) instead of emoji
+  const ICO = (n, cls = "") => `<img class="ico ${cls}" src="assets/img/ui/${n}.jpg" alt="">`;
+  const TICO = (u, cls = "") => `<img class="ico tico ${cls}" src="assets/img/ui/t-${u.id || u}.jpg" alt="">`;
   const pic = (id) => { const w = W(id); return `<span class="emo">${w.img ? `<img class="wimg" src="${w.img}" alt="">` : w.emo}</span>`; };
   let toastT;
   function toast(m) { let t = $(".ka-toast"); if (!t) { t = document.createElement("div"); t.className = "ka-toast"; t.setAttribute("role", "status"); document.body.appendChild(t); } t.textContent = m; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2600); }
@@ -255,14 +258,14 @@
     const L = lv(id), st = nextStep(id), rec = opts.rec && opts.rec.includes(id), dz = dusty(id);
     let go = ""; // one action button under the card: where the engine sends the child next
     if (!opts.static && L > 0) {
-      if (st.k === "review") go = `<button class="act act-review" data-card="${esc(id)}" aria-label="Refresh">🔄 PLAY</button>`;
-      else if (st.game) go = `<button class="act act-play" data-card="${esc(id)}" aria-label="Play ${GAME[st.game].name}">▶ PLAY</button>`;
-      else if (st.k === "wait") go = `<button class="act act-wait" data-card="${esc(id)}" aria-label="Come back later">⏳ ${st.left}</button>`;
+      if (st.k === "review") go = `<button class="act act-review" data-card="${esc(id)}" aria-label="Refresh">${ICO("refresh")}PLAY</button>`;
+      else if (st.game) go = `<button class="act act-play" data-card="${esc(id)}" aria-label="Play ${GAME[st.game].name}">${ICO("play")}PLAY</button>`;
+      else if (st.k === "wait") go = `<button class="act act-wait" data-card="${esc(id)}" aria-label="Come back later">${ICO("wait")}${st.left}</button>`;
       else if (st.k === "teacher") go = `<button class="act act-teacher" data-card="${esc(id)}" aria-label="Tell ${TEACHER}"><img src="${IMG}teacher-anna.jpg" alt="">TELL</button>`;
     }
     return `<div class="wc l${L} ${dz ? "dusty" : ""} ${rec ? "rec" : ""} ${opts.static ? "static" : ""}">
       <button class="face" data-hear="${esc(id)}" aria-label="${L ? esc(W(id).word) : "not met yet"}">${puzzle(id, L)}
-      <span class="w">${L ? esc(W(id).word) : "?"}</span>${L && !opts.static ? `<span class="spk">🔊</span>` : ""}</button>${go}</div>`;
+      <span class="w">${L ? esc(W(id).word) : "?"}</span>${L && !opts.static ? `<span class="spk">${ICO("speaker")}</span>` : ""}</button>${go}</div>`;
   }
 
   // ---------- child: dashboard ----------
@@ -270,7 +273,7 @@
     const anyDusty = WORDS.some((w) => open(w.id) && dusty(w.id));
     const tiles = TILES.map((t) => {
       if (t.key === "album") {
-        const badge = !S.albumSeen ? "NEW" : S.crowns.length ? "👑" : anyDusty ? "🔄" : "";
+        const badge = !S.albumSeen ? "NEW" : S.crowns.length ? ICO("crown", "bdg") : anyDusty ? ICO("refresh", "bdg") : "";
         return `<button class="ka-tile album-tile ${t.side}" style="grid-area:${t.area}" data-go="album" aria-label="My album">
           <div class="wr" style="background-image:url('${IMG}album-tile.jpg')">
           ${badge ? `<div class="ka-badge"><span>${badge}</span></div>` : ""}
@@ -299,7 +302,7 @@
   function popBoard(inner, act, sayAct, btn, gold) {
     return `<div class="ka-pop-wrap"><div class="ka-board" style="min-width:280px">
       <button class="ka-close" data-act="${act}" aria-label="close">✕</button>
-      <div class="in"><img class="pic" src="${IMG}teacher-anna.jpg" alt="" style="width:46px;height:46px">${inner}<button class="pop-spk" data-act="${sayAct}" aria-label="Listen">🔊</button></div>
+      <div class="in"><img class="pic" src="${IMG}teacher-anna.jpg" alt="" style="width:46px;height:46px">${inner}<button class="pop-spk" data-act="${sayAct}" aria-label="Listen">${ICO("speaker")}</button></div>
       <button class="ka-btn ${gold ? "gold" : ""}" data-act="${act}"><div class="bi"><span>${btn}</span></div></button></div></div>`;
   }
   const POP_TEXT = () => `Hi ${KID}! You met six new food words with ${TEACHER}. Play games to upgrade your cards!`;
@@ -309,11 +312,11 @@
   function album() {
     const u = UNITS.find((x) => x.id === S.tab) || UNITS[5], rec = recommended();
     const tabs = UNITS.map((x) => {
-      if (x.locked) return `<button class="gtab locked" data-lockedtab="${x.id}" aria-label="${x.name}, locked"><span class="ic">${x.ic}</span><span class="nm">${x.n}. ${x.name}</span><span class="lk">🔒</span></button>`;
+      if (x.locked) return `<button class="gtab locked" data-lockedtab="${x.id}" aria-label="${x.name}, locked"><span class="ic">${TICO(x)}</span><span class="nm">${x.n}. ${x.name}</span><span class="lk">${ICO("lock")}</span></button>`;
       const ids = x.w.map(([w]) => w);
       const pct = Math.round((ids.reduce((s, id) => s + lv(id), 0) / (ids.length * 5)) * 100);
       const hot = ids.some((id) => rec.includes(id)), dz = ids.some(dusty);
-      return `<button class="gtab ${x.id === u.id ? "on" : ""}" data-tab="${x.id}"><span class="ic">${x.ic}</span><span class="nm">${x.n}. ${x.name}</span>${dz ? `<span class="dz">🔄</span>` : hot ? `<span class="hot"></span>` : ""}
+      return `<button class="gtab ${x.id === u.id ? "on" : ""}" data-tab="${x.id}"><span class="ic">${TICO(x)}</span><span class="nm">${x.n}. ${x.name}</span>${dz ? `<span class="dz">${ICO("refresh")}</span>` : hot ? `<span class="hot"></span>` : ""}
         <span class="bar"><i style="width:${pct}%"></i></span></button>`;
     }).join("");
     return `${innerHeader("home", "MY ALBUM")}
@@ -325,11 +328,11 @@
   const ICN = "https://school.novakidschool.com/student/latest/static/";
   const MENU = [
     { k: "bubbles", name: "BUBBLES", col: "#E8B43C", bg: "#F2D292", art: `<img src="${ICN}svg/bubbles.2550282a.svg" alt="">` },
-    { k: "boxes", name: "BOX BATTLE", col: "#45CAD3", bg: "#62E8FB", art: `<span class="emo">📦</span>` },
+    { k: "boxes", name: "BOX BATTLE", col: "#45CAD3", bg: "#62E8FB", art: `<img class="mico" src="assets/img/ui/box.jpg" alt="">` },
     { k: "racing", name: "RACING", col: "#3D9C55", bg: "#82CF93", art: `<img src="${ICN}image/racing.573ee022.png" alt="">` },
     { k: "memo", name: "MEMO MIX", col: "#D58BE4", bg: "#EFAFFA", art: `<img src="${ICN}svg/bubble-memo.7d03e739.svg" alt="">` },
     { k: "snake", name: "SNAKE", col: "#8682EA", bg: "#A6A4F0", art: `<img src="${ICN}image/snake.b00f76bf.png" alt="">` },
-    { k: "quiz", name: "QUIZ CORNER", col: "#1FB2D8", bg: "#53D6FF", art: `<span class="qz-ic"><b>✔</b><b>✖</b></span>` },
+    { k: "quiz", name: "QUIZ CORNER", col: "#1FB2D8", bg: "#53D6FF", art: `<img class="mico" src="assets/img/ui/quiz.jpg" alt="">` },
   ];
   function games() {
     const q = S.engine ? queue() : [];
@@ -437,7 +440,7 @@
   function advanceSoon(ms) { clearTimeout(advT); advT = setTimeout(() => { if (S.screen === "play" && S.session) next(); }, ms); }
   function solved(it, upgraded, extraHTML = "") {
     it.solved = true; it.listening = false;
-    it.fb = { cls: "ok", html: `✅ ${esc(W(it.id).word)}${upgraded ? ` <span class="lvup">⬆</span><img src="${A.star}" alt="">+${STAR_UP}` : extraHTML}` };
+    it.fb = { cls: "ok", html: `${ICO("check")} ${esc(W(it.id).word)}${upgraded ? ` ${ICO("levelup")}<img src="${A.star}" alt="">+${STAR_UP}` : extraHTML}` };
     say(`Yes! ${W(it.id).word}!`); if (upgraded) say("Your card levelled up!", true);
     save(); render(); advanceSoon(upgraded ? 2400 : 1400);
   }
@@ -612,7 +615,7 @@
     if (it.solved || it.failed) return;
     attempt(it.id, ok);
     if (ok) return solved(it, it.up && !it.hint && S.session.att[it.id] <= 2 && levelUp(it.id, 3));
-    it.listening = false; it.fb = { cls: "no", html: "🔁" }; say("Hmm, not quite. Try again!"); save(); render();
+    it.listening = false; it.fb = { cls: "no", html: ICO("retry") }; say("Hmm, not quite. Try again!"); save(); render();
   }
   let recog;
   function startMic() {
@@ -707,7 +710,7 @@
         ${helpBtn()}
         <div class="ship" id="ship" style="top:${LANES[RACE.lane] - 19}px"></div>
         <div class="race-layer" id="raceLayer"></div>
-        <div class="rc-arrows"><button data-race="-1" aria-label="Up">▲</button><button data-race="1" aria-label="Down">▼</button></div>
+        <div class="rc-arrows"><button data-race="-1" aria-label="Up">${ICO("up")}</button><button data-race="1" aria-label="Down">${ICO("down")}</button></div>
         <div class="rc-p left"><img class="t" src="${GA.rField}" alt="">${listenBtn(it.id, "rc-lis")}<span class="pic">${pic(it.id)}</span><span class="w">${shown}</span><img class="sym" src="${GA.rQ}" alt=""></div>
         <div class="rc-p right"><img class="t" src="${GA.rField}" alt=""><span class="w ans" id="raceAns">${ansHTML(it)}</span><img class="sym" src="${GA.rA}" alt=""></div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag rc-flag"')}
@@ -720,7 +723,7 @@
         <div class="sn-av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${A.avatar}" alt=""><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
         <div class="sn-word">${pic(it.id)}<span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
         <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField">${snakeHTML()}</div></div>
-        <div class="sn-pad">${["U", "L", "D", "R"].map((d) => `<button data-dir="${d}" aria-label="${d}">${{ U: "▲", L: "◀", D: "▼", R: "▶" }[d]}</button>`).join("")}</div>
+        <div class="sn-pad">${["U", "L", "D", "R"].map((d) => `<button data-dir="${d}" aria-label="${d}">${{ U: ICO("up"), L: ICO("up", "rl"), D: ICO("down"), R: ICO("up", "rr") }[d]}</button>`).join("")}</div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag sn-flag"')}
         ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
     }
@@ -731,10 +734,10 @@
       <span class="g-chip" style="background:${GAME.pino.col}">${GAME.pino.name}</span>
       <div class="hw-body"><div class="sp-wrap"><img class="host" src="${A.pino}" alt="Pinocchio">
         <div class="sp-card ${it.solved ? "right" : ""}">${pic(it.id)}${it.solved || it.hint ? `<span class="sp-w">${esc(W(it.id).word)}</span>` : ""}</div>
-        <div class="sp-mic"><button class="mic ${it.listening ? "on" : ""}" data-act="mic" ${it.solved ? "disabled" : ""} aria-label="Speak">🎤</button>
+        <div class="sp-mic"><button class="mic ${it.listening ? "on" : ""}" data-act="mic" ${it.solved ? "disabled" : ""} aria-label="Speak">${ICO("mic", "big")}</button>
           ${it.listening ? `<div class="demo-say" title="Prototype: choose what the child said"><span>demo</span><button data-act="said-ok" aria-label="said it right">✓</button><button data-act="said-bad" aria-label="said it wrong">✗</button></div>` : ""}</div></div></div>
       ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}
-      <button class="hw-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""} aria-label="Hint">💡</button>`;
+      <button class="hw-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""} aria-label="Hint">${ICO("hint", "big")}</button>`;
   }
   function summary() {
     const sm = S.lastSummary || { ids: [], refreshed: [], dropped: [], stars: 0, ret: "album" };
@@ -743,7 +746,7 @@
     return `${innerHeader(back, back === "games" ? "GAMES" : "MY ALBUM")}
       <div class="sum-wrap"><div class="ka-board"><div class="in">
         ${sm.pvp ? `<div class="sum-ban"><img src="${sm.win ? GA.winG : GA.winR}" alt="">${prim(sm.win ? "YOU WIN!" : "GOOD TRY!", 15)}</div>` : ""}
-        <div class="mini-row big">${cards.length ? cards.map((id) => cardHTML(id, { static: true })).join("") : `<span class="emo-big">👍</span>`}</div>
+        <div class="mini-row big">${cards.length ? cards.map((id) => cardHTML(id, { static: true })).join("") : `${ICO("thumbs", "huge")}`}</div>
         <div class="plus"><img src="${A.star}" alt="">+${sm.stars}</div></div>
         <button class="ka-btn" data-go="${back}"><div class="bi"><span>OK</span></div></button></div></div>`;
   }
@@ -798,7 +801,7 @@
       const cls = u.locked ? "fut" : m >= e ? "ok" : m >= e - 0.15 ? "mid" : "low";
       return `<rect x="${x}" y="${y(Math.max(m, 0.01))}" width="${w}" height="${y(0) - y(Math.max(m, 0.01))}" rx="3" class="pb ${cls}"/>
         ${u.locked ? "" : `<line x1="${x - 3}" x2="${x + w + 3}" y1="${y(e)}" y2="${y(e)}" class="exp"/><text x="${x + w / 2}" y="${y(m) - 4}" text-anchor="middle" class="vl">${Math.round(m * 100)}%</text>`}
-        <text x="${x + w / 2}" y="${H - 18}" text-anchor="middle" class="ax">${u.ic}</text><text x="${x + w / 2}" y="${H - 5}" text-anchor="middle" class="ax">U${u.n}</text>`;
+        <text x="${x + w / 2}" y="${H - 18}" text-anchor="middle" class="ax"></text><image href="assets/img/ui/t-${u.id}.jpg" x="${x + w / 2 - 8}" y="${H - 31}" width="16" height="16"/><text x="${x + w / 2}" y="${H - 5}" text-anchor="middle" class="ax">U${u.n}</text>`;
     }).join("");
     return `<svg class="pchart" viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Mastery per unit compared with the expected level">
       ${[0, 0.5, 1].map((f) => `<line x1="${L}" x2="${Wd - R}" y1="${y(f)}" y2="${y(f)}" class="grid"/><text x="${L - 6}" y="${y(f) + 4}" text-anchor="end" class="ax">${f * 100}%</text>`).join("")}${bars}</svg>`;
@@ -811,7 +814,7 @@
     const behind = done.filter((u) => unitMastery(u) < expected(u) - 0.15);
     const fading = WORDS.filter((w) => open(w.id) && dusty(w.id));
     const fresh = cu.w.map(([w]) => w).filter((id) => lv(id) >= 1);
-    const map = UNITS.map((u) => `<div class="vm-row ${u.locked ? "locked" : ""}"><div class="vm-u"><span>${u.ic}</span><b>${u.n}. ${u.name}</b>${u.id === CURRENT ? `<em>now</em>` : u.locked ? `<em class="soon">later</em>` : ""}</div>
+    const map = UNITS.map((u) => `<div class="vm-row ${u.locked ? "locked" : ""}"><div class="vm-u">${TICO(u)}<b>${u.n}. ${u.name}</b>${u.id === CURRENT ? `<em>now</em>` : u.locked ? `<em class="soon">later</em>` : ""}</div>
       <div class="vm-chips">${u.w.map(([w, e]) => `<span class="vchip l${u.locked ? 0 : lv(w)} ${!u.locked && dusty(w) ? "dz" : ""}" title="${esc(w)} — ${u.locked ? "coming later" : dusty(w) ? "needs a refresh" : LEVELS[lv(w)].name}"><i>${e}</i>${esc(w)}${!u.locked && dusty(w) ? " 🔄" : ""}</span>`).join("")}</div></div>`).join("");
     return `<h2>How ${KID} is doing with English</h2><p class="sub">Parent view · Level 1 Juniors · ${dayName(S.day)}</p>
       <div class="status ${status[0]}"><b>${status[1]}</b> — ${KID} has finished ${done.length} of ${UNITS.length} units of Level 1 and keeps <b>${Math.round(keep * 100)}%</b> of their words (we expect about 70% at this point). Unit ${cu.n} ${cu.name} is in progress.${behind.length ? ` Worth a little extra practice: ${behind.map((u) => u.name).join(", ")}.` : ""}</div>

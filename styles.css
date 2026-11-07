@@ -326,3 +326,4 @@ th { font-size: 12px; text-transform: uppercase; color: var(--ink-soft); letter-
 .vchip.l5, .lvchip.l5 { background: linear-gradient(110deg, #FFB3C7, #FFE38A 25%, #B6F0A8 50%, #A8DDFF 75%, #D9B8FF); border: 1.5px solid #B48CF0; color: #3B2496; }
 .vchip.dz, .lvchip.dz { background: #FFD6E5; border: 1.5px solid #F48FB1; color: #A3164E; filter: none; border-style: solid; }
 .nw-e .emo { font-size: inherit; } .nw-e .wimg { width: 40px; height: 40px; border-radius: 10px; }
+.vm-u .tico { width: 22px; height: 22px; border-radius: 50%; }

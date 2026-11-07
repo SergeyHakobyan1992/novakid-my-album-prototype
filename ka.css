@@ -606,3 +606,30 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .wc .spk { width: 26px; height: 26px; font-size: 13px; top: -9px; left: -9px; }
 .wc, .wc.l0, .wc.l1, .wc.l2, .wc.l3, .wc.l4, .wc.l5 { padding: 4px 4px 4px; border-radius: 11px; }
 .pz .own { stroke-width: 1.2; } .pz .miss { stroke-width: 1; }
+
+/* v13: custom round icons instead of emoji */
+.ico { width: 1.25em; height: 1.25em; border-radius: 50%; object-fit: cover; display: inline-block; vertical-align: middle; flex: none; }
+.wc .spk { background: none; border: 0; box-shadow: none; padding: 0; }
+.wc .spk .ico { width: 100%; height: 100%; filter: drop-shadow(0 1.5px 0 rgba(0,30,38,.55)); }
+.ka-stage .wc .act { gap: 4px; }
+.wc .act .ico { width: 16px; height: 16px; box-shadow: 0 0 0 1.5px rgba(255,255,255,.85); }
+.gtab .ic .ico { width: 19px; height: 19px; }
+.gtab .lk .ico { width: 13px; height: 13px; }
+.gtab .dz .ico { width: 14px; height: 14px; }
+.ka-badge .bdg { width: 17px; height: 17px; transform: rotate(-45deg); }
+.ka-stage .pop-spk { background: none; border: 0; box-shadow: none; }
+.pop-spk .ico { width: 30px; height: 30px; }
+.ka-stage .mic { background: none; border: 0; box-shadow: none; width: 86px; height: 86px; }
+.mic .ico.big { width: 86px; height: 86px; filter: drop-shadow(0 3px 0 rgba(0,0,0,.35)); }
+.ka-stage .mic.on { background: none; box-shadow: 0 0 0 6px rgba(90,214,95,.55); border-radius: 50%; }
+.ka-stage .hw-hint { background: none; border: 0; box-shadow: none; width: 36px; height: 36px; }
+.hw-hint .ico.big { width: 36px; height: 36px; filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)); }
+.hw-hint:disabled .ico { filter: grayscale(1) opacity(.6); }
+.ka-stage .rc-arrows button { background: none; border: 0; width: 32px; height: 32px; }
+.rc-arrows .ico { width: 32px; height: 32px; filter: drop-shadow(0 2px 0 rgba(0,0,0,.3)); }
+.ka-stage .sn-pad button { background: none; padding: 0; }
+.sn-pad .ico { width: 15px; height: 15px; } .sn-pad .ico.rl { transform: rotate(-90deg); } .sn-pad .ico.rr { transform: rotate(90deg); }
+.ico.huge { width: 64px; height: 64px; }
+.gm .art .mico { width: 50px; height: 50px; border-radius: 50%; }
+.g-fb .ico { width: 20px; height: 20px; }
+.g-fb.no { padding: 4px 8px; }
