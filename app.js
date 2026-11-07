@@ -408,11 +408,7 @@
       it.bubbles = shuffle(L.concat(fill)).map((ch, k) => ({ ch, x: slots[k][0], y: slots[k][1], sel: false })); it.pos = 0; it.typed = "";
     }
     if (g === "racing") { const L = letters(it.id); it.miss = L.length <= 4 ? 0 : Math.floor(Math.random() * L.length); raceReset(); }
-    if (g === "snake") {
-      const need = letters(it.id)[0]; it.need = need;
-      const prev = ses.snake; ses.snake = prev || [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }]; ses.dir = ses.dir || "R";
-      it.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, freeCell(ses)));
-    }
+    if (g === "snake") { if (!SN) snReset(); snEggs(it); }
   }
   function prompt(queued) {
     const ses = S.session, g = ses.game;
@@ -456,10 +452,14 @@
     stopTimers();
     tickT = setInterval(() => {
       const ses = S.session; if (S.screen !== "play" || !ses) return stopTimers();
-      const sec = Math.floor((Date.now() - ses.t0) / 1000), el = $("#gclock"); if (el) el.textContent = clock(Math.max(0, 300 - sec));
+      const sec = Math.floor((Date.now() - ses.t0) / 1000), el = $("#gclock");
+      if (ses.game === "snake") { // 30 seconds per word, like the original
+        const it = cur(), left = WORD_SEC - Math.floor((Date.now() - it.t0) / 1000);
+        if (el) el.textContent = clock(Math.max(0, left));
+        if (left <= 0 && !it.solved && !it.failed) { it.failed = true; attempt(it.id, false, { chosen: "timeout" }); it.fb = { cls: "no", html: `${ICO("retry")} ${esc(W(it.id).word)}` }; say(`It's ${W(it.id).word}!`); SN.eggs = []; render(); advanceSoon(2200); }
+      } else if (el) el.textContent = clock(Math.max(0, 300 - sec));
       if ((ses.game === "boxes" || ses.game === "bubbles") && sec > 0 && sec % (ses.game === "boxes" ? 4 : 7) === 0 && !ses.over) { ses.bot += 1; const b = $("#gbot"); if (b) b.textContent = ses.bot; }
     }, 1000);
-    if (S.session && S.session.game === "snake") snakeT = setInterval(stepSnake, 260);
   }
   function stopTimers() { clearInterval(tickT); clearInterval(snakeT); tickT = snakeT = null; }
   const clock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
@@ -577,37 +577,64 @@
     raceRAF = requestAnimationFrame(raceLoop);
   }
   const ansHTML = (it) => Array.from({ length: 5 }, (_, k) => { const w = RACE ? RACE.wrong[k] : null; return w ? `<b class="bad">${w}</b>` : it.solved && k === (RACE ? RACE.wrong.length : 0) ? `<b class="ok">${letters(it.id)[it.miss]}</b>` : "<b>-</b>"; }).join("");
-  // Snake — eat the egg with the first letter
-  const SN_W = 20, SN_H = 8, CELL = 26;
-  function freeCell(ses) { let c; do { c = { x: 2 + Math.floor(Math.random() * (SN_W - 4)), y: 1 + Math.floor(Math.random() * (SN_H - 2)) }; } while ((ses.snake || []).some((p) => p.x === c.x && p.y === c.y)); return c; }
-  const DIRS = { U: [0, -1], D: [0, 1], L: [-1, 0], R: [1, 0] }, OPP = { U: "D", D: "U", L: "R", R: "L" };
-  function turn(d) { const ses = S.session; if (!ses || ses.game !== "snake") return; if (d !== OPP[ses.dir]) ses.nextDir = d; }
-  function stepSnake() {
-    const ses = S.session; if (S.screen !== "play" || !ses || ses.game !== "snake") return stopTimers();
-    const it = cur(); if (it.solved || ses.pause) return;
-    if (ses.nextDir) { ses.dir = ses.nextDir; ses.nextDir = null; }
-    const [dx, dy] = DIRS[ses.dir], h = ses.snake[0];
-    const nh = { x: (h.x + dx + SN_W) % SN_W, y: (h.y + dy + SN_H) % SN_H };
-    ses.snake.unshift(nh);
-    const e = it.eggs.findIndex((g) => g.x === nh.x && g.y === nh.y);
-    if (e >= 0) {
-      const egg = it.eggs[e];
-      if (egg.ch === it.need) { it.eggs = []; attempt(it.id, true); ses.me += 1; drawSnake(); const ok = it.up && !it.hint && (ses.err[it.id] || 0) === 0; return solved(it, ok && levelUp(it.id, 3)); }
-      attempt(it.id, false, { chosen: egg.ch }); it.eggs.splice(e, 1); ses.snake.pop(); if (ses.snake.length > 3) ses.snake.pop(); say(W(it.id).word);
-    } else ses.snake.pop();
+  // Snake — as in Kids Area: the snake glides after the pointer / finger; eat the egg with the first letter (30 s per word)
+  const SB = { w: 520, h: 208 }, SPEED = 82, TURN = 5.2, GAP = 9.5, HEAD = 74, WORD_SEC = 30;
+  let SN = null, snRAF = null;
+  function snReset() {
+    SN = { x: 110, y: 104, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };
+    for (let k = 0; k < 120; k++) SN.trail.push({ x: 110 - k * 1.5, y: 104 });
+  }
+  function snEggs(it) {
+    const need = letters(it.id)[0]; it.need = need;
+    const spots = []; let guard = 0;
+    while (spots.length < 3 && guard++ < 500) { const q = { x: 40 + Math.random() * (SB.w - 80), y: 30 + Math.random() * (SB.h - 60) }; if (Math.hypot(q.x - SN.x, q.y - SN.y) > 90 && spots.every((o) => Math.hypot(q.x - o.x, q.y - o.y) > 80)) spots.push(q); }
+    SN.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, spots[k] || { x: 300 + k * 60, y: 60 + k * 40 }));
+  }
+  function snAim(ev) {
+    const b = $("#snakeBoard"); if (!b || !SN) return; const r = b.getBoundingClientRect();
+    SN.tx = ((ev.clientX - r.left) / r.width) * SB.w; SN.ty = ((ev.clientY - r.top) / r.height) * SB.h;
+  }
+  function snLoop(ts) {
+    snRAF = null;
+    const ses = S.session; if (S.screen !== "play" || !ses || ses.game !== "snake" || !SN) return;
+    const it = cur(), dt = SN.last ? Math.min(0.05, (ts - SN.last) / 1000) : 0; SN.last = ts;
+    if (SN.tx !== null && !it.solved && !it.failed && Math.hypot(SN.tx - SN.x, SN.ty - SN.y) > 6) {
+      let d = Math.atan2(SN.ty - SN.y, SN.tx - SN.x) - SN.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+      SN.a += Math.max(-TURN * dt, Math.min(TURN * dt, d));
+      SN.x = Math.max(14, Math.min(SB.w - 14, SN.x + Math.cos(SN.a) * SPEED * dt)); SN.y = Math.max(14, Math.min(SB.h - 14, SN.y + Math.sin(SN.a) * SPEED * dt));
+      SN.trail.unshift({ x: SN.x, y: SN.y }); if (SN.trail.length > 500) SN.trail.length = 500;
+      for (const e of SN.eggs) {
+        if (e.gone || Math.hypot(e.x - SN.x, e.y - SN.y) > 22) continue;
+        e.gone = true;
+        if (e.ch === it.need) { attempt(it.id, true); ses.me += 1; SN.n += 2; SN.eggs = []; drawSnake(); const ok = it.up && !it.hint && !(ses.err[it.id] || 0); solved(it, ok && levelUp(it.id, 3)); return; }
+        attempt(it.id, false, { chosen: e.ch }); SN.n = Math.max(6, SN.n - 1); say(W(it.id).word);
+      }
+    }
     drawSnake();
+    snRAF = requestAnimationFrame(snLoop);
   }
-  function snakeHTML() {
-    const ses = S.session, it = cur(), n = ses.snake.length, rot = { R: 0, D: 90, L: 180, U: 270 };
-    const seg = ses.snake.map((p, k) => {
-      const cls = k === 0 ? "sh" : k === n - 1 ? "st" : "sb";
-      const nb = k === 0 ? ses.dir : (() => { const q = ses.snake[k - 1]; const dx = (q.x - p.x + SN_W) % SN_W, dy = (q.y - p.y + SN_H) % SN_H; return dx === 1 ? "R" : dx === SN_W - 1 ? "L" : dy === 1 ? "D" : "U"; })();
-      return `<i class="${cls}" style="left:${p.x * CELL}px;top:${p.y * CELL}px;transform:rotate(${rot[nb]}deg)"></i>`;
-    }).join("");
-    const eggs = it.eggs.map((g) => `<b class="egg e${g.c}" style="left:${g.x * CELL}px;top:${g.y * CELL}px">${g.ch}</b>`).join("");
-    return seg + eggs;
+  function drawSnake() {
+    const f = $("#snakeField"); if (!f || !SN) return;
+    if (SN.root !== f) { SN.root = f; f.innerHTML = ""; SN.segEls = []; SN.eggEls = []; SN.eggKey = ""; }
+    const key = SN.eggs.map((e) => e.ch + Math.round(e.x) + (e.gone ? "x" : "")).join();
+    if (key !== SN.eggKey) {
+      SN.eggEls.forEach((x) => x.remove()); SN.eggKey = key;
+      SN.eggEls = SN.eggs.filter((e) => !e.gone).map((e) => { const b = document.createElement("b"); b.className = "egg e" + e.c; b.textContent = e.ch; b.style.transform = `translate(${e.x - 20}px, ${e.y - 20}px)`; f.appendChild(b); return b; });
+    }
+    const pts = [{ x: SN.x, y: SN.y, a: SN.a }]; let acc = 0;
+    for (let i = 1; i < SN.trail.length && pts.length < SN.n; i++) { const p = SN.trail[i - 1], q = SN.trail[i]; acc += Math.hypot(p.x - q.x, p.y - q.y); if (acc >= GAP) { acc = 0; const prev = pts[pts.length - 1]; pts.push({ x: q.x, y: q.y, a: Math.atan2(prev.y - q.y, prev.x - q.x) }); } }
+    while (SN.segEls.length < SN.n) { const el = document.createElement("i"); f.insertBefore(el, f.firstChild); SN.segEls.push(el); }
+    SN.segEls.forEach((el, k) => {
+      if (k >= pts.length) { el.style.display = "none"; return; }
+      // sprite frames have wide transparent margins: body circle ≈ 37% of its frame, head ≈ 75%
+      const p = pts[k], last = k === pts.length - 1, n = pts.length, sz = k === 0 ? HEAD : last ? 66 : Math.max(52, 84 - k * 4);
+      el.style.display = ""; el.className = k === 0 ? "sh" : last ? "st" : "sb";
+      el.style.width = el.style.height = sz + "px"; el.style.zIndex = 100 - k;
+      if (k > 0 && !last) el.style.filter = `hue-rotate(${-Math.round((k / n) * 32)}deg) saturate(${1 + (k / n) * 0.3})`;
+      el.style.transform = k === 0 ? `translate(${p.x - sz / 2}px, ${p.y - sz / 2 - 4}px) scaleX(${Math.cos(SN.a) < -0.2 ? -1 : 1})`
+        : `translate(${p.x - sz / 2}px, ${p.y - sz / 2}px) rotate(${p.a + (last ? Math.PI / 2 : 0)}rad)`;
+    });
   }
-  function drawSnake() { const el = $("#snakeField"); if (el) el.innerHTML = snakeHTML(); }
 
   // Pinocchio — say the word (speech recognition when available, demo buttons otherwise)
   function onSaid(ok) {
@@ -629,7 +656,7 @@
     } catch (e) {}
   }
   function stopMic() { try { recog && recog.abort(); } catch (e) {} }
-  function stopAll() { clearTimeout(advT); stopTimers(); stopMic(); memoLock = false; if (raceRAF) cancelAnimationFrame(raceRAF); raceRAF = null; RACE = null; }
+  function stopAll() { clearTimeout(advT); stopTimers(); stopMic(); memoLock = false; if (snRAF) cancelAnimationFrame(snRAF); snRAF = null; SN = null; if (raceRAF) cancelAnimationFrame(raceRAF); raceRAF = null; RACE = null; }
 
   function finish() {
     const ses = S.session; if (!ses) return;
@@ -717,13 +744,14 @@
         ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
     }
     if (g === "snake") {
-      const it = cur(), L = letters(it.id), shown = it.solved ? W(it.id).word : "_" + W(it.id).word.slice(1);
+      const it = cur(), shown = it.solved || it.failed ? W(it.id).word : "_" + W(it.id).word.slice(1);
+      if (!SN) snReset();
+      if (!snRAF) snRAF = requestAnimationFrame(snLoop);
       return `<div class="gscene snake"></div>
-        ${timer(ses).replace('class="gclock"', 'class="gclock sn"')}
+        <div class="gclock sn" id="gclock">${clock(Math.max(0, WORD_SEC - Math.floor((Date.now() - it.t0) / 1000)))}</div>
         <div class="sn-av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${A.avatar}" alt=""><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
         <div class="sn-word">${pic(it.id)}<span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
-        <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField">${snakeHTML()}</div></div>
-        <div class="sn-pad">${["U", "L", "D", "R"].map((d) => `<button data-dir="${d}" aria-label="${d}">${{ U: ICO("up"), L: ICO("up", "rl"), D: ICO("down"), R: ICO("up", "rr") }[d]}</button>`).join("")}</div>
+        <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField"></div></div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag sn-flag"')}
         ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
     }
@@ -908,12 +936,13 @@
     if (ch) onBox(ch.dataset.box); else if (!moved) prompt();
   }
   document.addEventListener("pointerdown", dragStart);
+  document.addEventListener("pointermove", (ev) => { if (S.session && S.session.game === "snake" && ev.target.closest && ev.target.closest("#snakeBoard")) snAim(ev); });
+  document.addEventListener("pointerdown", (ev) => { if (S.session && S.session.game === "snake" && ev.target.closest && ev.target.closest("#snakeBoard")) snAim(ev); });
   document.addEventListener("pointermove", dragMove);
   document.addEventListener("mousemove", dragMove);
   ["pointerup", "mouseup", "pointercancel"].forEach((e) => document.addEventListener(e, dragEnd));
   document.addEventListener("keydown", (ev) => {
     const m = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R", w: "U", s: "D", a: "L", d: "R" }[ev.key];
-    if (m && S.session && S.session.game === "snake") { ev.preventDefault(); turn(m); }
     if ((m === "U" || m === "D") && S.session && S.session.game === "racing") { ev.preventDefault(); raceShip(m === "U" ? -1 : 1); }
   });
   document.addEventListener("click", (ev) => {
@@ -939,7 +968,6 @@
     if (d.bub !== undefined) { onBubble(+d.bub); return; }
     if (d.race) { raceShip(+d.race); return; }
     if (d.sayt) { say(d.sayt); return; }
-    if (d.dir) { turn(d.dir); return; }
     if (d.crown) {
       S.lv[d.crown] = 5; S.up[d.crown] = S.day; S.rev[d.crown] = S.day; S.ups.push({ id: d.crown, from: 4, to: 5, day: S.day }); S.stars += STAR_CROWN; S.crowns.push(d.crown);
       logEvent({ game: "lesson", item: d.crown, competency: compId(d.crown, "use"), attempt: 1, correct: true, hint: false, latency_ms: 0, superscore: 1, counts: true });

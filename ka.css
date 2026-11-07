@@ -633,3 +633,19 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .gm .art .mico { width: 50px; height: 50px; border-radius: 50%; }
 .g-fb .ico { width: 20px; height: 20px; }
 .g-fb.no { padding: 4px 8px; }
+/* v14: free-moving snake (pointer steering), sizes like the original */
+.sn-board { cursor: crosshair; touch-action: none; }
+.sn-field i, .sn-field b { position: absolute; left: 0; top: 0; will-change: transform; }
+.sn-field .sh { scale: 1; background: url("https://school.novakidschool.com/games/snake/assets/snake.87cfe96d.png") 0 0 / 300% 100% no-repeat; }
+.sn-field .sb { background: url("https://school.novakidschool.com/games/snake/assets/snake_body.6969d3ab.png") center / 100% 100% no-repeat; }
+.sn-field .st { background: url("https://school.novakidschool.com/games/snake/assets/snake_tail1.df374619.png") center / 100% 100% no-repeat; }
+.sn-field .egg { width: 34px; height: 34px; font: 800 15px "Open Sans", sans-serif; color: #1E1D3A; display: flex; align-items: center; justify-content: center; background-size: 300% 100%; }
+.sn-pad { display: none; }
+/* v15: snake scene like the original — plain navy outside, small dim pattern only inside the board */
+.ka-root.bg-g-snake { background: #252341; }
+.gscene.snake { background: none; }
+.sn-board { background: url("https://school.novakidschool.com/games/snake/assets/background.ece45b59.svg") 0 0 / 284px auto repeat; overflow: hidden; }
+.sn-board::before { content: ""; position: absolute; inset: 0; background: rgba(37,35,65,.45); pointer-events: none; }
+.sn-field { z-index: 1; }
+.sn-field .egg { width: 40px; height: 40px; font-size: 16px; }
+.sn-board { background-size: 420px auto; }
