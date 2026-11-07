@@ -754,7 +754,7 @@
   function onCard(id) {
     const st = nextStep(id), w = W(id).word;
     if (st.game) { if (st.k === "review") say(`Is your ${w} card dusty? Let's make it shiny again!`); startGame(st.game, id, "album"); return; }
-    if (st.k === "wait") say(`Great job! Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
+    if (st.k === "wait") say(`Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
     if (st.k === "teacher") { say(`Tell ${TEACHER} about ${w} to get the last level of the card!`); S.tellAsked[id] = S.day; save(); }
   }
 
