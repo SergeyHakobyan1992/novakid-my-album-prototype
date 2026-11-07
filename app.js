@@ -218,7 +218,7 @@
       if (t.key === "album") {
         const badge = !S.albumSeen ? "NEW" : S.crowns.length ? "👑" : anyDusty ? "🔄" : "";
         return `<button class="ka-tile album-tile ${t.side}" style="grid-area:${t.area}" data-go="album" aria-label="My album">
-          <div class="wr"><div class="iw"><div class="card-bg"><img src="${IMG}album-icon.jpg" alt=""></div></div>
+          <div class="wr" style="background-image:url('${IMG}album-tile.jpg')">
           ${badge ? `<div class="ka-badge"><span>${badge}</span></div>` : ""}
           <div class="label"><span>${t.lab}</span></div></div></button>`;
       }

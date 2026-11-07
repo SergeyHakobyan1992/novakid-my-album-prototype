@@ -550,3 +550,7 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .sum-wrap .plus { margin-top: 2px; }
 .bx-slot img { display: none; }
 .bx-slot { background: #FBE8C4; border-radius: 3px; box-shadow: inset 0 -2px 0 rgba(150,110,60,.15); }
+/* album tile: Gemini illustration as the tile background, like Streams / Games */
+.album-tile .wr { background-color: #5FCFC4; background-size: cover; background-position: center 30%; }
+.album-tile .wr::after { display: none; }
+.album-tile .label { background: #0E9C94; }
