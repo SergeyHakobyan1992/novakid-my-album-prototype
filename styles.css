@@ -316,3 +316,13 @@ th { font-size: 12px; text-transform: uppercase; color: var(--ink-soft); letter-
 .nw-i { display: flex; gap: 10px; align-items: center; }
 .nw-e { font-size: 28px; width: 40px; height: 40px; border-radius: 10px; background: #F3F6F9; display: flex; align-items: center; justify-content: center; flex: none; }
 .nw-i b { font-size: 15px; } .nw-i small { display: block; font-size: 13px; color: #3E5A63; margin-top: 1px; }
+
+/* v8: level colour scale — dashed (not met) → grey (met) → yellow (recognises) → light green (says) → green (remembers) → rainbow (uses with teacher); pink = forgotten */
+.vchip.l0, .lvchip.l0 { background: #fff; border: 1.5px dashed #B9C3CC; color: #8A959B; }
+.vchip.l1, .lvchip.l1 { background: #E6E9EC; border: 1.5px solid #D0D6DB; color: #4A565C; }
+.vchip.l2, .lvchip.l2 { background: #FFEB99; border: 1.5px solid #F2CF4A; color: #6B5300; }
+.vchip.l3, .lvchip.l3 { background: #D4F2C9; border: 1.5px solid #9FDC8C; color: #2B6B1C; }
+.vchip.l4, .lvchip.l4 { background: #5CCB5F; border: 1.5px solid #3BA53E; color: #fff; }
+.vchip.l5, .lvchip.l5 { background: linear-gradient(110deg, #FFB3C7, #FFE38A 25%, #B6F0A8 50%, #A8DDFF 75%, #D9B8FF); border: 1.5px solid #B48CF0; color: #3B2496; }
+.vchip.dz, .lvchip.dz { background: #FFD6E5; border: 1.5px solid #F48FB1; color: #A3164E; filter: none; border-style: solid; }
+.nw-e .emo { font-size: inherit; } .nw-e .wimg { width: 40px; height: 40px; border-radius: 10px; }

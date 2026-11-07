@@ -46,6 +46,8 @@
   const CURRENT = "food";
   const WORDS = [];
   UNITS.forEach((u) => u.w.forEach(([w, e]) => WORDS.push({ id: w, word: w, u: u.id, emo: e })));
+  const WORD_IMG = ["doll", "toy car", "toy train", "ball", "robot", "puzzle", "teddy bear", "bike"];
+  WORDS.forEach((w) => { if (WORD_IMG.includes(w.id)) w.img = `assets/img/words/${w.id.replace(/ /g, "-")}.jpg`; });
   const W = (id) => WORDS.find((w) => w.id === id);
   const unitOf = (id) => UNITS.find((u) => u.id === W(id).u);
   const open = (id) => !unitOf(id).locked;
@@ -118,7 +120,7 @@
   const lv = (id) => S.lv[id];
   const dusty = (id) => lv(id) >= 4 && S.day - S.rev[id] >= S.iv[id];
   const prim = (t, size, extra = "") => `<span class="t-primary ${extra}" data-text="${esc(t)}" style="font-size:${size}px">${esc(t)}</span>`;
-  const pic = (id) => `<span class="emo">${W(id).emo}</span>`;
+  const pic = (id) => { const w = W(id); return `<span class="emo">${w.img ? `<img class="wimg" src="${w.img}" alt="">` : w.emo}</span>`; };
   let toastT;
   function toast(m) { let t = $(".ka-toast"); if (!t) { t = document.createElement("div"); t.className = "ka-toast"; t.setAttribute("role", "status"); document.body.appendChild(t); } t.textContent = m; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2600); }
 
@@ -641,7 +643,7 @@
         <div class="qz-rib"><img src="${GA.blueShort}" alt="">${prim(`${ses.i + 1}/${ses.items.length}`, 16)}</div><div class="qz-line"></div>
         ${ico(GA.back, "qexit", `data-act="quit"`, "Leave the game")}
         ${widget("me", ses)}${widget("enemy", ses)}
-        <div class="qz-q"><img class="t" src="${GA.qTile}" alt=""><span class="emo">${W(it.id).emo}</span></div>
+        <div class="qz-q"><img class="t" src="${GA.qTile}" alt="">${pic(it.id)}</div>
         ${it.opts.map((o, k) => `<button class="qz-o" style="left:${[106, 243, 381][k]}px" data-quiz="${esc(o)}" ${it.pick ? "disabled" : ""}><img class="t" src="${tile(o)}" alt=""><span>${esc(W(o).word)}</span></button>`).join("")}`;
     }
     if (g === "memo") {
@@ -650,11 +652,11 @@
         <div class="mm-rib"><img src="${GA.memoTitle}" alt="">${prim("MEMO MIX", 14)}</div>
         ${quitBtn()}${widget("me", ses, ses.turn === "me" && !ses.preview)}${widget("enemy", ses, ses.turn === "bot")}
         ${ses.cards.map((c, k) => `<button class="mm-c ${c.matched ? "ok" : ""}" style="left:${x0 + (k % cols) * (tw + gap)}px;top:${y0 + Math.floor(k / cols) * (th + gap)}px" data-memo="${k}">
-          <img class="t" src="${GA.memoCard}" alt="">${c.open || c.matched ? (c.t === "pic" ? `<span class="emo">${W(c.id).emo}</span>` : `<span class="w">${esc(W(c.id).word)}</span>`) : ""}</button>`).join("")}
+          <img class="t" src="${GA.memoCard}" alt="">${c.open || c.matched ? (c.t === "pic" ? `${pic(c.id)}` : `<span class="w">${esc(W(c.id).word)}</span>`) : ""}</button>`).join("")}
         ${ses.preview ? `<div class="mm-hint">${prim("REMEMBER!", 13)}</div>` : ""}`;
     }
     if (g === "boxes") {
-      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt=""><span class="emo">${W(id).emo}</span>${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
+      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt="">${pic(id)}${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
       const slots = ses.deck.map((_, k) => `<div class="bx-slot" style="left:${364 + (k % 5) * 49}px;top:${209 + Math.floor(k / 5) * 51}px"><img src="${GA.boxSlot}" alt=""></div>`).join("");
       const name = (u) => UNITS.find((x) => x.id === u).name.toLowerCase();
       return `<div class="gscene sky"></div>
@@ -669,7 +671,7 @@
       const it = cur(), need = letters(it.id)[it.pos];
       return `<div class="gscene bub"></div>
         ${helpBtn()}${timer(ses)}<button class="bb-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""}><img src="${GA.bubHintBtn}" alt=""><span>HINT</span></button>
-        <div class="bb-mis"><img class="t" src="${GA.bubMission}" alt=""><span class="emo">${W(it.id).emo}</span>${listenBtn(it.id, "mis-lis")}</div>
+        <div class="bb-mis"><img class="t" src="${GA.bubMission}" alt="">${pic(it.id)}${listenBtn(it.id, "mis-lis")}</div>
         <div class="bb-en"><img class="t" src="${GA.bubEnemy}" alt=""><div class="mini">${Array.from({ length: 9 }, () => `<img src="${GA.bubMini}" alt="">`).join("")}</div>
           <div class="en-name"><img src="${GA.trophy}" alt=""><b id="gbot">${ses.bot}</b><span>${ENEMY}</span><img class="ea" src="${GA.enemyAv}" alt=""></div></div>
         ${widget("me", ses)}${quitBtn()}
@@ -686,7 +688,7 @@
         <div class="ship" id="ship" style="top:${LANES[RACE.lane] - 19}px"></div>
         <div class="race-layer" id="raceLayer"></div>
         <div class="rc-arrows"><button data-race="-1" aria-label="Up">▲</button><button data-race="1" aria-label="Down">▼</button></div>
-        <div class="rc-p left"><img class="t" src="${GA.rField}" alt="">${listenBtn(it.id, "rc-lis")}<span class="pic"><span class="emo">${W(it.id).emo}</span></span><span class="w">${shown}</span><img class="sym" src="${GA.rQ}" alt=""></div>
+        <div class="rc-p left"><img class="t" src="${GA.rField}" alt="">${listenBtn(it.id, "rc-lis")}<span class="pic">${pic(it.id)}</span><span class="w">${shown}</span><img class="sym" src="${GA.rQ}" alt=""></div>
         <div class="rc-p right"><img class="t" src="${GA.rField}" alt=""><span class="w ans" id="raceAns">${ansHTML(it)}</span><img class="sym" src="${GA.rA}" alt=""></div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag rc-flag"')}
         ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
@@ -696,7 +698,7 @@
       return `<div class="gscene snake"></div>
         ${timer(ses).replace('class="gclock"', 'class="gclock sn"')}
         <div class="sn-av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${A.avatar}" alt=""><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
-        <div class="sn-word"><span class="emo">${W(it.id).emo}</span><span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
+        <div class="sn-word">${pic(it.id)}<span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
         <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField">${snakeHTML()}</div></div>
         <div class="sn-pad">${["U", "L", "D", "R"].map((d) => `<button data-dir="${d}" aria-label="${d}">${{ U: "▲", L: "◀", D: "▼", R: "▶" }[d]}</button>`).join("")}</div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag sn-flag"')}
@@ -752,7 +754,7 @@
     return `<div class="t-head"><img src="${IMG}teacher-anna.jpg" alt=""><div><h2>Before the next lesson · ${KID}</h2><p class="sub" style="margin:0">Level 1 · Unit 6 Food · 1-minute read · Kids Area since ${dayName(0)}</p></div></div>
       <div class="panel"><h3>Suggested focus</h3><div class="focus">${tips.join("<br>") || `${KID} hasn’t played since the last lesson. Start with a quick check of the Unit 6 food words.`}</div></div>
       <div class="panel"><h3>👑 Ready for the crown — ask ${KID} to say it in the lesson</h3>
-        ${ready.length ? `<table><tbody>${ready.map((id) => `<tr><td style="width:30px;font-size:20px">${W(id).emo}</td><td><b>${esc(id)}</b><br><small class="sub">Unit ${unitOf(id).n} ${unitOf(id).name}${S.tellAsked[id] !== undefined ? ` · ${KID} was asked to tell you` : ""}</small></td>
+        ${ready.length ? `<table><tbody>${ready.map((id) => `<tr><td style="width:30px;font-size:20px">${pic(id)}</td><td><b>${esc(id)}</b><br><small class="sub">Unit ${unitOf(id).n} ${unitOf(id).name}${S.tellAsked[id] !== undefined ? ` · ${KID} was asked to tell you` : ""}</small></td>
           <td style="text-align:right;white-space:nowrap"><button class="chip-btn ok" data-crown="${esc(id)}">✓ Said it on her own</button> <button class="chip-btn" data-notyet="${esc(id)}">Not yet</button></td></tr>`).join("")}</tbody></table>` : `<p class="empty">No gold cards waiting.</p>`}</div>
       <div class="panel"><h3>Unit 6 words from your last lesson</h3><table><thead><tr><th></th><th>Word</th><th>Level</th><th>How it went</th><th>Last played</th></tr></thead><tbody>${rowsUnit}</tbody></table></div>`;
   }
@@ -800,7 +802,7 @@
           <p class="sub" style="margin:4px 0 0">Bar = how well ${KID} knows each unit’s words (5 steps per word, from “met in a lesson” to “uses it with the teacher”). Line = where we expect her to be. <span class="lg ok">on track</span> <span class="lg mid">a bit behind</span> <span class="lg low">needs practice</span></p></div>
         <div class="panel"><h3>New words this week</h3>
           <p class="sub" style="margin:0 0 8px">From ${TEACHER}’s lesson on ${dayName(0)} · Unit ${cu.n} ${cu.name}. Two minutes a day at home helps them stick.</p>
-          <div class="nw">${fresh.map((id, i) => `<div class="nw-i"><span class="nw-e">${W(id).emo}</span><div><b>${esc(id)}</b> <span class="lvchip l${lv(id)}">${LEVELS[lv(id)].name}</span><small>${(HOME_TIP[W(id).u] ? HOME_TIP[W(id).u][i % HOME_TIP[W(id).u].length] : (w) => `Ask “What’s this?” and let ${KID} name the ${w}.`)(id)}</small></div></div>`).join("")}</div>
+          <div class="nw">${fresh.map((id, i) => `<div class="nw-i"><span class="nw-e">${pic(id)}</span><div><b>${esc(id)}</b> <span class="lvchip l${lv(id)}">${LEVELS[lv(id)].name}</span><small>${(HOME_TIP[W(id).u] ? HOME_TIP[W(id).u][i % HOME_TIP[W(id).u].length] : (w) => `Ask “What’s this?” and let ${KID} name the ${w}.`)(id)}</small></div></div>`).join("")}</div>
           <p class="wk" style="margin-top:8px"><b>Tip:</b> let ${KID} be the teacher — ask her to teach you the words. Praise trying, not only right answers.</p>
           ${fading.length ? `<p class="wk"><b>Older words to refresh:</b> ${fading.map((w) => `${w.emo} ${esc(w.word)}`).join(", ")}</p>` : ""}</div></div>
       <div class="panel"><h3>Vocabulary map — every Level 1 word</h3>

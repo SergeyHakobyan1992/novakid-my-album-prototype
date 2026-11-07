@@ -573,3 +573,4 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .wc.static { height: auto; width: 64px; }
 .mini-row.big .wc.static { height: auto; width: 76px; }
 .wc.static .w { font-size: 10px; }
+.wimg { width: 1.15em; height: 1.15em; object-fit: cover; border-radius: .14em; display: inline-block; vertical-align: middle; }
