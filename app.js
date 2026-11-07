@@ -174,7 +174,7 @@
       .map((q) => {
         let p = q.k === "review" ? 95 + Math.min(q.over, 10) : q.k === "recall" ? 90 + Math.min(q.over, 10) : q.k === "learn" ? 60 : 55;
         if (W(q.id).u === CURRENT) p += 30;
-        const why = q.k === "review" ? `gold ${S.day - S.rev[q.id]} days ago → refresh before it is forgotten`
+        const why = q.k === "review" ? `remembered ${S.day - S.rev[q.id]} days ago → refresh before it is forgotten`
           : q.k === "recall" ? `“says it” ${S.day - S.up[q.id]} days ago → retention check`
           : W(q.id).u === CURRENT ? `from ${TEACHER}’s last lesson → ${q.k === "learn" ? "recognise" : "produce"}`
           : `Unit ${unitOf(q.id).n}, stuck at “${LEVELS[lv(q.id)].name}”`;
@@ -776,7 +776,7 @@
     const rowsUnit = WORDS.filter((w) => w.u === CURRENT && lv(w.id) >= 1).map((w) => { const s = stats(w.id); return `<tr><td>${w.emo}</td><td><b>${esc(w.word)}</b></td><td>${levelChip(w.id)}</td><td>${s.tries ? `${s.tries} tries · ${s.wrong} mistakes${s.hint ? " · hint" : ""}` : "—"}</td><td>${s.last || "—"}</td></tr>`; }).join("");
     return `<div class="t-head"><img src="${IMG}teacher-anna.jpg" alt=""><div><h2>Before the next lesson · ${KID}</h2><p class="sub" style="margin:0">Level 1 · Unit 6 Food · 1-minute read · Kids Area since ${dayName(0)}</p></div></div>
       <div class="panel"><h3>Suggested focus</h3><div class="focus">${tips.join("<br>") || `${KID} hasn’t played since the last lesson. Start with a quick check of the Unit 6 food words.`}</div></div>
-      <div class="panel"><h3>👑 Ready for the crown — ask ${KID} to say it in the lesson</h3>
+      <div class="panel"><h3>${ICO("crown", "chip-ico")} Ready for the last puzzle piece — ask ${KID} to say it in the lesson</h3>
         ${ready.length ? `<table><tbody>${ready.map((id) => `<tr><td style="width:30px;font-size:20px">${pic(id)}</td><td><b>${esc(id)}</b><br><small class="sub">Unit ${unitOf(id).n} ${unitOf(id).name}${S.tellAsked[id] !== undefined ? ` · ${KID} was asked to tell you` : ""}</small></td>
           <td style="text-align:right;white-space:nowrap"><button class="chip-btn ok" data-crown="${esc(id)}">✓ Said it on her own</button> <button class="chip-btn" data-notyet="${esc(id)}">Not yet</button></td></tr>`).join("")}</tbody></table>` : `<p class="empty">No gold cards waiting.</p>`}</div>
       <div class="panel"><h3>Unit 6 words from your last lesson</h3><table><thead><tr><th></th><th>Word</th><th>Level</th><th>How it went</th><th>Last played</th></tr></thead><tbody>${rowsUnit}</tbody></table></div>`;
@@ -815,7 +815,7 @@
     const fading = WORDS.filter((w) => open(w.id) && dusty(w.id));
     const fresh = cu.w.map(([w]) => w).filter((id) => lv(id) >= 1);
     const map = UNITS.map((u) => `<div class="vm-row ${u.locked ? "locked" : ""}"><div class="vm-u">${TICO(u)}<b>${u.n}. ${u.name}</b>${u.id === CURRENT ? `<em>now</em>` : u.locked ? `<em class="soon">later</em>` : ""}</div>
-      <div class="vm-chips">${u.w.map(([w, e]) => `<span class="vchip l${u.locked ? 0 : lv(w)} ${!u.locked && dusty(w) ? "dz" : ""}" title="${esc(w)} — ${u.locked ? "coming later" : dusty(w) ? "needs a refresh" : LEVELS[lv(w)].name}"><i>${e}</i>${esc(w)}${!u.locked && dusty(w) ? " 🔄" : ""}</span>`).join("")}</div></div>`).join("");
+      <div class="vm-chips">${u.w.map(([w, e]) => `<span class="vchip l${u.locked ? 0 : lv(w)} ${!u.locked && dusty(w) ? "dz" : ""}" title="${esc(w)} — ${u.locked ? "coming later" : dusty(w) ? "needs a refresh" : LEVELS[lv(w)].name}"><i>${e}</i>${esc(w)}${!u.locked && dusty(w) ? ICO("refresh", "chip-ico") : ""}</span>`).join("")}</div></div>`).join("");
     return `<h2>How ${KID} is doing with English</h2><p class="sub">Parent view · Level 1 Juniors · ${dayName(S.day)}</p>
       <div class="status ${status[0]}"><b>${status[1]}</b> — ${KID} has finished ${done.length} of ${UNITS.length} units of Level 1 and keeps <b>${Math.round(keep * 100)}%</b> of their words (we expect about 70% at this point). Unit ${cu.n} ${cu.name} is in progress.${behind.length ? ` Worth a little extra practice: ${behind.map((u) => u.name).join(", ")}.` : ""}</div>
       <div class="kpis"><div class="kpi"><b>${cu.n}<small>/10</small></b><span>units of Level 1<br>(Unit ${cu.n} ${cu.name} now)</span><small>${Math.round(((cu.n - 1) / UNITS.length) * 100)}% of the level done</small></div>
@@ -829,7 +829,7 @@
           <p class="wk" style="margin-top:8px"><b>Tip:</b> let ${KID} be the teacher — ask her to teach you the words. Praise trying, not only right answers.</p>
           ${fading.length ? `<p class="wk"><b>Older words to refresh:</b> ${fading.map((w) => `${w.emo} ${esc(w.word)}`).join(", ")}</p>` : ""}</div></div>
       <div class="panel"><h3>Vocabulary map — every Level 1 word</h3>
-        <div class="vm-legend">${LEVELS.map((L, i) => `<span class="vchip l${i}">${L.name}</span>`).join("")}<span class="vchip l4 dz">needs a refresh 🔄</span></div>${map}
+        <div class="vm-legend">${LEVELS.map((L, i) => `<span class="vchip l${i}">${L.name}</span>`).join("")}<span class="vchip l4 dz">needs a refresh ${ICO("refresh", "chip-ico")}</span></div>${map}
         <p class="sub" style="margin:8px 0 0">Units and words from the Novakid Level 1 programme (Unit 4 word list is approximate).</p></div>`;
   }
   function data() {
@@ -845,11 +845,11 @@
       <p class="sub">The album is a view of the learner model: one card = one word from the Level 1 programme, card level = the highest step with evidence. The engine decides which word goes into which existing Kids Area game, and brings remembered words back before they fade.</p>
       <div class="panel"><h3>Ladder → card → evidence → games</h3><table><thead><tr><th>Card</th><th>Level</th><th>Evidence needed</th></tr></thead><tbody>
         ${LEVELS.map((L, i) => `<tr><td>${L.look}</td><td><b>${i}. ${L.name}</b></td><td>${L.ev}</td></tr>`).join("")}</tbody></table>
-        <p class="sub" style="margin:8px 0 0">Games rotate within a level so the same word comes back in a different game. Fading: a gold / crown card needs a refresh after 7 days, then 14, 28… (interval doubles after each success). A failed refresh drops the card to silver. Stars only for new progress (+${STAR_UP} level, +${STAR_REFRESH} refresh), never for replaying.</p></div>
+        <p class="sub" style="margin:8px 0 0">Games rotate within a level so the same word comes back in a different game. Fading: a card with 4 or 5 puzzle pieces (“Remembers” / “Uses with teacher”) needs a refresh after 7 days, then 14, 28… (the interval doubles after each success). When a refresh is due the card looks dusty; a failed refresh takes the card back to 3 pieces (“Says it”). Stars only for new progress (+${STAR_UP} level, +${STAR_REFRESH} refresh), never for replaying.</p></div>
       <div class="panel"><h3>Next words the engine sends to games ${S.engine ? "" : "(engine off — games use random words, like today)"}</h3>${qRows ? `<table><thead><tr><th>#</th><th>Word</th><th>Now</th><th>Game</th><th>Why</th></tr></thead><tbody>${qRows}</tbody></table>` : `<p class="empty">Nothing queued.</p>`}
         <p class="sub" style="margin:8px 0 0">All six Kids Area games (Memo Mix, Box Battle, Bubbles, Racing, Snake, Quiz Corner) plus Pinocchio take their words from this queue instead of a random list. The real games are live PvP; in the prototype the opponent is a bot.</p></div>
       <div class="grid2"><div class="panel"><h3>By game</h3><table><thead><tr><th>Game</th><th>Skill</th><th>Solved</th><th>Avg superscore · zone</th></tr></thead><tbody>${byGame}</tbody></table></div>
-      <div class="panel"><h3>Reads from lessons</h3><p class="sub" style="margin:0">${S.engine ? `Last 1-1 lesson (${dayName(0)}): Level 1 · Unit 6 Food → 6 words become “Met in lesson”. Teacher’s ✓ in the next lesson → crown.` : "Off."}</p></div></div>
+      <div class="panel"><h3>Reads from lessons</h3><p class="sub" style="margin:0">${S.engine ? `Last 1-1 lesson (${dayName(0)}): Level 1 · Unit 6 Food → 6 words become “Met in lesson”. Teacher’s ✓ in the next lesson → the last puzzle piece and a gold frame.` : "Off."}</p></div></div>
       <div class="panel"><h3>Event log (latest first)</h3><div class="events-wrap">${rows ? `<table><thead><tr><th>When</th><th>Game</th><th>Word</th><th>Competency</th><th>Try</th><th>OK</th><th>Hint</th><th>ms</th><th>Score</th><th>Counts</th></tr></thead><tbody>${rows}</tbody></table>` : `<p class="empty">No events yet — play as ${KID}.</p>`}</div></div>`;
   }
 
@@ -943,7 +943,7 @@
     if (d.crown) {
       S.lv[d.crown] = 5; S.up[d.crown] = S.day; S.rev[d.crown] = S.day; S.ups.push({ id: d.crown, from: 4, to: 5, day: S.day }); S.stars += STAR_CROWN; S.crowns.push(d.crown);
       logEvent({ game: "lesson", item: d.crown, competency: compId(d.crown, "use"), attempt: 1, correct: true, hint: false, latency_ms: 0, superscore: 1, counts: true });
-      save(); render(); toast(`Crown sent — ${KID} sees it next time she opens Kids Area`); return;
+      save(); render(); toast(`Last piece sent — ${KID} sees it next time she opens Kids Area`); return;
     }
     if (d.notyet) {
       logEvent({ game: "lesson", item: d.notyet, competency: compId(d.notyet, "use"), attempt: 1, correct: false, hint: false, latency_ms: 0, superscore: 0, counts: true });
@@ -969,7 +969,7 @@
         stopAll(); const c = counts(S); S.hist.push({ d: S.day, met: c.met, rem: c.rem }); S.day += RECALL;
         if (S.screen === "play") { S.session = null; S.screen = "album"; }
         save(); render(); const nd = WORDS.filter((w) => open(w.id) && dusty(w.id)).length;
-        toast(`It’s ${dayName(S.day)} — 3 days later${nd ? ` · ${nd} cards got dusty 🔄` : ""}`); say(nd ? "Oh no, some cards got dusty! Play to make them shiny again." : "Three days later!"); break;
+        toast(`It’s ${dayName(S.day)} — 3 days later${nd ? ` · ${nd} cards got dusty` : ""}`); say(nd ? "Oh no, some cards got dusty! Play to make them shiny again." : "Three days later!"); break;
       }
       case "sound": S.sound = !S.sound; save(); renderBar(); startMusic(); break;
       case "engine": S.engine = !S.engine; save(); render(); toast(S.engine ? "Engine on: album words go into games, teacher gets the brief" : "Engine off: games use random words, like Kids Area today"); break;

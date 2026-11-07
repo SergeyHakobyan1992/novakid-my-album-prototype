@@ -327,3 +327,5 @@ th { font-size: 12px; text-transform: uppercase; color: var(--ink-soft); letter-
 .vchip.dz, .lvchip.dz { background: #FFD6E5; border: 1.5px solid #F48FB1; color: #A3164E; filter: none; border-style: solid; }
 .nw-e .emo { font-size: inherit; } .nw-e .wimg { width: 40px; height: 40px; border-radius: 10px; }
 .vm-u .tico { width: 22px; height: 22px; border-radius: 50%; }
+.chip-ico { width: 15px; height: 15px; border-radius: 50%; vertical-align: -3px; margin-left: 3px; }
+h3 .chip-ico { width: 20px; height: 20px; margin: 0 4px 0 0; vertical-align: -4px; }
