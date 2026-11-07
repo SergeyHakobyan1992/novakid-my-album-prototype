@@ -52,12 +52,12 @@
 
   // ---------- mastery ladder = card level ----------
   const LEVELS = [
-    { name: "Not met yet", look: "silhouette", ev: "not taught yet" },
-    { name: "Met in lesson", look: "black & white", ev: "taught in a 1-1 lesson (from the lesson record)" },
-    { name: "Recognises", look: "colour", ev: "matches the word (heard and written) to the picture — Memo Mix or Box Battle — with ≤ 1 mistake" },
-    { name: "Says it", look: "silver frame", ev: "produces the word — says it to Pinocchio, or spells it in Bubbles, Racing or Snake — without a hint" },
-    { name: "Remembers", look: "gold frame", ev: "names the picture again after 3+ days, first try, no hint (Quiz Corner). Then refresh after 7 → 14 → 28 days" },
-    { name: "Uses with teacher", look: "crown", ev: "says it to the teacher in a live lesson (teacher taps ✓)" },
+    { name: "Not met yet", look: "empty puzzle", ev: "not taught yet" },
+    { name: "Met in lesson", look: "1 of 5 pieces", ev: "taught in a 1-1 lesson (from the lesson record)" },
+    { name: "Recognises", look: "2 of 5 pieces", ev: "matches the word (heard and written) to the picture — Memo Mix or Box Battle — with ≤ 1 mistake" },
+    { name: "Says it", look: "3 of 5 pieces", ev: "produces the word — says it to Pinocchio, or spells it in Bubbles, Racing or Snake — without a hint" },
+    { name: "Remembers", look: "4 of 5 pieces", ev: "names the picture again after 3+ days, first try, no hint (Quiz Corner). Then refresh after 7 → 14 → 28 days" },
+    { name: "Uses with teacher", look: "full picture + gold frame", ev: "says it to the teacher in a live lesson (teacher taps ✓)" },
   ];
   const GAME = {
     memo: { name: "Memo Mix", col: "#D98DE3", ic: "🃏", skill: "recognise", n: 6, intro: "Find the picture for every sound." },
@@ -196,6 +196,40 @@
   const gameIcon = (g) => g === "pino" ? `<img src="${A.pino}" alt="">` : GAME[g].ic;
 
   // A card: picture + word + 5 pips. Tap the card = hear it. Round badge = where the engine sends you next.
+  // Puzzle card: 5 jigsaw pieces = 5 mastery levels; the 5th level also gets a gold frame. Only the word as a caption.
+  const PZ = (() => {
+    const h = 9, w = 7;
+    const seg = (x1, y1, x2, y2, n) => { // straight edge with an optional knob; n = absolute knob direction [nx, ny] or null
+      if (!n) return `L${x2},${y2}`;
+      const len = Math.hypot(x2 - x1, y2 - y1), dx = (x2 - x1) / len, dy = (y2 - y1) / len, mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const ax = mx - dx * w, ay = my - dy * w, bx = mx + dx * w, by = my + dy * w;
+      return `L${ax},${ay} C${ax + n[0] * h * 1.4 - dx * 4},${ay + n[1] * h * 1.4 - dy * 4} ${bx + n[0] * h * 1.4 + dx * 4},${by + n[1] * h * 1.4 + dy * 4} ${bx},${by} L${x2},${y2}`;
+    };
+    const t3 = 100 / 3, T = 2 * t3;
+    // knob directions on shared edges (absolute, so neighbours get matching tab/blank)
+    const K = { v50: [1, 0], h0: [0, 1], h2: [0, -1], v33: [-1, 0], v66: [1, 0] };
+    const P = [
+      `M0,0 L50,0 ${seg(50, 0, 50, 50, K.v50)} ${seg(50, 50, t3, 50, null)} ${seg(t3, 50, 0, 50, K.h0)} Z`,
+      `M50,0 L100,0 L100,50 ${seg(100, 50, T, 50, K.h2)} ${seg(T, 50, 50, 50, null)} ${seg(50, 50, 50, 0, K.v50)} Z`,
+      `M0,50 ${seg(0, 50, t3, 50, K.h0)} ${seg(t3, 50, t3, 100, K.v33)} L0,100 Z`,
+      `M${t3},50 L${T},50 ${seg(T, 50, T, 100, K.v66)} L${t3},100 ${seg(t3, 100, t3, 50, K.v33)} Z`,
+      `M${T},50 ${seg(T, 50, 100, 50, K.h2)} L100,100 L${T},100 ${seg(T, 100, T, 50, K.v66)} Z`,
+    ];
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    defs.setAttribute("width", "0"); defs.setAttribute("height", "0"); defs.style.position = "absolute";
+    defs.innerHTML = `<defs>${P.map((d, k) => `<clipPath id="pz${k}"><path d="${d}"/></clipPath>`).join("")}</defs>`;
+    document.body.appendChild(defs);
+    return P;
+  })();
+  const UNIT_BG = { toys: "#FFE3B8", face: "#FFD6DD", feelings: "#FFF1A8", school: "#D8ECFF", family: "#E6DBFF", food: "#D6F5D0", home: "#EEE", actions: "#EEE", clothes: "#EEE", animals: "#EEE" };
+  function puzzle(id, L) {
+    const w = W(id), bg = UNIT_BG[w.u] || "#EEE";
+    const art = w.img ? `<image href="${w.img}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>` : `<rect width="100" height="100" fill="${bg}"/><text x="50" y="69" font-size="62" text-anchor="middle">${w.emo}</text>`;
+    return `<svg class="pz" viewBox="-3 -3 106 106" aria-hidden="true">
+      ${PZ.map((d, k) => k < L ? `<g clip-path="url(#pz${k})">${art}</g>` : "").join("")}
+      ${PZ.map((d, k) => `<path d="${d}" class="${k < L ? "own" : "miss"}"/>`).join("")}
+      ${L === 0 ? `<text x="50" y="64" font-size="34" text-anchor="middle" class="q">?</text>` : ""}</svg>`;
+  }
   function cardHTML(id, opts = {}) {
     const L = lv(id), st = nextStep(id), rec = opts.rec && opts.rec.includes(id), dz = dusty(id);
     let go = "";
@@ -205,10 +239,8 @@
       else if (st.k === "teacher") go = `<button class="go go-teacher" data-card="${esc(id)}" aria-label="Tell ${TEACHER}"><img src="${IMG}teacher-anna.jpg" alt=""></button>`;
     }
     return `<div class="wc l${L} ${dz ? "dusty" : ""} ${rec ? "rec" : ""} ${opts.static ? "static" : ""}">
-      ${L === 5 ? `<span class="crown">👑</span>` : ""}
-      <button class="face" data-hear="${esc(id)}" aria-label="${L ? esc(W(id).word) : "not met yet"}"><span class="pic">${pic(id)}</span>
-      <span class="w">${L ? esc(W(id).word) : "?"}</span>${L && !opts.static ? `<span class="spk">🔊</span>` : ""}</button>
-      <span class="pips">${[1, 2, 3, 4, 5].map((n) => `<i class="${n <= L ? "on" : ""}"></i>`).join("")}</span>${go}</div>`;
+      <button class="face" data-hear="${esc(id)}" aria-label="${L ? esc(W(id).word) : "not met yet"}">${puzzle(id, L)}
+      <span class="w">${L ? esc(W(id).word) : "?"}</span>${L && !opts.static ? `<span class="spk">🔊</span>` : ""}</button>${go}</div>`;
   }
 
   // ---------- child: dashboard ----------
@@ -249,7 +281,7 @@
       <button class="ka-btn ${gold ? "gold" : ""}" data-act="${act}"><div class="bi"><span>${btn}</span></div></button></div></div>`;
   }
   const POP_TEXT = () => `Hi ${KID}! You met six new food words with ${TEACHER}. Play games to upgrade your cards!`;
-  const CROWN_TEXT = () => `${TEACHER} gave you a crown for ${S.crowns.map((id) => W(id).word).join(" and ")}! Well done!`;
+  const CROWN_TEXT = () => `${TEACHER} gave you the last puzzle piece for ${S.crowns.map((id) => W(id).word).join(" and ")}! Your card is gold!`;
 
   // ---------- child: album ----------
   function album() {
@@ -697,7 +729,7 @@
   function onCard(id) {
     const st = nextStep(id), w = W(id).word;
     if (st.game) { if (st.k === "review") say(`Is your ${w} card dusty? Let's make it shiny again!`); startGame(st.game, id, "album"); return; }
-    if (st.k === "wait") say(`Great job! Come back in ${st.left === 1 ? "one day" : st.left + " days"} to make your ${w} card gold!`);
+    if (st.k === "wait") say(`Great job! Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
     if (st.k === "teacher") { say(`Tell ${TEACHER} about ${w} to get the last level of the card!`); S.tellAsked[id] = S.day; save(); }
   }
 
@@ -724,36 +756,53 @@
           <td style="text-align:right;white-space:nowrap"><button class="chip-btn ok" data-crown="${esc(id)}">✓ Said it on her own</button> <button class="chip-btn" data-notyet="${esc(id)}">Not yet</button></td></tr>`).join("")}</tbody></table>` : `<p class="empty">No gold cards waiting.</p>`}</div>
       <div class="panel"><h3>Unit 6 words from your last lesson</h3><table><thead><tr><th></th><th>Word</th><th>Level</th><th>How it went</th><th>Last played</th></tr></thead><tbody>${rowsUnit}</tbody></table></div>`;
   }
-  function chart() {
-    const now = counts(S), pts = S.hist.concat([{ d: S.day, met: now.met, rem: now.rem, now: true }]);
-    const Wd = 560, H = 170, L = 34, R = 16, T = 14, B = 26, max = Math.max(WORDS.length, ...pts.map((p) => p.met));
-    const d0 = pts[0].d, d1 = pts[pts.length - 1].d;
-    const x = (d) => L + ((d - d0) / Math.max(1, d1 - d0)) * (Wd - L - R), y = (v) => T + (1 - v / max) * (H - T - B);
-    const line = (k) => pts.map((p, i) => `${i ? "L" : "M"}${x(p.d).toFixed(1)},${y(p[k]).toFixed(1)}`).join(" ");
-    const lab = (p) => p.now ? "now" : p.d < 0 ? `${Math.round(-p.d / 7)}w ago` : dayName(p.d).slice(0, 3);
-    return `<svg class="pchart" viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Words met and words remembered over time">
-      ${[0, 0.5, 1].map((f) => `<line x1="${L}" x2="${Wd - R}" y1="${y(max * f)}" y2="${y(max * f)}" class="grid"/><text x="${L - 6}" y="${y(max * f) + 4}" text-anchor="end" class="ax">${Math.round(max * f)}</text>`).join("")}
-      <path d="${line("met")}" class="ln met"/><path d="${line("rem")}" class="ln rem"/>
-      ${pts.map((p) => `<circle cx="${x(p.d)}" cy="${y(p.rem)}" r="${p.now ? 4.5 : 2.5}" class="dt rem"/><circle cx="${x(p.d)}" cy="${y(p.met)}" r="${p.now ? 4.5 : 2.5}" class="dt met"/>`).join("")}
-      ${pts.filter((p, i) => i % 2 === 0 || p.now).map((p) => `<text x="${x(p.d)}" y="${H - 8}" text-anchor="middle" class="ax">${lab(p)}</text>`).join("")}
-      <text x="${x(d1) - 6}" y="${y(now.met) - 8}" text-anchor="end" class="vl met">${now.met} met</text><text x="${x(d1) - 6}" y="${y(now.rem) + 16}" text-anchor="end" class="vl rem">${now.rem} remembered</text>
-    </svg>`;
+  // How the child is doing against the programme: mastery per unit vs the level we expect at this point
+  const unitMastery = (u) => { const ids = u.w.map(([w]) => w); return ids.reduce((s, id) => s + (dusty(id) ? 3 : lv(id)), 0) / (ids.length * 5); };
+  const expected = (u) => (u.locked ? 0 : u.id === CURRENT ? 0.3 : 0.7);
+  const HOME_TIP = {
+    food: [(w) => `At dinner, point at the ${w} and ask “What’s this?”`, (w) => `In the shop, ask “Can you find the ${w}?”`, (w) => `Ask “Do you like ${w}?” — answer “I like… / I don’t like…” together.`],
+    toys: [(w) => `Hide the ${w} and ask “Where is the ${w}?”`, (w) => `At bedtime, ask her to show you the ${w} and name it.`],
+    face: [(w) => `Play “Touch your ${w}!” — then swap roles.`, (w) => `Draw a face together and label the ${w}.`],
+    feelings: [(w) => `Make a ${w} face and ask “How do I feel?”`, (w) => `At bedtime ask “Are you ${w}?”`],
+    school: [(w) => `While packing the bag, ask “Where is your ${w}?”`, (w) => `Play “I spy” with the ${w}.`],
+    family: [(w) => `Look at a family photo and ask “Who is the ${w}?”`, (w) => `On a video call, let her say “Hello, ${w}!”`],
+  };
+
+  function progChart() {
+    const us = UNITS, Wd = 560, H = 190, L = 34, R = 10, T = 12, B = 34, bw = (Wd - L - R) / us.length;
+    const y = (v) => T + (1 - v) * (H - T - B);
+    const bars = us.map((u, i) => {
+      const m = u.locked ? 0 : unitMastery(u), e = expected(u), x = L + i * bw + bw * 0.18, w = bw * 0.64;
+      const cls = u.locked ? "fut" : m >= e ? "ok" : m >= e - 0.15 ? "mid" : "low";
+      return `<rect x="${x}" y="${y(Math.max(m, 0.01))}" width="${w}" height="${y(0) - y(Math.max(m, 0.01))}" rx="3" class="pb ${cls}"/>
+        ${u.locked ? "" : `<line x1="${x - 3}" x2="${x + w + 3}" y1="${y(e)}" y2="${y(e)}" class="exp"/><text x="${x + w / 2}" y="${y(m) - 4}" text-anchor="middle" class="vl">${Math.round(m * 100)}%</text>`}
+        <text x="${x + w / 2}" y="${H - 18}" text-anchor="middle" class="ax">${u.ic}</text><text x="${x + w / 2}" y="${H - 5}" text-anchor="middle" class="ax">U${u.n}</text>`;
+    }).join("");
+    return `<svg class="pchart" viewBox="0 0 ${Wd} ${H}" role="img" aria-label="Mastery per unit compared with the expected level">
+      ${[0, 0.5, 1].map((f) => `<line x1="${L}" x2="${Wd - R}" y1="${y(f)}" y2="${y(f)}" class="grid"/><text x="${L - 6}" y="${y(f) + 4}" text-anchor="end" class="ax">${f * 100}%</text>`).join("")}${bars}</svg>`;
   }
   function parent() {
-    const c = counts(S), base = S.hist[S.hist.length - 1];
+    const done = UNITS.filter((u) => !u.locked && u.id !== CURRENT), cu = UNITS.find((u) => u.id === CURRENT);
+    const keep = done.reduce((s, u) => s + unitMastery(u), 0) / done.length;
+    const doneIds = done.flatMap((u) => u.w.map(([w]) => w)), remDone = doneIds.filter((id) => lv(id) >= 4 && !dusty(id)).length;
+    const status = keep >= 0.65 ? ["ok", "On track"] : keep >= 0.5 ? ["mid", "Almost on track"] : ["low", "Needs support"];
+    const behind = done.filter((u) => unitMastery(u) < expected(u) - 0.15);
     const fading = WORDS.filter((w) => open(w.id) && dusty(w.id));
-    const week = S.ups.filter((u) => u.day > S.day - 7), moved = [...new Set(week.map((u) => u.id))];
+    const fresh = cu.w.map(([w]) => w).filter((id) => lv(id) >= 1);
     const map = UNITS.map((u) => `<div class="vm-row ${u.locked ? "locked" : ""}"><div class="vm-u"><span>${u.ic}</span><b>${u.n}. ${u.name}</b>${u.id === CURRENT ? `<em>now</em>` : u.locked ? `<em class="soon">later</em>` : ""}</div>
-      <div class="vm-chips">${u.w.map(([w, e]) => `<span class="vchip l${u.locked ? 0 : lv(w)} ${!u.locked && dusty(w) ? "dz" : ""}" title="${esc(w)} — ${u.locked ? "coming later" : dusty(w) ? "needs a refresh" : LEVELS[lv(w)].name}"><i>${e}</i>${esc(w)}${!u.locked && lv(w) === 5 ? " 👑" : ""}${!u.locked && dusty(w) ? " 🔄" : ""}</span>`).join("")}</div></div>`).join("");
-    return `<h2>${KID}’s English vocabulary</h2><p class="sub">Parent view · Level 1 Juniors · ${dayName(S.day)}</p>
-      <div class="kpis"><div class="kpi"><b>${c.rem}</b><span>words ${KID} <u>remembers</u><br>(said after 3+ days)</span><small class="${c.rem - base.rem >= 0 ? "pos" : "neg"}">${c.rem - base.rem >= 0 ? "+" : ""}${c.rem - base.rem} this week</small></div>
-        <div class="kpi"><b>${c.met}</b><span>words met in lessons<br>of ${WORDS.length} in Level 1</span><small>${Math.round((c.met / WORDS.length) * 100)}% of the level</small></div>
+      <div class="vm-chips">${u.w.map(([w, e]) => `<span class="vchip l${u.locked ? 0 : lv(w)} ${!u.locked && dusty(w) ? "dz" : ""}" title="${esc(w)} — ${u.locked ? "coming later" : dusty(w) ? "needs a refresh" : LEVELS[lv(w)].name}"><i>${e}</i>${esc(w)}${!u.locked && dusty(w) ? " 🔄" : ""}</span>`).join("")}</div></div>`).join("");
+    return `<h2>How ${KID} is doing with English</h2><p class="sub">Parent view · Level 1 Juniors · ${dayName(S.day)}</p>
+      <div class="status ${status[0]}"><b>${status[1]}</b> — ${KID} has finished ${done.length} of ${UNITS.length} units of Level 1 and keeps <b>${Math.round(keep * 100)}%</b> of their words (we expect about 70% at this point). Unit ${cu.n} ${cu.name} is in progress.${behind.length ? ` Worth a little extra practice: ${behind.map((u) => u.name).join(", ")}.` : ""}</div>
+      <div class="kpis"><div class="kpi"><b>${cu.n}<small>/10</small></b><span>units of Level 1<br>(Unit ${cu.n} ${cu.name} now)</span><small>${Math.round(((cu.n - 1) / UNITS.length) * 100)}% of the level done</small></div>
+        <div class="kpi"><b>${remDone}</b><span>words from finished units<br>${KID} still remembers</span><small>of ${doneIds.length} words</small></div>
         <div class="kpi"><b>${fading.length}</b><span>words to refresh<br>(not practised for a while)</span><small>${fading.length ? "Kids Area brings them back" : "all fresh"}</small></div></div>
-      <div class="grid2"><div class="panel"><h3>Progress over time</h3>${chart()}<p class="sub" style="margin:4px 0 0">“Remembered” counts only words Mia said correctly after a 3-day break and hasn’t forgotten since.</p></div>
-        <div class="panel"><h3>This week</h3>
-          ${moved.length ? `<p class="wk"><b>Moved up:</b> ${moved.map((id) => `${W(id).emo} ${esc(id)} → ${LEVELS[lv(id)].name.toLowerCase()}`).join(", ")}</p>` : `<p class="wk">No new steps yet this week.</p>`}
-          ${fading.length ? `<p class="wk"><b>To refresh:</b> ${fading.map((w) => `${w.emo} ${esc(w.word)}`).join(", ")}</p>` : ""}
-          <p class="wk"><b>Try at home:</b> point at ${WORDS.filter((w) => w.u === CURRENT && lv(w.id) >= 2).slice(0, 3).map((w) => w.word).join(", ") || "food"} at dinner and ask “What’s this?”</p></div></div>
+      <div class="grid2"><div class="panel"><h3>Progress through the programme</h3>${progChart()}
+          <p class="sub" style="margin:4px 0 0">Bar = how well ${KID} knows each unit’s words (5 steps per word, from “met in a lesson” to “uses it with the teacher”). Line = where we expect her to be. <span class="lg ok">on track</span> <span class="lg mid">a bit behind</span> <span class="lg low">needs practice</span></p></div>
+        <div class="panel"><h3>New words this week</h3>
+          <p class="sub" style="margin:0 0 8px">From ${TEACHER}’s lesson on ${dayName(0)} · Unit ${cu.n} ${cu.name}. Two minutes a day at home helps them stick.</p>
+          <div class="nw">${fresh.map((id, i) => `<div class="nw-i"><span class="nw-e">${W(id).emo}</span><div><b>${esc(id)}</b> <span class="lvchip l${lv(id)}">${LEVELS[lv(id)].name}</span><small>${(HOME_TIP[W(id).u] ? HOME_TIP[W(id).u][i % HOME_TIP[W(id).u].length] : (w) => `Ask “What’s this?” and let ${KID} name the ${w}.`)(id)}</small></div></div>`).join("")}</div>
+          <p class="wk" style="margin-top:8px"><b>Tip:</b> let ${KID} be the teacher — ask her to teach you the words. Praise trying, not only right answers.</p>
+          ${fading.length ? `<p class="wk"><b>Older words to refresh:</b> ${fading.map((w) => `${w.emo} ${esc(w.word)}`).join(", ")}</p>` : ""}</div></div>
       <div class="panel"><h3>Vocabulary map — every Level 1 word</h3>
         <div class="vm-legend">${LEVELS.map((L, i) => `<span class="vchip l${i}">${L.name}</span>`).join("")}<span class="vchip l4 dz">needs a refresh 🔄</span></div>${map}
         <p class="sub" style="margin:8px 0 0">Units and words from the Novakid Level 1 programme (Unit 4 word list is approximate).</p></div>`;

@@ -554,3 +554,22 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .album-tile .wr { background-color: #5FCFC4; background-size: cover; background-position: center 30%; }
 .album-tile .wr::after { display: none; }
 .album-tile .label { background: #0E9C94; }
+
+/* ===== v7: puzzle cards (5 pieces = 5 levels, gold frame at the last level) ===== */
+.wc, .wc.l0, .wc.l1, .wc.l2, .wc.l3, .wc.l4 { background: #fff; border: 2px solid #C9D3DC; box-shadow: 0 2px 0 #9AA8B4; padding: 4px 4px 3px; }
+.wc.l0 { background: rgba(255,255,255,.55); border: 2px dashed #A99BE0; box-shadow: none; }
+.wc.l5 { background: linear-gradient(#FFF6CF, #FFE07A); border: 3px solid #D9A000; box-shadow: 0 2px 0 #8A6100, 0 0 0 2px #FFF3B8 inset, 0 0 8px rgba(255,200,40,.7); }
+.wc .pips, .wc .crown, .wc .pic { display: none; }
+.wc .pz { width: 100%; aspect-ratio: 1; display: block; flex: none; }
+.ka-stage .wc .face { justify-content: flex-start; }
+.wc .w { margin: 2px 0 0; font-size: 11.5px; }
+.pz .own { fill: none; stroke: rgba(255,255,255,.95); stroke-width: 1.6; }
+.pz .miss { fill: #EEF1F4; stroke: #B9C3CC; stroke-width: 1.2; stroke-dasharray: 3 2.5; }
+.wc.l0 .pz .miss { fill: rgba(235,230,255,.6); stroke: #B5A8E8; }
+.pz .q { fill: #A99BE0; font-family: "Lilita One", sans-serif; }
+.wc .spk { bottom: 2px; left: 2px; }
+.wc.l1 .pz g { filter: none; }
+.wc.dusty .pz { filter: saturate(.25) brightness(.95); }
+.wc.static { height: auto; width: 64px; }
+.mini-row.big .wc.static { height: auto; width: 76px; }
+.wc.static .w { font-size: 10px; }
