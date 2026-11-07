@@ -521,3 +521,32 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .sn-field i, .sn-field b { width: 26px; height: 26px; }
 .sn-field .egg { font-size: 13px; }
 .gscene.race .tower { height: 210px; }
+
+/* ===== v6 ===== */
+/* racing: parallax background + stars flying towards the ship (transform-only, GPU) */
+.gscene.race .clouds { width: 200%; animation: rc-scroll 60s linear infinite; }
+.gscene.race .trees { width: 200%; animation: rc-scroll 16s linear infinite; }
+@keyframes rc-scroll { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+.ship { left: 12px; transition: top .18s ease-out; animation: ship-bob 1.2s ease-in-out infinite; }
+@keyframes ship-bob { 50% { margin-top: 2px; } }
+.race-layer { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.race-layer .star { position: absolute; left: 0; top: 0; width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; will-change: transform; }
+.race-layer .star.bad { opacity: .5; filter: grayscale(.9); }
+.race-layer .star.bad i { background-image: url("https://school.novakidschool.com/games/racing/assets/star_blue.dda716e6.png"); background-size: 500% 300%; }
+.rc-arrows { position: absolute; left: 112px; top: 200px; display: flex; gap: 6px; z-index: 3; }
+.ka-stage .rc-arrows button { width: 30px; height: 30px; border-radius: 50%; background: rgba(13,59,78,.6); border: 2px solid #fff; color: #fff; font-size: 12px; }
+.rc-p .w.ans { display: flex; gap: 10px; }
+.rc-p .w.ans b { min-width: 12px; text-align: center; }
+.rc-p .w.ans b.bad { color: #FF6B81; } .rc-p .w.ans b.ok { color: #6CF08F; }
+/* box battle: topic labels */
+.bx-lab .t-primary { text-transform: lowercase; }
+/* summary: fits the 320px stage */
+.sum-wrap { inset: 58px 0 0 0; padding-top: 0; }
+.sum-wrap .in { padding: 8px 16px 24px; }
+.sum-ban { width: 170px; height: 38px; margin-bottom: 2px; }
+.mini-row.big { margin: 4px 0 0; }
+.mini-row.big .wc.static { height: 92px; width: 70px; }
+.mini-row.big .wc.static .pic .emo { font-size: 30px; }
+.sum-wrap .plus { margin-top: 2px; }
+.bx-slot img { display: none; }
+.bx-slot { background: #FBE8C4; border-radius: 3px; box-shadow: inset 0 -2px 0 rgba(150,110,60,.15); }

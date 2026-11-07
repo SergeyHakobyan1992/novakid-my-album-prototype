@@ -34,7 +34,7 @@
   const UNITS = [
     { n: 1, id: "toys", name: "Toys", ic: "🧸", w: [["doll", "🪆"], ["toy car", "🚗"], ["toy train", "🚂"], ["ball", "⚽"], ["robot", "🤖"], ["puzzle", "🧩"], ["teddy bear", "🧸"], ["bike", "🚲"]] },
     { n: 2, id: "face", name: "The Face", ic: "🙂", w: [["head", "🧑"], ["neck", "🦒"], ["legs", "🦵"], ["arms", "💪"], ["eyes", "👀"], ["ears", "👂"], ["nose", "👃"], ["mouth", "👄"]] },
-    { n: 3, id: "feelings", name: "Feelings", ic: "😀", w: [["happy", "😀"], ["sad", "😢"], ["angry", "😠"], ["scared", "😱"], ["hungry", "🤤"], ["thirsty", "🥤"], ["sleepy", "😴"], ["hot", "🥵"], ["cold", "🥶"]] },
+    { n: 3, id: "feelings", name: "Feelings", ic: "😀", w: [["happy", "😀"], ["sad", "😢"], ["angry", "😠"], ["scared", "😱"], ["hungry", "🤤"], ["thirsty", "😮‍💨"], ["sleepy", "😴"], ["hot", "🥵"], ["cold", "🥶"]] },
     { n: 4, id: "school", name: "School", ic: "🎒", guess: true, w: [["pen", "🖊️"], ["pencil", "✏️"], ["book", "📕"], ["bag", "🎒"], ["ruler", "📏"], ["crayon", "🖍️"], ["scissors", "✂️"], ["notebook", "📓"]] },
     { n: 5, id: "family", name: "Family", ic: "👪", w: [["mum", "👩"], ["dad", "👨"], ["sister", "👧"], ["brother", "👦"], ["grandma", "👵"], ["grandpa", "👴"], ["aunt", "👩‍🦰"], ["uncle", "🧔"], ["cousin", "🧒"]] },
     { n: 6, id: "food", name: "Food", ic: "🍕", w: [["carrot", "🥕"], ["cupcake", "🧁"], ["pizza", "🍕"], ["fish", "🐟"], ["grapes", "🍇"], ["peas", "🫛"], ["hamburger", "🍔"], ["tomato", "🍅"], ["sandwich", "🥪"], ["milk", "🥛"], ["juice", "🧃"]] },
@@ -331,7 +331,7 @@
     [...new Set(items.filter((it) => it.up).map((it) => playKey(it.id)))].forEach((k) => { S.plays[k] = (S.plays[k] || 0) + 1; });
     const ses = { game, items, i: 0, ret, att: {}, err: {}, upgrades: [], refreshed: [], dropped: [], starsBefore: S.stars, me: 0, bot: 0, t0: Date.now() };
     if (game === "memo") { ses.cards = shuffle(ids.flatMap((id) => [{ id, t: "pic" }, { id, t: "word" }])).map((c) => Object.assign(c, { open: true })); ses.flip = []; ses.turn = "me"; ses.preview = true; }
-    if (game === "boxes") { ses.rounds = []; for (let k = 0; k < ids.length; k += 2) ses.rounds.push(ids.slice(k, k + 2)); ses.r = 0; ses.placed = []; ses.done = {}; dealBoxes(ses); }
+    if (game === "boxes") setupBoxes(ses);
     S.session = ses;
     if (!["memo", "boxes"].includes(game)) prepItem();
     S.screen = "play"; save(); render(); startMusic();
@@ -350,10 +350,7 @@
       const slots = BUB_SLOTS.slice(0, total);
       it.bubbles = shuffle(L.concat(fill)).map((ch, k) => ({ ch, x: slots[k][0], y: slots[k][1], sel: false })); it.pos = 0; it.typed = "";
     }
-    if (g === "racing") {
-      const L = letters(it.id); it.miss = L.length <= 4 ? 0 : Math.floor(Math.random() * L.length);
-      const need = L[it.miss]; it.stars = shuffle([need, ...randLetters(3, [need])]).map((ch, k) => ({ ch, x: STAR_SLOTS[k][0], y: STAR_SLOTS[k][1], state: "" })); it.ship = { x: 8, y: 120 };
-    }
+    if (g === "racing") { const L = letters(it.id); it.miss = L.length <= 4 ? 0 : Math.floor(Math.random() * L.length); raceReset(); }
     if (g === "snake") {
       const need = letters(it.id)[0]; it.need = need;
       const prev = ses.snake; ses.snake = prev || [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }]; ses.dir = ses.dir || "R";
@@ -454,20 +451,26 @@
     setTimeout(() => { if (S.session !== ses) return; if (b !== undefined) { ses.cards[a].open = ses.cards[b].open = true; render(); }
       setTimeout(() => { if (S.session !== ses) return; ses.cards.forEach((c) => { if (!c.matched) c.open = false; }); ses.turn = "me"; memoLock = false; save(); render(); }, 1100); }, 700);
   }
-  // Box Battle — drag the picture card into the chest with its word
-  function dealBoxes(ses) { const w = ses.rounds[ses.r]; ses.deck = shuffle(w.concat(w)); ses.chests = shuffle(w.slice()); ses.glow = null; }
-  function onBox(id) {
+  // Box Battle — two chests are topics (as in Kids Area, where chests are categories); drag each picture card into its topic
+  function setupBoxes(ses) {
+    const A = W(ses.items[0].id).u;
+    const units = UNITS.filter((u) => !u.locked && u.id !== A && u.w.some(([w]) => lv(w) >= 1));
+    const B = (units.find((u) => ses.items.some((it) => W(it.id).u === u.id)) || units[Math.floor(Math.random() * units.length)]).id;
+    let cards = ses.items.filter((it) => W(it.id).u === A).map((it) => it.id).slice(0, 4);
+    const more = (u, n) => shuffle(WORDS.filter((w) => w.u === u && lv(w.id) >= 1 && !cards.includes(w.id)).map((w) => w.id)).slice(0, n);
+    cards = cards.concat(more(B, 6 - cards.length >= 3 ? 3 : 2)); cards = cards.concat(more(A, 6 - cards.length)).slice(0, 6);
+    const was = Object.fromEntries(ses.items.map((it) => [it.id, it]));
+    ses.items = cards.map((id) => was[id] || { id, kind: nextStep(id).k, up: false });
+    ses.chests = shuffle([A, B]); ses.deck = shuffle(cards); ses.total = cards.length; ses.glow = null;
+  }
+  function onBox(topic) {
     const ses = S.session; if (ses.over || !ses.deck.length) return;
     const c = ses.deck[ses.deck.length - 1];
-    if (id === c) {
-      attempt(c, true); ses.deck.pop(); ses.placed.push(c); ses.done[c] = (ses.done[c] || 0) + 1; ses.me += 1; ses.glow = { id, ok: true };
-      if (!ses.deck.length) {
-        ses.r += 1;
-        if (ses.r >= ses.rounds.length) { ses.over = true; ses.win = ses.me >= ses.bot; say(ses.win ? "You win!" : "Good try!"); sfx(ses.win ? "win" : "defeat", 0.5); save(); render(); setTimeout(finish, 2000); return; }
-        dealBoxes(ses);
-      }
+    if (W(c).u === topic) {
+      attempt(c, true); ses.deck.pop(); ses.me += 1; ses.glow = { id: topic, ok: true };
+      if (!ses.deck.length) { ses.over = true; ses.win = ses.me >= ses.bot; say(ses.win ? "You win!" : "Good try!"); sfx(ses.win ? "win" : "defeat", 0.5); save(); render(); setTimeout(finish, 2000); return; }
       save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); prompt(); } }, 600);
-    } else { attempt(c, false, { chosen: id }); ses.glow = { id, ok: false }; say(`Oops! Listen: ${W(c).word}`); save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); } }, 700); }
+    } else { attempt(c, false, { chosen: topic }); ses.glow = { id: topic, ok: false }; say(`Oops! ${W(c).word}!`); save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); } }, 700); }
   }
   // Bubbles — pop letter bubbles to spell the word for the picture
   const BUB_SLOTS = [[187, 245], [247, 245], [307, 245], [367, 245], [427, 245], [217, 196], [277, 196], [337, 196], [397, 196], [247, 147], [307, 147], [367, 147]];
@@ -481,15 +484,42 @@
       sfx("click", 0.4); save(); render();
     } else { attempt(it.id, false, { chosen: b.ch }); b.bad = true; save(); render(); setTimeout(() => { b.bad = false; render(); }, 500); }
   }
-  // Racing — catch the star with the missing letter
-  const STAR_SLOTS = [[300, 170], [372, 92], [462, 64], [505, 178]];
-  function onStar(k) {
-    const it = cur(); if (it.solved) return;
-    const s = it.stars[k], need = letters(it.id)[it.miss];
-    it.ship = { x: s.x - 70, y: s.y - 2 };
-    if (s.ch === need) { s.state = "got"; attempt(it.id, true); S.session.me += 1; save(); render(); const ok = it.up && !it.hint && (S.session.err[it.id] || 0) === 0; setTimeout(() => solved(it, ok && levelUp(it.id, 3)), 450); }
-    else { s.state = "bad"; attempt(it.id, false, { chosen: s.ch }); say(W(it.id).word); save(); render(); }
+  // Racing — stars with letters fly towards the ship; move the ship up/down (arrow keys) to touch the missing letter
+  const LANES = [52, 96, 140, 184, 226], SHIP_X = 12, STAR_SPEED = 85;
+  let RACE = null, raceRAF = null;
+  function raceReset() { RACE = { lane: (RACE && RACE.lane) || 2, stars: [], last: 0, wrong: [] }; }
+  function raceWave() {
+    const it = cur(), need = letters(it.id)[it.miss], lanes = shuffle([0, 1, 2, 3, 4]).slice(0, 3);
+    shuffle([need, ...randLetters(2, [need])]).forEach((ch, k) => RACE.stars.push({ ch, lane: lanes[k], x: 640 + k * 95, el: null, state: "" }));
   }
+  function raceShip(d) { if (!RACE) return; RACE.lane = Math.max(0, Math.min(4, RACE.lane + d)); const s = $("#ship"); if (s) s.style.top = LANES[RACE.lane] - 19 + "px"; }
+  function raceLoop(ts) {
+    raceRAF = null;
+    const ses = S.session; if (S.screen !== "play" || !ses || ses.game !== "racing" || !RACE) return;
+    const it = cur(), layer = $("#raceLayer");
+    const dt = RACE.last ? Math.min(0.05, (ts - RACE.last) / 1000) : 0; RACE.last = ts;
+    if (layer && !it.solved) {
+      if (!RACE.stars.length) raceWave();
+      const need = letters(it.id)[it.miss];
+      for (const s of RACE.stars) {
+        if (!s.el || !s.el.isConnected) { s.el = document.createElement("div"); s.el.className = "star" + (s.state ? " " + s.state : ""); s.el.innerHTML = `<i></i><span>${s.ch}</span>`; layer.appendChild(s.el); }
+        s.x -= STAR_SPEED * dt;
+        s.el.style.transform = `translate3d(${s.x}px, ${LANES[s.lane] - 19}px, 0)`;
+        if (!s.state && s.lane === RACE.lane && s.x < SHIP_X + 84 && s.x > SHIP_X + 20) {
+          if (s.ch === need) {
+            s.state = "got"; attempt(it.id, true); ses.me += 1;
+            const ok = it.up && !it.hint && (ses.err[it.id] || 0) <= 1; RACE.stars.forEach((o) => o.el && o.el.remove()); RACE.stars = [];
+            return solved(it, ok && levelUp(it.id, 3));
+          }
+          s.state = "bad"; s.el.classList.add("bad"); attempt(it.id, false, { chosen: s.ch }); RACE.wrong.push(s.ch); say(W(it.id).word);
+          const a = $("#raceAns"); if (a) a.innerHTML = ansHTML(it);
+        }
+      }
+      RACE.stars = RACE.stars.filter((s) => { if (s.x < -60) { s.el && s.el.remove(); return false; } return true; });
+    }
+    raceRAF = requestAnimationFrame(raceLoop);
+  }
+  const ansHTML = (it) => Array.from({ length: 5 }, (_, k) => { const w = RACE ? RACE.wrong[k] : null; return w ? `<b class="bad">${w}</b>` : it.solved && k === (RACE ? RACE.wrong.length : 0) ? `<b class="ok">${letters(it.id)[it.miss]}</b>` : "<b>-</b>"; }).join("");
   // Snake — eat the egg with the first letter
   const SN_W = 20, SN_H = 8, CELL = 26;
   function freeCell(ses) { let c; do { c = { x: 2 + Math.floor(Math.random() * (SN_W - 4)), y: 1 + Math.floor(Math.random() * (SN_H - 2)) }; } while ((ses.snake || []).some((p) => p.x === c.x && p.y === c.y)); return c; }
@@ -542,12 +572,12 @@
     } catch (e) {}
   }
   function stopMic() { try { recog && recog.abort(); } catch (e) {} }
-  function stopAll() { clearTimeout(advT); stopTimers(); stopMic(); memoLock = false; }
+  function stopAll() { clearTimeout(advT); stopTimers(); stopMic(); memoLock = false; if (raceRAF) cancelAnimationFrame(raceRAF); raceRAF = null; RACE = null; }
 
   function finish() {
     const ses = S.session; if (!ses) return;
     if (ses.game === "memo") ses.items.forEach((it) => { if (it.up && (ses.err[it.id] || 0) <= 2) levelUp(it.id, 2); });
-    if (ses.game === "boxes") ses.items.forEach((it) => { if (it.up && ses.done[it.id] === 2 && (ses.err[it.id] || 0) <= 1) levelUp(it.id, 2); });
+    if (ses.game === "boxes") ses.items.forEach((it) => { if (it.up && !ses.deck.includes(it.id) && !(ses.err[it.id] || 0)) levelUp(it.id, 2); });
     const win = ses.win !== undefined ? ses.win : ses.me >= ses.bot;
     S.lastSummary = { ids: [...new Set(ses.upgrades)], refreshed: ses.refreshed, dropped: ses.dropped, stars: S.stars - ses.starsBefore, ret: ses.ret, game: ses.game, win, pvp: PVP.includes(ses.game) };
     stopAll(); S.session = null; S.screen = "summary"; save(); render(); startMusic();
@@ -592,17 +622,16 @@
         ${ses.preview ? `<div class="mm-hint">${prim("REMEMBER!", 13)}</div>` : ""}`;
     }
     if (g === "boxes") {
-      const top = ses.deck[ses.deck.length - 1];
-      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px" ${isTop ? `data-drag="1"` : ""}><img class="t" src="${GA.boxCard}" alt=""><span class="emo">${W(id).emo}</span>${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
-      const slots = Array.from({ length: ses.rounds.flat().length * 2 }, (_, k) => `<div class="bx-slot" style="left:${364 + (k % 5) * 49}px;top:${209 + Math.floor(k / 5) * 51}px"><img src="${GA.boxSlot}" alt="">${ses.placed[k] ? `<span class="emo">${W(ses.placed[k]).emo}</span>` : ""}</div>`).join("");
+      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt=""><span class="emo">${W(id).emo}</span>${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
+      const slots = ses.deck.map((_, k) => `<div class="bx-slot" style="left:${364 + (k % 5) * 49}px;top:${209 + Math.floor(k / 5) * 51}px"><img src="${GA.boxSlot}" alt=""></div>`).join("");
+      const name = (u) => UNITS.find((x) => x.id === u).name.toLowerCase();
       return `<div class="gscene sky"></div>
         ${helpBtn()}${timer(ses)}${quitBtn()}${widget("me", ses)}${widget("enemy", ses)}
-        ${(ses.chests || []).map((id, k) => `<div class="bx-lab" style="left:${[174, 320][k]}px">${prim(W(id).word, 19)}</div>
-          <button class="bx-chest ${ses.glow && ses.glow.id === id ? (ses.glow.ok ? "ok" : "bad") : ""}" style="left:${[174, 320][k]}px" data-box="${esc(id)}" aria-label="${esc(W(id).word)} chest"><img src="${GA.box}" alt=""></button>
-          ${listenBtn(id, "chest-lis").replace('class="gi lis chest-lis"', `class="gi lis chest-lis" style="left:${[174, 320][k] + 92}px"`)}`).join("")}
+        ${ses.chests.map((u, k) => `<div class="bx-lab" style="left:${[174, 320][k]}px">${prim(name(u), 19)}</div>
+          <button class="bx-chest ${ses.glow && ses.glow.id === u ? (ses.glow.ok ? "ok" : "bad") : ""}" style="left:${[174, 320][k]}px" data-box="${u}" aria-label="${name(u)} chest"><img src="${GA.box}" alt=""></button>
+          <button class="gi lis chest-lis" style="left:${[174, 320][k] + 92}px" data-sayt="${esc(name(u))}" aria-label="Listen"><img src="${GA.listen}" alt=""></button>`).join("")}
         <div class="bx-deck">${deck}</div>${slots}
-        ${ses.over ? `<div class="g-result"><img src="${ses.win ? GA.winG : GA.winR}" alt="">${prim(ses.win ? "YOU WIN!" : "GOOD TRY!", 16)}</div>` : ""}
-        ${top ? "" : ""}`;
+        ${ses.over ? `<div class="g-result"><img src="${ses.win ? GA.winG : GA.winR}" alt="">${prim(ses.win ? "YOU WIN!" : "GOOD TRY!", 16)}</div>` : ""}`;
     }
     if (g === "bubbles") {
       const it = cur(), need = letters(it.id)[it.pos];
@@ -618,12 +647,15 @@
     }
     if (g === "racing") {
       const it = cur(), L = letters(it.id), shown = L.split("").map((ch, k) => k === it.miss && !it.solved ? "_" : ch).join("");
-      return `<div class="gscene race"><div class="clouds"></div><div class="trees"></div><img class="tower" src="${GA.rTower}" alt=""></div>
+      if (!RACE) raceReset();
+      if (!raceRAF) raceRAF = requestAnimationFrame(raceLoop);
+      return `<div class="gscene race"><div class="clouds"></div><div class="trees"></div></div>
         ${helpBtn()}
-        <div class="ship" style="left:${it.ship.x}px;top:${it.ship.y}px"></div>
-        ${it.stars.map((s, k) => `<button class="star ${s.state}" style="left:${s.x - 22}px;top:${s.y - 19}px" data-star="${k}" ${it.solved || s.state ? "disabled" : ""}><i></i><span>${s.ch}</span></button>`).join("")}
+        <div class="ship" id="ship" style="top:${LANES[RACE.lane] - 19}px"></div>
+        <div class="race-layer" id="raceLayer"></div>
+        <div class="rc-arrows"><button data-race="-1" aria-label="Up">▲</button><button data-race="1" aria-label="Down">▼</button></div>
         <div class="rc-p left"><img class="t" src="${GA.rField}" alt="">${listenBtn(it.id, "rc-lis")}<span class="pic"><span class="emo">${W(it.id).emo}</span></span><span class="w">${shown}</span><img class="sym" src="${GA.rQ}" alt=""></div>
-        <div class="rc-p right"><img class="t" src="${GA.rField}" alt=""><span class="w ans">${it.solved ? L[it.miss] : "- - -"}</span><img class="sym" src="${GA.rA}" alt=""></div>
+        <div class="rc-p right"><img class="t" src="${GA.rField}" alt=""><span class="w ans" id="raceAns">${ansHTML(it)}</span><img class="sym" src="${GA.rA}" alt=""></div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag rc-flag"')}
         ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
     }
@@ -808,6 +840,7 @@
   document.addEventListener("keydown", (ev) => {
     const m = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R", w: "U", s: "D", a: "L", d: "R" }[ev.key];
     if (m && S.session && S.session.game === "snake") { ev.preventDefault(); turn(m); }
+    if ((m === "U" || m === "D") && S.session && S.session.game === "racing") { ev.preventDefault(); raceShip(m === "U" ? -1 : 1); }
   });
   document.addEventListener("click", (ev) => {
     const t = ev.target.closest("button"); if (!t) return;
@@ -830,7 +863,8 @@
     if (d.memo !== undefined) { onMemo(+d.memo); return; }
     if (d.box) { onBox(d.box); return; }
     if (d.bub !== undefined) { onBubble(+d.bub); return; }
-    if (d.star !== undefined) { onStar(+d.star); return; }
+    if (d.race) { raceShip(+d.race); return; }
+    if (d.sayt) { say(d.sayt); return; }
     if (d.dir) { turn(d.dir); return; }
     if (d.crown) {
       S.lv[d.crown] = 5; S.up[d.crown] = S.day; S.rev[d.crown] = S.day; S.ups.push({ id: d.crown, from: 4, to: 5, day: S.day }); S.stars += STAR_CROWN; S.crowns.push(d.crown);
