@@ -54,20 +54,21 @@
   const LEVELS = [
     { name: "Not met yet", look: "silhouette", ev: "not taught yet" },
     { name: "Met in lesson", look: "black & white", ev: "taught in a 1-1 lesson (from the lesson record)" },
-    { name: "Recognises", look: "colour", ev: "matches the sound or the written word to the picture — Memo Mix, Box Battle or Bubbles — with ≤ 1 mistake, no hint" },
-    { name: "Says it", look: "silver frame", ev: "produces the word — says it to Pinocchio or spells it in Racing — without a hint" },
-    { name: "Remembers", look: "gold frame", ev: "says it again after 3+ days, first try, no hint (Quiz Corner). Then refresh after 7 → 14 → 28 days" },
+    { name: "Recognises", look: "colour", ev: "matches the word (heard and written) to the picture — Memo Mix or Box Battle — with ≤ 1 mistake" },
+    { name: "Says it", look: "silver frame", ev: "produces the word — says it to Pinocchio, or spells it in Bubbles, Racing or Snake — without a hint" },
+    { name: "Remembers", look: "gold frame", ev: "names the picture again after 3+ days, first try, no hint (Quiz Corner). Then refresh after 7 → 14 → 28 days" },
     { name: "Uses with teacher", look: "crown", ev: "says it to the teacher in a live lesson (teacher taps ✓)" },
   ];
   const GAME = {
-    memo: { name: "Memo Mix", col: "#D98DE3", ic: "🃏", skill: "recognise", n: 4, intro: "Memo Mix! Find the picture for every sound." },
-    boxes: { name: "Box Battle", col: "#43C6CC", ic: "📦", skill: "recognise", n: 3, intro: "Box Battle! Listen and put each card into the right box. Be faster than Robo!" },
-    bubbles: { name: "Bubbles", col: "#E9B33D", ic: `<span class="mini-t">ABC</span>`, skill: "read", n: 4, intro: "Bubbles! Find the word for the picture." },
+    memo: { name: "Memo Mix", col: "#D98DE3", ic: "🃏", skill: "recognise", n: 6, intro: "Find the picture for every sound." },
+    boxes: { name: "Box Battle", col: "#43C6CC", ic: "📦", skill: "recognise", n: 4, intro: "Listen and put each card into the right box!" },
+    bubbles: { name: "Bubbles", col: "#E9B33D", ic: `<span class="mini-t">ABC</span>`, skill: "spell", n: 3, intro: "Pop the letters to spell the word!" },
     pino: { name: "Pinocchio", col: "#E8590C", ic: "🎤", skill: "say", n: 4, intro: "Say it to Pinocchio!" },
-    racing: { name: "Racing", col: "#3E9B5A", ic: "🏎️", skill: "spell", n: 3, intro: "Racing! Catch the letters to spell the word." },
-    quiz: { name: "Quiz Corner", col: "#2BB5D6", ic: `<span class="mini-t"><b style="color:#18A410">✓</b><b style="color:#DD0035">✗</b></span>`, skill: "recall", n: 4, intro: "Quiz Corner! Do you still remember?" },
+    racing: { name: "Racing", col: "#3E9B5A", ic: "🚀", skill: "spell", n: 3, intro: "Catch the missing letter!" },
+    snake: { name: "Snake", col: "#8A7BEA", ic: "🐍", skill: "spell", n: 3, intro: "Eat the first letter of the word!" },
+    quiz: { name: "Quiz Corner", col: "#2BB5D6", ic: `<span class="mini-t"><b style="color:#18A410">✓</b><b style="color:#DD0035">✗</b></span>`, skill: "recall", n: 4, intro: "Do you still remember these words?" },
   };
-  const LEARN = ["memo", "boxes", "bubbles"], MAKE = ["pino", "racing"];
+  const LEARN = ["memo", "boxes"], MAKE = ["bubbles", "pino", "racing", "snake"];
   const RECALL = 3, FIRST_IV = 7, STAR_UP = 10, STAR_REFRESH = 5, STAR_CROWN = 20;
   const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
   const dayName = (d) => DAYS[((d % 7) + 7) % 7];
@@ -135,7 +136,11 @@
   }
   // UI sounds + background music from Kids Area
   let music = null, lastHover = null, hoverT = 0;
-  function sfx(name, vol = 0.45) { if (!S.sound) return; try { const a = new Audio(SND[name]); a.volume = vol; a.play().catch(() => {}); } catch (e) {} }
+  // preloaded pool per sound: no network fetch or decoding on every hover/click
+  const POOL = {}, POOL_N = 3;
+  function pool(name) { if (!POOL[name]) { POOL[name] = { i: 0, a: Array.from({ length: POOL_N }, () => { const a = new Audio(SND[name]); a.preload = "auto"; return a; }) }; } return POOL[name]; }
+  ["hover", "click", "close"].forEach((n) => { try { pool(n); } catch (e) {} });
+  function sfx(name, vol = 0.45) { if (!S.sound) return; try { const p = pool(name), a = p.a[p.i++ % POOL_N]; a.volume = vol; a.currentTime = 0; a.play().catch(() => {}); } catch (e) {} }
   function startMusic() {
     if (!S.sound) { if (music) music.pause(); return; }
     try { if (!music) { music = new Audio(SND.music); music.loop = true; } music.volume = S.screen === "play" ? 0.06 : 0.16; music.play().catch(() => {}); } catch (e) {}
@@ -243,9 +248,8 @@
       <div class="in"><img class="pic" src="${IMG}teacher-anna.jpg" alt="" style="width:46px;height:46px">${inner}<button class="pop-spk" data-act="${sayAct}" aria-label="Listen">🔊</button></div>
       <button class="ka-btn ${gold ? "gold" : ""}" data-act="${act}"><div class="bi"><span>${btn}</span></div></button></div></div>`;
   }
-  const POP_TEXT = () => `Hi ${KID}! You met six new food words with ${TEACHER}. Play games to colour your cards!`;
+  const POP_TEXT = () => `Hi ${KID}! You met six new food words with ${TEACHER}. Play games to upgrade your cards!`;
   const CROWN_TEXT = () => `${TEACHER} gave you a crown for ${S.crowns.map((id) => W(id).word).join(" and ")}! Well done!`;
-  const HELP_TEXT = `Tap a card to hear the word. Tap the round button to play a game and level up your card: colour, silver, gold, and a crown from ${TEACHER}!`;
 
   // ---------- child: album ----------
   function album() {
@@ -258,32 +262,61 @@
       return `<button class="gtab ${x.id === u.id ? "on" : ""}" data-tab="${x.id}"><span class="ic">${x.ic}</span><span class="nm">${x.n}. ${x.name}</span>${dz ? `<span class="dz">🔄</span>` : hot ? `<span class="hot"></span>` : ""}
         <span class="bar"><i style="width:${pct}%"></i></span></button>`;
     }).join("");
-    return `${innerHeader("home", "MY ALBUM", `<button class="ka-help" data-act="help" aria-label="How it works">🔊</button>`)}
+    return `${innerHeader("home", "MY ALBUM")}
       <div class="alb3"><div class="gtabs" id="gtabs">${tabs}</div>
         <div class="cards" id="cards">${u.w.map(([w]) => cardHTML(w, { rec })).join("")}</div></div>`;
   }
 
   // ---------- child: games menu (replica of Kids Area Games) ----------
+  const ICN = "https://school.novakidschool.com/student/latest/static/";
   const MENU = [
-    { k: "bubbles", name: "BUBBLES", col: "#E9B33D", bg: "#FBE7B9", art: `<span class="abc"><i>A</i><i>B</i><i>C</i></span>` },
-    { k: "boxes", name: "BOX BATTLE", col: "#43C6CC", bg: "#A9EEF6", art: "📦" },
-    { k: "racing", name: "RACING", col: "#3E9B5A", bg: "#94CDA1", art: "🏎️" },
-    { k: "memo", name: "MEMO MIX", col: "#D98DE3", bg: "#F5CEF8", art: "🍋🥝" },
-    { k: "snake", name: "SNAKE", col: "#8A7BEA", bg: "#C7C0F6", art: "🐛" },
-    { k: "quiz", name: "QUIZ CORNER", col: "#2BB5D6", bg: "#A4E6F4", art: "✅❌" },
+    { k: "bubbles", name: "BUBBLES", col: "#E8B43C", bg: "#F2D292", art: `<img src="${ICN}svg/bubbles.2550282a.svg" alt="">` },
+    { k: "boxes", name: "BOX BATTLE", col: "#45CAD3", bg: "#62E8FB", art: `<span class="emo">📦</span>` },
+    { k: "racing", name: "RACING", col: "#3D9C55", bg: "#82CF93", art: `<img src="${ICN}image/racing.573ee022.png" alt="">` },
+    { k: "memo", name: "MEMO MIX", col: "#D58BE4", bg: "#EFAFFA", art: `<img src="${ICN}svg/bubble-memo.7d03e739.svg" alt="">` },
+    { k: "snake", name: "SNAKE", col: "#8682EA", bg: "#A6A4F0", art: `<img src="${ICN}image/snake.b00f76bf.png" alt="">` },
+    { k: "quiz", name: "QUIZ CORNER", col: "#1FB2D8", bg: "#53D6FF", art: `<span class="qz-ic"><b>✔</b><b>✖</b></span>` },
   ];
   function games() {
     const q = S.engine ? queue() : [];
     return `${innerHeader("home", "GAMES")}
       <div class="gm-grid">${MENU.map((m) => {
         const cnt = q.filter((x) => x.game === m.k).length;
-        return `<button class="gm" ${m.k === "snake" ? `data-soon="engine"` : `data-play="${m.k}" data-ret="games"`} style="--c:${m.col};--b:${m.bg}">
+        return `<button class="gm" data-play="${m.k}" data-ret="games" style="--c:${m.col};--b:${m.bg}">
           <span class="hd">${m.name}</span><span class="art">${m.art}</span>
           ${cnt ? `<span class="alb-badge"><img src="${IMG}album-icon.jpg" alt="">${cnt}</span>` : ""}</button>`;
       }).join("")}</div>`;
   }
 
-  // ---------- game sessions ----------
+  // ---------- game sessions: DOM replicas of the Kids Area games (their own art, loaded from school.novakidschool.com) ----------
+  const G0 = "https://school.novakidschool.com/games/", CDN = "https://cdn.novakidschool.com/api/0/files/";
+  const GA = {
+    sky: G0 + "quiz/assets/background.3350a184.svg", help: G0 + "assets/buttons/icon/icon_help.svg", flag: G0 + "assets/buttons/icon/icon_surrender.svg",
+    listen: G0 + "assets/buttons/icon/icon_listen.svg", back: G0 + "assets/buttons/icon/back/normal.svg",
+    pLabel: G0 + "quiz/assets/player.37ffa0be.svg", eLabel: G0 + "quiz/assets/enemy.61c4fa1d.svg",
+    trophy: CDN + "5v_zyN5hTuyVFHjdE8Ti9A", avBg: CDN + "J3YuxiLKSkqYZvfuPpv41w", enemyAv: CDN + "CaT7Oc8sSPqp4XKSlMokqA",
+    blueShort: G0 + "assets/banners/title/blue-short.svg", winG: G0 + "assets/banners/winner_green.svg", winR: G0 + "assets/banners/winner_red.svg",
+    qTile: G0 + "quiz/assets/default.1ca2e341.svg", qOpt: G0 + "quiz/assets/default.26a6ae60.svg", qMe: G0 + "quiz/assets/player.210c6808.svg",
+    qOk: G0 + "quiz/assets/correct.d855c117.svg", qBad: G0 + "quiz/assets/incorrect.348ea4a1.svg", qEnemy: G0 + "quiz/assets/enemy.05954e7a.svg",
+    memoTitle: G0 + "assets/banners/title/blue.svg", memoCard: G0 + "memo/assets/card.41b61622.svg",
+    box: G0 + "boxes/assets/box.bc479f5b.svg", boxCard: G0 + "boxes/assets/boxes-card-blank.7e4643d8.svg", boxSlot: G0 + "boxes/assets/blank.60831bb7.svg",
+    bub: G0 + "bubbles/assets/img/bubble_sprite.svg", bubSel: G0 + "bubbles/assets/img/bubble_sprite_selected.svg", bubBad: G0 + "bubbles/assets/img/bubble_sprite_wrong.svg",
+    bubHint: G0 + "bubbles/assets/img/bubble_sprite_hint.svg", bubBar: G0 + "bubbles/assets/img/battle_word_bg.svg", bubMission: G0 + "bubbles/assets/img/bubbles_mission_bg.svg",
+    bubEnemy: G0 + "bubbles/assets/img/bubble_enemy_bg.svg", bubHintBtn: G0 + "bubbles/assets/img/hint_button_bg.svg", bubBg: G0 + "bubbles/assets/img/bubbles_background.svg",
+    bubMini: G0 + "bubbles/assets/img/bubble_enemy_bubble_normal.svg",
+    rSky: G0 + "racing/assets/sky.4926bbde.png", rTrees: G0 + "racing/assets/trees_1024.d612d7c9.png", rTower: G0 + "racing/assets/tower_0.5.91798f95.png",
+    rClouds: G0 + "racing/assets/clouds_cropped_0.5.f9bbe10e.png", rShip: G0 + "racing/assets/spaceship.4f132245.png", rStar: G0 + "racing/assets/star_yellow.c2b45e9f.png",
+    rStarBlue: G0 + "racing/assets/star_blue.dda716e6.png", rField: G0 + "racing/assets/field.3595ca41.svg", rQ: G0 + "racing/assets/questionSymbol.98247274.svg", rA: G0 + "racing/assets/answerSymbol.d8231c22.svg",
+    sBg: G0 + "snake/assets/background.ece45b59.svg", sHead: G0 + "snake/assets/snake.87cfe96d.png", sBody: G0 + "snake/assets/snake_body.6969d3ab.png",
+    sTail: G0 + "snake/assets/snake_tail1.df374619.png", sEggs: G0 + "snake/assets/eggs.8c647ee5.png",
+  };
+  Object.assign(SND, { right: G0 + "racing/assets/right.3d699fab.mp3", wrong: G0 + "racing/assets/wrong.527348da.mp3", win: G0 + "racing/assets/win.3c0e07ba.mp3", defeat: G0 + "racing/assets/defeat.8e3b1393.mp3" });
+  ["right", "wrong"].forEach((n) => { try { pool(n); } catch (e) {} });
+  const ENEMY = "Lily";
+  const letters = (id) => W(id).word.toLowerCase().replace(/[^a-z]/g, "");
+  const ABC = "abcdefghijklmnopqrstuvwxyz";
+  const randLetters = (n, not) => shuffle(ABC.split("").filter((l) => !not.includes(l))).slice(0, n);
+
   function startGame(game, focus, ret) {
     const G = GAME[game];
     let ids = [];
@@ -293,36 +326,54 @@
       const pool = WORDS.filter((w) => open(w.id) && lv(w.id) >= 1 && !ids.includes(w.id) && (game === "quiz" ? lv(w.id) >= 3 : true));
       ids = ids.concat(shuffle(pool.filter((w) => w.u === unit)).map((w) => w.id), shuffle(pool.filter((w) => w.u !== unit)).map((w) => w.id)).slice(0, G.n);
     }
+    if (!S.engine && !focus) ids = shuffle(WORDS.filter((w) => open(w.id) && lv(w.id) >= 1).map((w) => w.id)).slice(0, G.n); // today: random words
     const items = ids.map((id) => { const st = nextStep(id); return { id, kind: st.k, up: st.game === game }; });
     [...new Set(items.filter((it) => it.up).map((it) => playKey(it.id)))].forEach((k) => { S.plays[k] = (S.plays[k] || 0) + 1; });
-    const ses = { game, items, i: 0, ret, att: {}, err: {}, upgrades: [], refreshed: [], dropped: [], starsBefore: S.stars };
-    if (game === "memo") { ses.cards = shuffle(ids.flatMap((id) => [{ id, t: "pic" }, { id, t: "snd" }])); ses.flip = []; }
-    if (game === "boxes") { ses.deck = shuffle(ids.concat(ids)); ses.pos = 0; ses.bot = 0; ses.done = {}; }
+    const ses = { game, items, i: 0, ret, att: {}, err: {}, upgrades: [], refreshed: [], dropped: [], starsBefore: S.stars, me: 0, bot: 0, t0: Date.now() };
+    if (game === "memo") { ses.cards = shuffle(ids.flatMap((id) => [{ id, t: "pic" }, { id, t: "word" }])).map((c) => Object.assign(c, { open: true })); ses.flip = []; ses.turn = "me"; ses.preview = true; }
+    if (game === "boxes") { ses.rounds = []; for (let k = 0; k < ids.length; k += 2) ses.rounds.push(ids.slice(k, k + 2)); ses.r = 0; ses.placed = []; ses.done = {}; dealBoxes(ses); }
     S.session = ses;
     if (!["memo", "boxes"].includes(game)) prepItem();
     S.screen = "play"; save(); render(); startMusic();
-    say(G.intro); prompt(true); if (game === "boxes") startBot();
+    say(G.intro); prompt(true);
+    if (game === "memo") setTimeout(() => { if (S.session === ses) { ses.cards.forEach((c) => { c.open = false; }); ses.preview = false; save(); render(); } }, 3500);
+    startTimers();
   }
   const cur = () => S.session.items[S.session.i];
   function prepItem() {
-    const it = cur(), g = S.session.game, uw = WORDS.filter((w) => w.u === W(it.id).u && w.id !== it.id).map((w) => w.id);
+    const ses = S.session, it = cur(), g = ses.game, same = WORDS.filter((w) => w.u === W(it.id).u && w.id !== it.id).map((w) => w.id);
     Object.assign(it, { hint: false, solved: false, failed: false, wrong: [], listening: false, fb: null, t0: Date.now() });
-    if (g === "bubbles") it.options = shuffle([it.id, ...shuffle(uw).slice(0, 4)]);
-    if (g === "racing") { it.pos = 0; skipSpaces(it); it.lanes = lanes(it); }
+    if (g === "quiz") { it.opts = shuffle([it.id, ...shuffle(same).slice(0, 2)]); it.pick = null; it.enemy = null; }
+    if (g === "bubbles") {
+      const L = letters(it.id).split(""), total = 12;
+      const fill = Array.from({ length: Math.max(0, total - L.length) }, () => ABC[Math.floor(Math.random() * 26)]);
+      const slots = BUB_SLOTS.slice(0, total);
+      it.bubbles = shuffle(L.concat(fill)).map((ch, k) => ({ ch, x: slots[k][0], y: slots[k][1], sel: false })); it.pos = 0; it.typed = "";
+    }
+    if (g === "racing") {
+      const L = letters(it.id); it.miss = L.length <= 4 ? 0 : Math.floor(Math.random() * L.length);
+      const need = L[it.miss]; it.stars = shuffle([need, ...randLetters(3, [need])]).map((ch, k) => ({ ch, x: STAR_SLOTS[k][0], y: STAR_SLOTS[k][1], state: "" })); it.ship = { x: 8, y: 120 };
+    }
+    if (g === "snake") {
+      const need = letters(it.id)[0]; it.need = need;
+      const prev = ses.snake; ses.snake = prev || [{ x: 5, y: 5 }, { x: 4, y: 5 }, { x: 3, y: 5 }]; ses.dir = ses.dir || "R";
+      it.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, freeCell(ses)));
+    }
   }
   function prompt(queued) {
-    const g = S.session.game;
-    if (g === "boxes") { const c = S.session.deck[S.session.pos]; if (c) say(W(c).word, queued); return; }
+    const ses = S.session, g = ses.game;
     if (g === "memo") return;
+    if (g === "boxes") { const c = ses.deck[ses.deck.length - 1]; if (c) say(W(c).word, queued); return; }
     const it = cur();
-    if (g === "racing") say(W(it.id).word, queued);
-    else if (g === "bubbles") say("Which word is it?", queued);
-    else say(g === "quiz" ? "What is it? Say it!" : "What's this?", queued);
+    if (g === "quiz") return say("What is it?", queued);
+    if (g === "pino") return say("What's this?", queued);
+    say(W(it.id).word, queued);
   }
   function attempt(id, correct, extra = {}) {
     const ses = S.session; ses.att[id] = (ses.att[id] || 0) + 1; if (!correct) ses.err[id] = (ses.err[id] || 0) + 1;
     const it = ses.items.find((x) => x.id === id) || {};
     logEvent(Object.assign({ game: ses.game, item: id, competency: compId(id, GAME[ses.game].skill), attempt: ses.att[id], correct, hint: !!it.hint, latency_ms: it.t0 ? Date.now() - it.t0 : 0, superscore: superscore(correct, ses.att[id], it.hint), counts: !!it.up }, extra));
+    sfx(correct ? "right" : "wrong", 0.5);
   }
   function levelUp(id, to) {
     if (lv(id) >= to) return false;
@@ -337,7 +388,7 @@
     it.solved = true; it.listening = false;
     it.fb = { cls: "ok", html: `✅ ${esc(W(it.id).word)}${upgraded ? ` <span class="lvup">⬆</span><img src="${A.star}" alt="">+${STAR_UP}` : extraHTML}` };
     say(`Yes! ${W(it.id).word}!`); if (upgraded) say("Your card levelled up!", true);
-    save(); render(); advanceSoon(upgraded ? 2600 : 1500);
+    save(); render(); advanceSoon(upgraded ? 2400 : 1400);
   }
   function next() {
     S.session.i += 1;
@@ -345,86 +396,139 @@
     prepItem(); save(); render(); prompt();
   }
 
-  // Memo Mix: picture card ↔ sound card pairs
+  // timers: one light interval for the clock + bots; Snake has its own movement loop
+  let tickT = null, snakeT = null;
+  function startTimers() {
+    stopTimers();
+    tickT = setInterval(() => {
+      const ses = S.session; if (S.screen !== "play" || !ses) return stopTimers();
+      const sec = Math.floor((Date.now() - ses.t0) / 1000), el = $("#gclock"); if (el) el.textContent = clock(Math.max(0, 300 - sec));
+      if ((ses.game === "boxes" || ses.game === "bubbles") && sec > 0 && sec % (ses.game === "boxes" ? 4 : 7) === 0 && !ses.over) { ses.bot += 1; const b = $("#gbot"); if (b) b.textContent = ses.bot; }
+    }, 1000);
+    if (S.session && S.session.game === "snake") snakeT = setInterval(stepSnake, 260);
+  }
+  function stopTimers() { clearInterval(tickT); clearInterval(snakeT); tickT = snakeT = null; }
+  const clock = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+  // Quiz Corner — retention: picture on top, three words, first try counts
+  function onQuiz(o) {
+    const ses = S.session, it = cur(); if (it.pick) return;
+    it.pick = o; const ok = o === it.id; attempt(it.id, ok, { chosen: o });
+    it.enemy = Math.random() < 0.8 ? it.id : it.opts.find((x) => x !== it.id);
+    if (ok) ses.me += 3; if (it.enemy === it.id) ses.bot += 3;
+    if (ok) {
+      if (it.up && it.kind === "recall") { const up = levelUp(it.id, 4); it.solved = true; say(`Yes! ${W(it.id).word}!`); if (up) say("Your card levelled up!", true); }
+      else if (it.up && it.kind === "review") { S.rev[it.id] = S.day; S.iv[it.id] *= 2; S.stars += STAR_REFRESH; ses.refreshed.push(it.id); it.solved = true; say(`Yes! ${W(it.id).word}! Shiny again!`); }
+      else { it.solved = true; say(`Yes! ${W(it.id).word}!`); }
+    } else {
+      it.failed = true;
+      if (it.up && it.kind === "review") { S.lv[it.id] = 3; S.up[it.id] = S.day; ses.dropped.push(it.id); }
+      if (it.up && it.kind === "recall") S.up[it.id] = S.day - RECALL + 1;
+      say(`It's ${W(it.id).word}. We'll practise it again!`);
+    }
+    save(); render(); advanceSoon(2200);
+  }
+  // Memo Mix — picture ↔ word pairs, turns with a bot
   let memoLock = false;
   function onMemo(k) {
     const ses = S.session, c = ses.cards[k];
-    if (memoLock || c.open || c.matched) return;
-    c.open = true; ses.flip.push(k);
-    if (c.t === "snd") say(W(c.id).word);
+    if (memoLock || ses.preview || ses.turn !== "me" || c.open || c.matched) return;
+    c.open = true; ses.flip.push(k); if (c.t === "word") say(W(c.id).word);
     if (ses.flip.length === 2) {
       const [a, b] = ses.flip.map((x) => ses.cards[x]);
       if (a.id === b.id) {
-        a.matched = b.matched = true; ses.flip = []; attempt(a.id, true); say(`Yes! ${W(a.id).word}!`, true);
-        if (ses.cards.every((x) => x.matched)) { save(); render(); setTimeout(finish, 1600); return; }
+        a.matched = b.matched = true; ses.flip = []; ses.me += 1; attempt(a.id, true); say(`Yes! ${W(a.id).word}!`, true);
+        if (ses.cards.every((x) => x.matched)) { ses.over = true; save(); render(); setTimeout(finish, 1500); return; }
       } else {
-        const snd = a.t === "snd" ? a : b.t === "snd" ? b : null;
-        if (snd) attempt(snd.id, false, { chosen: (snd === a ? b : a).id });
+        const w = a.t === "word" ? a : b.t === "word" ? b : a; attempt(w.id, false, { chosen: (w === a ? b : a).id });
         memoLock = true;
-        setTimeout(() => { a.open = b.open = false; ses.flip = []; memoLock = false; save(); render(); }, 1300);
+        setTimeout(() => { a.open = b.open = false; ses.flip = []; ses.turn = "bot"; save(); render(); botMemo(); }, 1200);
       }
     }
     save(); render();
   }
-  // Box Battle: hear a card, drop it into the box with the right picture, faster than the bot
-  let botT = null;
-  function stopBot() { clearInterval(botT); botT = null; }
-  function startBot() { stopBot(); botT = setInterval(tickBot, 3600); }
-  function tickBot() {
-    const ses = S.session;
-    if (S.screen !== "play" || !ses || ses.game !== "boxes" || ses.over) { stopBot(); return; }
-    ses.bot += 1;
-    if (ses.bot >= ses.deck.length) { ses.over = true; ses.win = false; stopBot(); say("Robo finished first! Good try!"); save(); render(); setTimeout(finish, 2200); return; }
-    save(); render();
+  function botMemo() { // the bot opens two cards that don't match, then it's the child's turn again
+    const ses = S.session; if (!ses || ses.game !== "memo") return;
+    const closed = ses.cards.map((c, k) => k).filter((k) => !ses.cards[k].matched);
+    const a = closed[Math.floor(Math.random() * closed.length)], b = closed.find((k) => k !== a && ses.cards[k].id !== ses.cards[a].id);
+    setTimeout(() => { if (S.session !== ses) return; if (b !== undefined) { ses.cards[a].open = ses.cards[b].open = true; render(); }
+      setTimeout(() => { if (S.session !== ses) return; ses.cards.forEach((c) => { if (!c.matched) c.open = false; }); ses.turn = "me"; memoLock = false; save(); render(); }, 1100); }, 700);
   }
+  // Box Battle — drag the picture card into the chest with its word
+  function dealBoxes(ses) { const w = ses.rounds[ses.r]; ses.deck = shuffle(w.concat(w)); ses.chests = shuffle(w.slice()); ses.glow = null; }
   function onBox(id) {
-    const ses = S.session; if (ses.over) return;
-    const c = ses.deck[ses.pos];
+    const ses = S.session; if (ses.over || !ses.deck.length) return;
+    const c = ses.deck[ses.deck.length - 1];
     if (id === c) {
-      attempt(c, true); ses.done[c] = (ses.done[c] || 0) + 1; ses.pos += 1; ses.bad = null;
-      if (ses.pos >= ses.deck.length) { ses.over = true; ses.win = true; stopBot(); say(`You win! ${Object.keys(ses.err).length ? "" : "No mistakes!"}`); save(); render(); setTimeout(finish, 2200); return; }
-      save(); render(); setTimeout(() => prompt(), 250);
-    } else { attempt(c, false, { chosen: id }); ses.bad = id; say(`Oops! Listen: ${W(c).word}`); save(); render(); }
+      attempt(c, true); ses.deck.pop(); ses.placed.push(c); ses.done[c] = (ses.done[c] || 0) + 1; ses.me += 1; ses.glow = { id, ok: true };
+      if (!ses.deck.length) {
+        ses.r += 1;
+        if (ses.r >= ses.rounds.length) { ses.over = true; ses.win = ses.me >= ses.bot; say(ses.win ? "You win!" : "Good try!"); sfx(ses.win ? "win" : "defeat", 0.5); save(); render(); setTimeout(finish, 2000); return; }
+        dealBoxes(ses);
+      }
+      save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); prompt(); } }, 600);
+    } else { attempt(c, false, { chosen: id }); ses.glow = { id, ok: false }; say(`Oops! Listen: ${W(c).word}`); save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); } }, 700); }
   }
-  function onPick(o) { // Bubbles
+  // Bubbles — pop letter bubbles to spell the word for the picture
+  const BUB_SLOTS = [[187, 245], [247, 245], [307, 245], [367, 245], [427, 245], [217, 196], [277, 196], [337, 196], [397, 196], [247, 147], [307, 147], [367, 147]];
+  function onBubble(k) {
     const it = cur(); if (it.solved) return;
-    if (o === it.id) { attempt(it.id, true); const ok = it.up && superscore(true, S.session.att[it.id], it.hint) >= 0.8; solved(it, ok && levelUp(it.id, 2)); }
-    else { attempt(it.id, false, { chosen: o }); it.wrong.push(o); it.fb = { cls: "no", html: "🔁" }; say(o); save(); render(); }
+    const b = it.bubbles[k], need = letters(it.id)[it.pos];
+    if (b.sel) return;
+    if (b.ch === need) {
+      b.sel = true; it.pos += 1; it.typed += b.ch;
+      if (it.pos >= letters(it.id).length) { attempt(it.id, true); S.session.me += 3; const ok = it.up && !it.hint && (S.session.err[it.id] || 0) <= 1; return solved(it, ok && levelUp(it.id, 3)); }
+      sfx("click", 0.4); save(); render();
+    } else { attempt(it.id, false, { chosen: b.ch }); b.bad = true; save(); render(); setTimeout(() => { b.bad = false; render(); }, 500); }
   }
-  // Racing: catch the next letter
-  function skipSpaces(it) { const w = W(it.id).word.toLowerCase(); while (it.pos < w.length && !/[a-z]/.test(w[it.pos])) it.pos++; }
-  function lanes(it) {
-    const w = W(it.id).word.toLowerCase(), need = w[it.pos]; if (!need) return [];
-    const others = shuffle("abcdefghijklmnopqrstuvwxyz".split("").filter((l) => l !== need)).slice(0, 2);
-    return shuffle([need, ...others]);
-  }
-  function onLane(l) {
+  // Racing — catch the star with the missing letter
+  const STAR_SLOTS = [[300, 170], [372, 92], [462, 64], [505, 178]];
+  function onStar(k) {
     const it = cur(); if (it.solved) return;
-    const w = W(it.id).word.toLowerCase();
-    if (l === w[it.pos]) {
-      it.pos++; skipSpaces(it); it.wrongLane = null; it.hintLane = false;
-      if (it.pos >= w.length) { attempt(it.id, true); const ok = it.up && !it.hint && (S.session.err[it.id] || 0) <= 1; solved(it, ok && levelUp(it.id, 3)); return; }
-      it.lanes = lanes(it); save(); render();
-    } else { attempt(it.id, false, { chosen: l }); it.wrongLane = l; save(); render(); }
+    const s = it.stars[k], need = letters(it.id)[it.miss];
+    it.ship = { x: s.x - 70, y: s.y - 2 };
+    if (s.ch === need) { s.state = "got"; attempt(it.id, true); S.session.me += 1; save(); render(); const ok = it.up && !it.hint && (S.session.err[it.id] || 0) === 0; setTimeout(() => solved(it, ok && levelUp(it.id, 3)), 450); }
+    else { s.state = "bad"; attempt(it.id, false, { chosen: s.ch }); say(W(it.id).word); save(); render(); }
   }
-  // Pinocchio / Quiz Corner: say the word (speech recognition when available, demo buttons otherwise)
+  // Snake — eat the egg with the first letter
+  const SN_W = 20, SN_H = 8, CELL = 26;
+  function freeCell(ses) { let c; do { c = { x: 2 + Math.floor(Math.random() * (SN_W - 4)), y: 1 + Math.floor(Math.random() * (SN_H - 2)) }; } while ((ses.snake || []).some((p) => p.x === c.x && p.y === c.y)); return c; }
+  const DIRS = { U: [0, -1], D: [0, 1], L: [-1, 0], R: [1, 0] }, OPP = { U: "D", D: "U", L: "R", R: "L" };
+  function turn(d) { const ses = S.session; if (!ses || ses.game !== "snake") return; if (d !== OPP[ses.dir]) ses.nextDir = d; }
+  function stepSnake() {
+    const ses = S.session; if (S.screen !== "play" || !ses || ses.game !== "snake") return stopTimers();
+    const it = cur(); if (it.solved || ses.pause) return;
+    if (ses.nextDir) { ses.dir = ses.nextDir; ses.nextDir = null; }
+    const [dx, dy] = DIRS[ses.dir], h = ses.snake[0];
+    const nh = { x: (h.x + dx + SN_W) % SN_W, y: (h.y + dy + SN_H) % SN_H };
+    ses.snake.unshift(nh);
+    const e = it.eggs.findIndex((g) => g.x === nh.x && g.y === nh.y);
+    if (e >= 0) {
+      const egg = it.eggs[e];
+      if (egg.ch === it.need) { it.eggs = []; attempt(it.id, true); ses.me += 1; drawSnake(); const ok = it.up && !it.hint && (ses.err[it.id] || 0) === 0; return solved(it, ok && levelUp(it.id, 3)); }
+      attempt(it.id, false, { chosen: egg.ch }); it.eggs.splice(e, 1); ses.snake.pop(); if (ses.snake.length > 3) ses.snake.pop(); say(W(it.id).word);
+    } else ses.snake.pop();
+    drawSnake();
+  }
+  function snakeHTML() {
+    const ses = S.session, it = cur(), n = ses.snake.length, rot = { R: 0, D: 90, L: 180, U: 270 };
+    const seg = ses.snake.map((p, k) => {
+      const cls = k === 0 ? "sh" : k === n - 1 ? "st" : "sb";
+      const nb = k === 0 ? ses.dir : (() => { const q = ses.snake[k - 1]; const dx = (q.x - p.x + SN_W) % SN_W, dy = (q.y - p.y + SN_H) % SN_H; return dx === 1 ? "R" : dx === SN_W - 1 ? "L" : dy === 1 ? "D" : "U"; })();
+      return `<i class="${cls}" style="left:${p.x * CELL}px;top:${p.y * CELL}px;transform:rotate(${rot[nb]}deg)"></i>`;
+    }).join("");
+    const eggs = it.eggs.map((g) => `<b class="egg e${g.c}" style="left:${g.x * CELL}px;top:${g.y * CELL}px">${g.ch}</b>`).join("");
+    return seg + eggs;
+  }
+  function drawSnake() { const el = $("#snakeField"); if (el) el.innerHTML = snakeHTML(); }
+
+  // Pinocchio — say the word (speech recognition when available, demo buttons otherwise)
   function onSaid(ok) {
-    const it = cur(), g = S.session.game;
+    const it = cur();
     if (it.solved || it.failed) return;
     attempt(it.id, ok);
-    if (ok) {
-      if (g === "pino") return solved(it, it.up && !it.hint && S.session.att[it.id] <= 2 && levelUp(it.id, 3));
-      if (it.up && it.kind === "recall" && S.session.att[it.id] === 1) return solved(it, levelUp(it.id, 4));
-      if (it.up && it.kind === "review") { S.rev[it.id] = S.day; S.iv[it.id] *= 2; S.stars += STAR_REFRESH; S.session.refreshed.push(it.id); return solved(it, false, ` <span class="lvup">🔄</span><img src="${A.star}" alt="">+${STAR_REFRESH}`); }
-      return solved(it, false);
-    }
-    it.listening = false;
-    if (g === "quiz") {
-      it.failed = true; it.fb = { cls: "no", html: `🔁 ${esc(W(it.id).word)}` };
-      if (it.up && it.kind === "review") { S.lv[it.id] = 3; S.up[it.id] = S.day; S.session.dropped.push(it.id); }
-      if (it.up && it.kind === "recall") S.up[it.id] = S.day - RECALL + 1; // try again tomorrow
-      say(`It's ${W(it.id).word}. We'll practise it again!`); save(); render(); advanceSoon(2600);
-    } else { it.fb = { cls: "no", html: "🔁" }; say("Hmm, not quite. Try again!"); save(); render(); }
+    if (ok) return solved(it, it.up && !it.hint && S.session.att[it.id] <= 2 && levelUp(it.id, 3));
+    it.listening = false; it.fb = { cls: "no", html: "🔁" }; say("Hmm, not quite. Try again!"); save(); render();
   }
   let recog;
   function startMic() {
@@ -438,57 +542,113 @@
     } catch (e) {}
   }
   function stopMic() { try { recog && recog.abort(); } catch (e) {} }
-  function stopAll() { clearTimeout(advT); stopBot(); stopMic(); memoLock = false; }
+  function stopAll() { clearTimeout(advT); stopTimers(); stopMic(); memoLock = false; }
 
   function finish() {
     const ses = S.session; if (!ses) return;
-    if (ses.game === "memo") ses.items.forEach((it) => { if (it.up && (ses.err[it.id] || 0) <= 1) levelUp(it.id, 2); });
+    if (ses.game === "memo") ses.items.forEach((it) => { if (it.up && (ses.err[it.id] || 0) <= 2) levelUp(it.id, 2); });
     if (ses.game === "boxes") ses.items.forEach((it) => { if (it.up && ses.done[it.id] === 2 && (ses.err[it.id] || 0) <= 1) levelUp(it.id, 2); });
-    S.lastSummary = { ids: [...new Set(ses.upgrades)], refreshed: ses.refreshed, dropped: ses.dropped, stars: S.stars - ses.starsBefore, ret: ses.ret, game: ses.game, win: ses.win };
+    const win = ses.win !== undefined ? ses.win : ses.me >= ses.bot;
+    S.lastSummary = { ids: [...new Set(ses.upgrades)], refreshed: ses.refreshed, dropped: ses.dropped, stars: S.stars - ses.starsBefore, ret: ses.ret, game: ses.game, win, pvp: PVP.includes(ses.game) };
     stopAll(); S.session = null; S.screen = "summary"; save(); render(); startMusic();
     const n = S.lastSummary.ids.length, r = S.lastSummary.refreshed.length;
     say(n ? `Wow! ${n === 1 ? "One card" : n + " cards"} levelled up!` : r ? "Your cards are shiny again!" : "Good practice!");
   }
 
+  // ----- rendering -----
+  const PVP = ["quiz", "memo", "boxes", "bubbles"];
+  const ico = (src, cls, act, label) => `<button class="gi ${cls}" ${act} aria-label="${label}"><img src="${src}" alt=""></button>`;
+  function widget(side, ses, turn) {
+    const me = side === "me";
+    return `<div class="pw ${side} ${turn ? "turn" : ""}">
+      <div class="av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${me ? A.avatar : GA.enemyAv}" alt=""></div>
+      <div class="lbl"><img src="${me ? GA.pLabel : GA.eLabel}" alt=""><span>${me ? KID : ENEMY}</span></div>
+      <div class="tr"><img src="${GA.trophy}" alt=""><b ${me ? "" : `id="gbot"`}>${me ? ses.me : ses.bot}</b></div>
+      ${turn ? `<div class="turnclock">0:30</div>` : ""}</div>`;
+  }
+  const listenBtn = (id, cls = "") => `<button class="gi lis ${cls}" data-sayw="${esc(id)}" aria-label="Listen"><img src="${GA.listen}" alt=""></button>`;
+  const quitBtn = () => ico(GA.flag, "flag", `data-act="quit"`, "Leave the game");
+  const helpBtn = () => ico(GA.help, "help", `data-act="ghelp"`, "How to play");
+  const timer = (ses) => `<div class="gclock" id="gclock">${clock(Math.max(0, 300 - Math.floor((Date.now() - ses.t0) / 1000)))}</div>`;
+
   function play() {
     const ses = S.session, g = ses.game;
-    let body = "", pct = 0, hintBtn = "", fb = "";
-    if (g === "memo") {
-      pct = Math.round((ses.cards.filter((c) => c.matched).length / ses.cards.length) * 100);
-      body = `<div class="memo">${ses.cards.map((c, k) => `<button class="mc ${c.open || c.matched ? "up" : ""} ${c.matched ? "ok" : ""}" data-memo="${k}" aria-label="card">${c.open || c.matched ? (c.t === "pic" ? pic(c.id) : `<span class="snd">🔊</span>`) : `<span class="back">★</span>`}</button>`).join("")}</div>`;
-    } else if (g === "boxes") {
-      pct = Math.round((ses.pos / ses.deck.length) * 100);
-      const c = ses.deck[ses.pos];
-      body = `<div class="bx-wrap"><div class="bx-score"><span class="bx-me">${KID} <b>${ses.pos}</b></span><span class="vs">VS</span><span class="bx-bot">🤖 Robo <b>${ses.bot}</b></span>
-          <span class="bot-bar"><i style="width:${Math.round((ses.bot / ses.deck.length) * 100)}%"></i></span></div>
-        ${ses.over ? `<div class="bx-card result">${ses.win ? "🏆" : "🤖"}</div>` : `<button class="bx-card" draggable="true" data-act="replay" aria-label="Listen again">🔊</button>`}
-        <div class="bx-boxes">${ses.items.map((it) => `<button class="bx ${ses.bad === it.id ? "bad" : ""}" data-box="${esc(it.id)}" aria-label="box">${pic(it.id)}<span class="cnt">${"●".repeat(ses.done[it.id] || 0)}</span></button>`).join("")}</div></div>`;
-    } else {
-      const it = cur();
-      pct = Math.round(((ses.i + (it.solved || it.failed ? 1 : 0)) / ses.items.length) * 100);
-      fb = it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : "";
-      if (g !== "quiz") hintBtn = `<button class="hw-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""} aria-label="Hint">💡</button>`;
-      if (g === "bubbles") {
-        body = `<div class="bub-wrap"><div class="sp-card small ${it.solved ? "right" : ""}">${pic(it.id)}</div>
-          <div class="bubbles2">${it.options.map((o, k) => `<button class="bub b${k} ${it.wrong.includes(o) ? "bad" : ""} ${it.solved && o === it.id ? "ok" : ""}" data-pick="${esc(o)}" ${it.solved ? "disabled" : ""}>${esc(W(o).word)}</button>`).join("")}</div></div>`;
-      } else if (g === "racing") {
-        const w = W(it.id).word.toLowerCase(), prog = it.pos / w.length;
-        body = `<div class="rc-wrap"><div class="rc-top"><div class="sp-card small">${pic(it.id)}</div><button class="big-spk" data-act="replay" aria-label="Listen">🔊</button>
-            <div class="rc-slots">${[...w].map((ch, k) => /[a-z]/.test(ch) ? `<span class="sl ${k < it.pos ? "f" : ""}">${k < it.pos ? ch : ""}</span>` : `<span class="gap"></span>`).join("")}</div></div>
-          <div class="rc-track"><span class="ship" style="left:${Math.round(prog * 88)}%">🚀</span><span class="flag">🏁</span></div>
-          <div class="rc-lanes">${(it.solved ? [] : it.lanes).map((l) => `<button class="lane ${it.wrongLane === l ? "bad" : ""} ${it.hint && l === w[it.pos] ? "hint" : ""}" data-lane="${l}">${l}</button>`).join("")}</div></div>`;
-      } else {
-        const host = g === "pino" ? `<img class="host" src="${A.pino}" alt="Pinocchio">` : `<div class="host quiz-host"><span>✅</span><span>❌</span></div>`;
-        body = `<div class="sp-wrap">${host}
-          <div class="sp-card ${it.solved ? "right" : ""} ${it.failed ? "fail" : ""}">${pic(it.id)}${it.solved || it.failed || it.hint ? `<span class="sp-w">${esc(W(it.id).word)}</span>` : ""}</div>
-          <div class="sp-mic"><button class="mic ${it.listening ? "on" : ""}" data-act="mic" ${it.solved || it.failed ? "disabled" : ""} aria-label="Speak">🎤</button>
-            ${it.listening ? `<div class="demo-say" title="Prototype: choose what the child said"><span>demo</span><button data-act="said-ok" aria-label="said it right">✓</button><button data-act="said-bad" aria-label="said it wrong">✗</button></div>` : ""}</div></div>`;
-      }
+    if (g === "quiz") {
+      const it = cur(), tile = (o) => it.pick ? (o === it.id ? GA.qOk : o === it.pick ? GA.qBad : o === it.enemy ? GA.qEnemy : GA.qOpt) : GA.qOpt;
+      return `<div class="gscene sky"></div>
+        <div class="qz-rib"><img src="${GA.blueShort}" alt="">${prim(`${ses.i + 1}/${ses.items.length}`, 16)}</div><div class="qz-line"></div>
+        ${ico(GA.back, "qexit", `data-act="quit"`, "Leave the game")}
+        ${widget("me", ses)}${widget("enemy", ses)}
+        <div class="qz-q"><img class="t" src="${GA.qTile}" alt=""><span class="emo">${W(it.id).emo}</span></div>
+        ${it.opts.map((o, k) => `<button class="qz-o" style="left:${[106, 243, 381][k]}px" data-quiz="${esc(o)}" ${it.pick ? "disabled" : ""}><img class="t" src="${tile(o)}" alt=""><span>${esc(W(o).word)}</span></button>`).join("")}`;
     }
+    if (g === "memo") {
+      const cols = 4, rows = Math.ceil(ses.cards.length / cols), tw = 64, th = 50, gap = 6, x0 = (616 - (cols * tw + (cols - 1) * gap)) / 2, y0 = 92 + (4 - rows) * 22;
+      return `<div class="gscene sky"></div>
+        <div class="mm-rib"><img src="${GA.memoTitle}" alt="">${prim("MEMO MIX", 14)}</div>
+        ${quitBtn()}${widget("me", ses, ses.turn === "me" && !ses.preview)}${widget("enemy", ses, ses.turn === "bot")}
+        ${ses.cards.map((c, k) => `<button class="mm-c ${c.matched ? "ok" : ""}" style="left:${x0 + (k % cols) * (tw + gap)}px;top:${y0 + Math.floor(k / cols) * (th + gap)}px" data-memo="${k}">
+          <img class="t" src="${GA.memoCard}" alt="">${c.open || c.matched ? (c.t === "pic" ? `<span class="emo">${W(c.id).emo}</span>` : `<span class="w">${esc(W(c.id).word)}</span>`) : ""}</button>`).join("")}
+        ${ses.preview ? `<div class="mm-hint">${prim("REMEMBER!", 13)}</div>` : ""}`;
+    }
+    if (g === "boxes") {
+      const top = ses.deck[ses.deck.length - 1];
+      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px" ${isTop ? `data-drag="1"` : ""}><img class="t" src="${GA.boxCard}" alt=""><span class="emo">${W(id).emo}</span>${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
+      const slots = Array.from({ length: ses.rounds.flat().length * 2 }, (_, k) => `<div class="bx-slot" style="left:${364 + (k % 5) * 49}px;top:${209 + Math.floor(k / 5) * 51}px"><img src="${GA.boxSlot}" alt="">${ses.placed[k] ? `<span class="emo">${W(ses.placed[k]).emo}</span>` : ""}</div>`).join("");
+      return `<div class="gscene sky"></div>
+        ${helpBtn()}${timer(ses)}${quitBtn()}${widget("me", ses)}${widget("enemy", ses)}
+        ${(ses.chests || []).map((id, k) => `<div class="bx-lab" style="left:${[174, 320][k]}px">${prim(W(id).word, 19)}</div>
+          <button class="bx-chest ${ses.glow && ses.glow.id === id ? (ses.glow.ok ? "ok" : "bad") : ""}" style="left:${[174, 320][k]}px" data-box="${esc(id)}" aria-label="${esc(W(id).word)} chest"><img src="${GA.box}" alt=""></button>
+          ${listenBtn(id, "chest-lis").replace('class="gi lis chest-lis"', `class="gi lis chest-lis" style="left:${[174, 320][k] + 92}px"`)}`).join("")}
+        <div class="bx-deck">${deck}</div>${slots}
+        ${ses.over ? `<div class="g-result"><img src="${ses.win ? GA.winG : GA.winR}" alt="">${prim(ses.win ? "YOU WIN!" : "GOOD TRY!", 16)}</div>` : ""}
+        ${top ? "" : ""}`;
+    }
+    if (g === "bubbles") {
+      const it = cur(), need = letters(it.id)[it.pos];
+      return `<div class="gscene bub"></div>
+        ${helpBtn()}${timer(ses)}<button class="bb-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""}><img src="${GA.bubHintBtn}" alt=""><span>HINT</span></button>
+        <div class="bb-mis"><img class="t" src="${GA.bubMission}" alt=""><span class="emo">${W(it.id).emo}</span>${listenBtn(it.id, "mis-lis")}</div>
+        <div class="bb-en"><img class="t" src="${GA.bubEnemy}" alt=""><div class="mini">${Array.from({ length: 9 }, () => `<img src="${GA.bubMini}" alt="">`).join("")}</div>
+          <div class="en-name"><img src="${GA.trophy}" alt=""><b id="gbot">${ses.bot}</b><span>${ENEMY}</span><img class="ea" src="${GA.enemyAv}" alt=""></div></div>
+        ${widget("me", ses)}${quitBtn()}
+        ${it.bubbles.map((b, k) => `<button class="bub-b" style="left:${b.x - 28}px;top:${b.y - 28}px" data-bub="${k}" ${it.solved ? "disabled" : ""}><img src="${b.bad ? GA.bubBad : b.sel ? GA.bubSel : it.hint && !b.sel && b.ch === need ? GA.bubHint : GA.bub}" alt=""><span>${b.ch}</span></button>`).join("")}
+        <div class="bb-bar"><img src="${GA.bubBar}" alt=""><span>${esc(it.typed)}</span></div>
+        ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
+    }
+    if (g === "racing") {
+      const it = cur(), L = letters(it.id), shown = L.split("").map((ch, k) => k === it.miss && !it.solved ? "_" : ch).join("");
+      return `<div class="gscene race"><div class="clouds"></div><div class="trees"></div><img class="tower" src="${GA.rTower}" alt=""></div>
+        ${helpBtn()}
+        <div class="ship" style="left:${it.ship.x}px;top:${it.ship.y}px"></div>
+        ${it.stars.map((s, k) => `<button class="star ${s.state}" style="left:${s.x - 22}px;top:${s.y - 19}px" data-star="${k}" ${it.solved || s.state ? "disabled" : ""}><i></i><span>${s.ch}</span></button>`).join("")}
+        <div class="rc-p left"><img class="t" src="${GA.rField}" alt="">${listenBtn(it.id, "rc-lis")}<span class="pic"><span class="emo">${W(it.id).emo}</span></span><span class="w">${shown}</span><img class="sym" src="${GA.rQ}" alt=""></div>
+        <div class="rc-p right"><img class="t" src="${GA.rField}" alt=""><span class="w ans">${it.solved ? L[it.miss] : "- - -"}</span><img class="sym" src="${GA.rA}" alt=""></div>
+        ${quitBtn().replace('class="gi flag"', 'class="gi flag rc-flag"')}
+        ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
+    }
+    if (g === "snake") {
+      const it = cur(), L = letters(it.id), shown = it.solved ? W(it.id).word : "_" + W(it.id).word.slice(1);
+      return `<div class="gscene snake"></div>
+        ${timer(ses).replace('class="gclock"', 'class="gclock sn"')}
+        <div class="sn-av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${A.avatar}" alt=""><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
+        <div class="sn-word"><span class="emo">${W(it.id).emo}</span><span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
+        <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField">${snakeHTML()}</div></div>
+        <div class="sn-pad">${["U", "L", "D", "R"].map((d) => `<button data-dir="${d}" aria-label="${d}">${{ U: "▲", L: "◀", D: "▼", R: "▶" }[d]}</button>`).join("")}</div>
+        ${quitBtn().replace('class="gi flag"', 'class="gi flag sn-flag"')}
+        ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}`;
+    }
+    // Pinocchio (speaking)
+    const it = cur(), pct = Math.round(((ses.i + (it.solved ? 1 : 0)) / ses.items.length) * 100);
     return `<div class="hw-top"><button class="hw-back" data-act="quit" aria-label="back"><img src="${A.hwBack}" alt=""></button></div>
       <div class="hw-bar"><div class="fill" style="width:${pct}%"></div></div><img class="hw-star" src="${A.hwStar}" alt="">
-      <span class="g-chip" style="background:${GAME[g].col}">${GAME[g].name}</span>
-      <div class="hw-body">${body}</div>${fb}${hintBtn}`;
+      <span class="g-chip" style="background:${GAME.pino.col}">${GAME.pino.name}</span>
+      <div class="hw-body"><div class="sp-wrap"><img class="host" src="${A.pino}" alt="Pinocchio">
+        <div class="sp-card ${it.solved ? "right" : ""}">${pic(it.id)}${it.solved || it.hint ? `<span class="sp-w">${esc(W(it.id).word)}</span>` : ""}</div>
+        <div class="sp-mic"><button class="mic ${it.listening ? "on" : ""}" data-act="mic" ${it.solved ? "disabled" : ""} aria-label="Speak">🎤</button>
+          ${it.listening ? `<div class="demo-say" title="Prototype: choose what the child said"><span>demo</span><button data-act="said-ok" aria-label="said it right">✓</button><button data-act="said-bad" aria-label="said it wrong">✗</button></div>` : ""}</div></div></div>
+      ${it.fb ? `<div class="g-fb ${it.fb.cls}">${it.fb.html}</div>` : ""}
+      <button class="hw-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""} aria-label="Hint">💡</button>`;
   }
   function summary() {
     const sm = S.lastSummary || { ids: [], refreshed: [], dropped: [], stars: 0, ret: "album" };
@@ -496,7 +656,7 @@
     const cards = [...sm.ids, ...sm.refreshed.filter((id) => !sm.ids.includes(id)), ...sm.dropped];
     return `${innerHeader(back, back === "games" ? "GAMES" : "MY ALBUM")}
       <div class="sum-wrap"><div class="ka-board"><div class="in">
-        ${sm.game === "boxes" ? `<div class="sum-res">${sm.win ? "🏆" : "🤖"}</div>` : ""}
+        ${sm.pvp ? `<div class="sum-ban"><img src="${sm.win ? GA.winG : GA.winR}" alt="">${prim(sm.win ? "YOU WIN!" : "GOOD TRY!", 15)}</div>` : ""}
         <div class="mini-row big">${cards.length ? cards.map((id) => cardHTML(id, { static: true })).join("") : `<span class="emo-big">👍</span>`}</div>
         <div class="plus"><img src="${A.star}" alt="">+${sm.stars}</div></div>
         <button class="ka-btn" data-go="${back}"><div class="bi"><span>OK</span></div></button></div></div>`;
@@ -581,7 +741,7 @@
         ${LEVELS.map((L, i) => `<tr><td>${L.look}</td><td><b>${i}. ${L.name}</b></td><td>${L.ev}</td></tr>`).join("")}</tbody></table>
         <p class="sub" style="margin:8px 0 0">Games rotate within a level so the same word comes back in a different game. Fading: a gold / crown card needs a refresh after 7 days, then 14, 28… (interval doubles after each success). A failed refresh drops the card to silver. Stars only for new progress (+${STAR_UP} level, +${STAR_REFRESH} refresh), never for replaying.</p></div>
       <div class="panel"><h3>Next words the engine sends to games ${S.engine ? "" : "(engine off — games use random words, like today)"}</h3>${qRows ? `<table><thead><tr><th>#</th><th>Word</th><th>Now</th><th>Game</th><th>Why</th></tr></thead><tbody>${qRows}</tbody></table>` : `<p class="empty">Nothing queued.</p>`}
-        <p class="sub" style="margin:8px 0 0">Snake is not built in the prototype; in the product the same queue would feed it.</p></div>
+        <p class="sub" style="margin:8px 0 0">All six Kids Area games (Memo Mix, Box Battle, Bubbles, Racing, Snake, Quiz Corner) plus Pinocchio take their words from this queue instead of a random list. The real games are live PvP; in the prototype the opponent is a bot.</p></div>
       <div class="grid2"><div class="panel"><h3>By game</h3><table><thead><tr><th>Game</th><th>Skill</th><th>Solved</th><th>Avg superscore · zone</th></tr></thead><tbody>${byGame}</tbody></table></div>
       <div class="panel"><h3>Reads from lessons</h3><p class="sub" style="margin:0">${S.engine ? `Last 1-1 lesson (${dayName(0)}): Level 1 · Unit 6 Food → 6 words become “Met in lesson”. Teacher’s ✓ in the next lesson → crown.` : "Off."}</p></div></div>
       <div class="panel"><h3>Event log (latest first)</h3><div class="events-wrap">${rows ? `<table><thead><tr><th>When</th><th>Game</th><th>Word</th><th>Competency</th><th>Try</th><th>OK</th><th>Hint</th><th>ms</th><th>Score</th><th>Counts</th></tr></thead><tbody>${rows}</tbody></table>` : `<p class="empty">No events yet — play as ${KID}.</p>`}</div></div>`;
@@ -607,15 +767,16 @@
     if (adult) { $("#adultScreen").innerHTML = { teacher, parent, data }[S.view](); return; }
     if (S.screen === "play" && !S.session) S.screen = "album";
     const root = $("#kaRoot"), path = $("#cloudPath");
-    const bg = S.screen === "home" ? "bg-dash" : S.screen === "play" ? "bg-hw" : "bg-inner";
+    const pg = S.screen === "play" && S.session ? S.session.game : null;
+    const bg = S.screen === "home" ? "bg-dash" : pg === "pino" ? "bg-hw" : pg ? "bg-g-" + pg : "bg-inner";
     root.className = "ka-root " + bg;
-    $(".ka-cloud").style.display = bg === "bg-hw" ? "none" : "";
+    $(".ka-cloud").style.display = pg ? "none" : "";
     path.setAttribute("fill", bg === "bg-dash" ? "#BFDCFF" : "#FFFFFF");
     const sc = $("#cards") ? $("#cards").scrollTop : 0, st = $("#gtabs") ? $("#gtabs").scrollTop : null;
     $("#stage").innerHTML = { home, album, games, play, summary }[S.screen]();
     if ($("#cards")) $("#cards").scrollTop = sc;
     if ($("#gtabs")) { if (st !== null) $("#gtabs").scrollTop = st; else { const on = $(".gtab.on"); if (on) on.scrollIntoView({ block: "nearest" }); } }
-    if (S.screen === "play" && S.session && S.session.game === "boxes" && !S.session.over && !botT) startBot();
+    if (S.screen === "play" && S.session && !tickT) startTimers();
   }
 
   // ---------- events ----------
@@ -624,9 +785,30 @@
     const b = ev.target.closest("#stage button"); if (!b || b === lastHover) return;
     lastHover = b; const now = Date.now(); if (now - hoverT > 90) { hoverT = now; sfx("hover", 0.35); }
   });
-  document.addEventListener("dragstart", (ev) => { if (ev.target.closest && ev.target.closest(".bx-card")) ev.dataTransfer.setData("text/plain", "card"); });
-  document.addEventListener("dragover", (ev) => { if (ev.target.closest && ev.target.closest(".bx")) ev.preventDefault(); });
-  document.addEventListener("drop", (ev) => { const b = ev.target.closest && ev.target.closest(".bx"); if (b) { ev.preventDefault(); onBox(b.dataset.box); } });
+  // Box Battle drag: move the top card with the pointer, drop on a chest (tap a chest works too)
+  let drag = null;
+  function dragStart(ev) {
+    const c = ev.target.closest && ev.target.closest(".bx-card.top"); if (!c || ev.target.closest(".lis")) return;
+    const z = parseFloat(getComputedStyle($("#stage")).getPropertyValue("--zoom")) || 1;
+    drag = { el: c, x: ev.clientX, y: ev.clientY, z, lx: ev.clientX, ly: ev.clientY }; c.classList.add("dragging"); ev.preventDefault();
+  }
+  function dragMove(ev) { if (!drag) return; drag.lx = ev.clientX; drag.ly = ev.clientY; drag.el.style.transform = `translate(${(ev.clientX - drag.x) / drag.z}px, ${(ev.clientY - drag.y) / drag.z}px)`; }
+  function dragEnd(ev) {
+    if (!drag) return; const d = drag; drag = null;
+    const x = ev.clientX !== undefined ? ev.clientX : d.lx, y = ev.clientY !== undefined ? ev.clientY : d.ly;
+    d.el.style.visibility = "hidden"; const under = document.elementFromPoint(x, y); d.el.style.visibility = "";
+    d.el.classList.remove("dragging"); d.el.style.transform = "";
+    const ch = under && under.closest(".bx-chest"), moved = Math.abs(x - d.x) + Math.abs(y - d.y) > 8;
+    if (ch) onBox(ch.dataset.box); else if (!moved) prompt();
+  }
+  document.addEventListener("pointerdown", dragStart);
+  document.addEventListener("pointermove", dragMove);
+  document.addEventListener("mousemove", dragMove);
+  ["pointerup", "mouseup", "pointercancel"].forEach((e) => document.addEventListener(e, dragEnd));
+  document.addEventListener("keydown", (ev) => {
+    const m = { ArrowUp: "U", ArrowDown: "D", ArrowLeft: "L", ArrowRight: "R", w: "U", s: "D", a: "L", d: "R" }[ev.key];
+    if (m && S.session && S.session.game === "snake") { ev.preventDefault(); turn(m); }
+  });
   document.addEventListener("click", (ev) => {
     const t = ev.target.closest("button"); if (!t) return;
     const d = t.dataset;
@@ -636,17 +818,20 @@
     if (d.soon !== undefined) { toast(d.soon === "engine" ? "Not built in the prototype — in the product the engine feeds album words here too" : "Not part of this prototype — try My album, Games or Pinocchio"); return; }
     if (d.go) {
       stopAll(); S.session = null; S.screen = d.go;
-      if (d.go === "album") { S.popupSeen = true; if (!S.albumSeen || !S.helpSaid) { S.albumSeen = true; S.helpSaid = true; say(HELP_TEXT); } }
+      if (d.go === "album") { S.popupSeen = true; S.albumSeen = true; }
       save(); render(); startMusic(); return;
     }
     if (d.play) { startGame(d.play, null, d.ret || "home"); return; }
     if (d.card) { onCard(d.card); return; }
     if (d.tab) { S.tab = d.tab; save(); render(); say(UNITS.find((x) => x.id === d.tab).name); return; }
-    if (d.lockedtab) { say("Coming soon, after your next lessons!"); return; }
-    if (d.pick) { onPick(d.pick); return; }
+    if (d.lockedtab) { say("Coming soon!"); return; }
+    if (d.sayw) { say(W(d.sayw).word); return; }
+    if (d.quiz) { onQuiz(d.quiz); return; }
     if (d.memo !== undefined) { onMemo(+d.memo); return; }
     if (d.box) { onBox(d.box); return; }
-    if (d.lane) { onLane(d.lane); return; }
+    if (d.bub !== undefined) { onBubble(+d.bub); return; }
+    if (d.star !== undefined) { onStar(+d.star); return; }
+    if (d.dir) { turn(d.dir); return; }
     if (d.crown) {
       S.lv[d.crown] = 5; S.up[d.crown] = S.day; S.rev[d.crown] = S.day; S.ups.push({ id: d.crown, from: 4, to: 5, day: S.day }); S.stars += STAR_CROWN; S.crowns.push(d.crown);
       logEvent({ game: "lesson", item: d.crown, competency: compId(d.crown, "use"), attempt: 1, correct: true, hint: false, latency_ms: 0, superscore: 1, counts: true });
@@ -657,12 +842,12 @@
       S.lv[d.notyet] = 3; S.up[d.notyet] = S.day - RECALL; save(); render(); toast("Noted — the word goes back to Quiz Corner"); return;
     }
     switch (d.act) {
-      case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); say(POP_TEXT()); say("Tap a card to hear the word. Tap the round button to play!", true); break;
+      case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); say(POP_TEXT()); break;
       case "popsay": say(POP_TEXT()); break;
       case "crownok": S.crowns = []; sfx("close"); save(); render(); break;
       case "crownsay": say(CROWN_TEXT()); break;
-      case "help": say(HELP_TEXT); break;
       case "replay": prompt(); break;
+      case "ghelp": say(GAME[S.session.game].intro); break;
       case "hint": {
         const it = cur(); it.hint = true;
         logEvent({ game: S.session.game, item: it.id, competency: compId(it.id, GAME[S.session.game].skill), attempt: S.session.att[it.id] || 0, correct: false, hint: true, latency_ms: Date.now() - it.t0, superscore: 0, counts: it.up, note: "hint" });

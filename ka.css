@@ -370,3 +370,154 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .ka-stage .lane.hint { box-shadow: .5px 3px 0 #000, 0 0 0 4px #FFD84D; }
 .mini-t { font: 9px "Lilita One", sans-serif; color: #fff; letter-spacing: -.02em; text-shadow: 0 1px 0 rgba(0,0,0,.35); }
 .mini-t b { font-size: 12px; text-shadow: none; }
+
+/* ===== v5: replicas of the Kids Area games (art from school.novakidschool.com/games, 616×320 base like the originals) ===== */
+.ka-root.bg-g-quiz, .ka-root.bg-g-memo, .ka-root.bg-g-boxes { background: #6FC9F2 url("https://school.novakidschool.com/games/quiz/assets/background.3350a184.svg") center / cover no-repeat; }
+.ka-root.bg-g-bubbles { background: #8ED9F7 url("https://school.novakidschool.com/games/bubbles/assets/img/bubbles_background.svg") center / cover no-repeat; }
+.ka-root.bg-g-racing { background: #F6C55C; }
+.ka-root.bg-g-snake { background: #22213F url("https://school.novakidschool.com/games/snake/assets/background.ece45b59.svg") center / cover no-repeat; }
+.gscene { position: absolute; inset: 0; pointer-events: none; }
+.gscene.race { background: url("https://school.novakidschool.com/games/racing/assets/sky.4926bbde.png") center / 100% 100%; overflow: hidden; }
+.gscene.race .clouds { position: absolute; left: 0; right: 0; top: 30px; height: 62px; background: url("https://school.novakidschool.com/games/racing/assets/clouds_cropped_0.5.f9bbe10e.png") 0 0 / auto 100% repeat-x; }
+.gscene.race .trees { position: absolute; left: 0; right: 0; top: 70px; height: 190px; background: url("https://school.novakidschool.com/games/racing/assets/trees_1024.d612d7c9.png") 0 0 / 360px auto repeat-x; }
+.gscene.race .tower { position: absolute; right: -30px; top: -10px; height: 250px; }
+.ka-stage .gi { position: absolute; display: flex; align-items: center; justify-content: center; z-index: 3; }
+.ka-stage .gi img { width: 100%; height: 100%; object-fit: contain; }
+.ka-stage .gi.help { left: 14px; top: 27px; width: 30px; height: 30px; }
+.ka-stage .gi.flag { right: 22px; top: 22px; width: 34px; height: 36px; }
+.ka-stage .gi.qexit { right: 40px; top: 30px; width: 30px; height: 30px; }
+.ka-stage .gi.lis { width: 24px; height: 25px; }
+.gclock { position: absolute; left: 60px; top: 26px; width: 32px; height: 32px; border-radius: 50%; background: #0D3B4E; border: 2.5px solid #fff; box-shadow: 0 2px 2px rgba(0,0,0,.25); color: #fff; font: 10px "Lilita One", sans-serif; display: flex; align-items: center; justify-content: center; z-index: 3; }
+/* player widgets */
+.pw { position: absolute; top: 96px; width: 100px; z-index: 2; }
+.pw.me { left: 0; } .pw.enemy { right: 0; }
+.pw .av { position: absolute; top: 0; width: 66px; height: 66px; border-radius: 50%; overflow: hidden; border: 2px solid #0B4F63; box-shadow: 0 0 0 2px #2FB7D8; }
+.pw.me .av { left: 12px; } .pw.enemy .av { right: 12px; }
+.pw .av .bgc { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pw .av .ch { position: absolute; left: -12%; top: 4%; width: 125%; }
+.pw.enemy .av .ch { left: 0; top: 2%; width: 100%; }
+.pw .lbl { position: absolute; top: 76px; width: 98px; height: 26px; }
+.pw.me .lbl { left: 0; } .pw.enemy .lbl { right: 0; }
+.pw .lbl img { width: 100%; height: 100%; }
+.pw .lbl span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font: 700 11px "Open Sans", sans-serif; color: #0D3B4E; }
+.pw.enemy .lbl span { color: #fff; }
+.pw .tr { position: absolute; top: 108px; display: flex; align-items: center; gap: 4px; font: 15px "Lilita One", sans-serif; color: #fff; text-shadow: 0 1px 0 #0D3B4E; }
+.pw.me .tr { left: 22px; } .pw.enemy .tr { right: 22px; }
+.pw .tr img { width: 20px; }
+.pw.turn::before { content: ""; position: absolute; top: 102px; width: 96px; height: 130px; background: #F9C94C; z-index: -1; }
+.pw.me.turn::before { left: 0; } .pw.enemy.turn::before { right: 0; }
+.pw .turnclock { position: absolute; top: 150px; width: 36px; height: 36px; border-radius: 50%; background: #0D3B4E; border: 2.5px solid #fff; color: #fff; font: 11px "Lilita One", sans-serif; display: flex; align-items: center; justify-content: center; }
+.pw.me .turnclock { left: 32px; } .pw.enemy .turnclock { right: 32px; }
+.ka-stage .boxes-hide { display: none; }
+/* quiz */
+.qz-rib { position: absolute; left: 232px; top: 24px; width: 152px; height: 42px; display: flex; align-items: center; justify-content: center; }
+.qz-rib img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.qz-line { position: absolute; left: 106px; top: 77px; width: 404px; height: 4px; background: #0D3B4E; border-radius: 2px; }
+.qz-q { position: absolute; left: 106px; top: 96px; width: 404px; height: 100px; display: flex; align-items: center; justify-content: center; }
+.qz-q .t, .qz-o .t, .mm-c .t, .bx-card .t, .bb-mis .t, .bb-en .t, .rc-p .t { position: absolute; inset: 0; width: 100%; height: 100%; }
+.qz-q .emo { position: relative; font-size: 62px; }
+.ka-stage .qz-o { position: absolute; top: 207px; width: 126px; height: 99px; display: flex; align-items: center; justify-content: center; }
+.qz-o span { position: relative; font: 800 15px "Open Sans", sans-serif; color: #0D3B4E; padding: 0 6px; text-align: center; }
+.ka-stage .qz-o:disabled { filter: none; }
+/* memo */
+.mm-rib { position: absolute; left: 194px; top: 18px; width: 228px; height: 41px; display: flex; align-items: center; justify-content: center; }
+.mm-rib img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.ka-stage .mm-c { position: absolute; width: 64px; height: 50px; display: flex; align-items: center; justify-content: center; }
+.mm-c .emo { position: relative; font-size: 30px; }
+.mm-c .w { position: relative; font: 800 10.5px "Open Sans", sans-serif; color: #0D3B4E; }
+.ka-stage .mm-c.ok { filter: drop-shadow(0 0 3px #3BD16F); }
+.mm-hint { position: absolute; left: 0; right: 0; top: 66px; display: flex; justify-content: center; }
+/* box battle */
+.bx-lab { position: absolute; top: 74px; width: 109px; display: flex; justify-content: center; white-space: nowrap; }
+.ka-stage .bx-chest { position: absolute; top: 108px; width: 109px; height: 67px; }
+.bx-chest img { width: 100%; height: 100%; }
+.ka-stage .bx-chest.ok { filter: drop-shadow(0 0 5px #2EE86A) drop-shadow(0 0 2px #2EE86A); }
+.ka-stage .bx-chest.bad { filter: drop-shadow(0 0 5px #FF3B5B) drop-shadow(0 0 2px #FF3B5B); }
+.ka-stage .gi.chest-lis { top: 146px; }
+.bx-deck { position: absolute; left: 0; top: 207px; width: 340px; height: 100px; }
+.bx-card { position: absolute; top: 0; width: 118px; height: 91px; display: flex; align-items: center; justify-content: center; touch-action: none; }
+.bx-card .emo { position: relative; font-size: 50px; }
+.bx-card.top { cursor: grab; z-index: 2; }
+.bx-card.dragging { z-index: 20; cursor: grabbing; }
+.ka-stage .gi.card-lis { right: 6px; top: 33px; }
+.bx-slot { position: absolute; width: 45px; height: 43px; }
+.bx-slot img { width: 100%; height: 100%; }
+.bx-slot .emo { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.g-result, .sum-ban { position: absolute; left: 50%; top: 40%; transform: translate(-50%, -50%); width: 214px; height: 54px; display: flex; align-items: center; justify-content: center; z-index: 10; }
+.g-result img, .sum-ban img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sum-ban { position: relative; left: auto; top: auto; transform: none; margin: 0 auto 4px; }
+/* bubbles */
+.ka-stage .bb-hint { position: absolute; left: 112px; top: 30px; width: 51px; height: 26px; display: flex; align-items: center; justify-content: center; z-index: 3; }
+.bb-hint img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bb-hint span { position: relative; font: 700 10px "St Transmission Bold", "Lilita One", sans-serif; color: #fff; letter-spacing: .05em; }
+.bb-mis { position: absolute; left: 232px; top: 4px; width: 152px; height: 93px; display: flex; align-items: center; justify-content: center; }
+.bb-mis .emo { position: relative; font-size: 54px; }
+.ka-stage .gi.mis-lis { right: 6px; bottom: 6px; }
+.bb-en { position: absolute; left: 445px; top: 4px; width: 160px; height: 95px; }
+.bb-en .mini { position: absolute; left: 30px; top: 34px; width: 100px; display: flex; flex-wrap: wrap; gap: 2px; justify-content: center; }
+.bb-en .mini img { width: 18px; height: 18px; }
+.bb-en .en-name { position: absolute; right: 2px; top: 2px; display: flex; align-items: center; gap: 3px; background: #0E6C8E; border-radius: 10px; padding: 1px 2px 1px 6px; font: 9px "Lilita One", sans-serif; color: #fff; }
+.bb-en .en-name img { width: 12px; } .bb-en .en-name .ea { width: 18px; height: 18px; border-radius: 50%; background: #0B4F63; object-fit: cover; }
+.ka-stage .bub-b { position: absolute; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; }
+.bub-b img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bub-b span { position: relative; font: 700 15px "Open Sans", sans-serif; color: #0D3B4E; }
+.bb-bar { position: absolute; left: 76px; top: 278px; width: 464px; height: 37px; display: flex; align-items: center; justify-content: center; }
+.bb-bar img { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bb-bar span { position: relative; font: 800 20px "Open Sans", sans-serif; color: #fff; letter-spacing: .04em; }
+.ka-root.bg-g-bubbles .pw { top: 100px; }
+.ka-root.bg-g-bubbles .gi.flag { top: 116px; right: 14px; }
+/* racing */
+.ship { position: absolute; width: 96px; height: 38px; background: url("https://school.novakidschool.com/games/racing/assets/spaceship.4f132245.png") 0 0 / 200% 600% no-repeat; transition: left .45s ease, top .45s ease; z-index: 2; }
+.ka-stage .star { position: absolute; width: 44px; height: 38px; display: flex; align-items: center; justify-content: center; }
+.star i { position: absolute; inset: 0; background: url("https://school.novakidschool.com/games/racing/assets/star_yellow.c2b45e9f.png") 0 0 / 500% 300% no-repeat; }
+.star span { position: relative; top: 2px; font: 700 13px "Open Sans", sans-serif; color: #6D3DE4; }
+.ka-stage .star.bad { opacity: .45; filter: grayscale(.8); }
+.ka-stage .star.got { filter: drop-shadow(0 0 6px #fff) brightness(1.15); }
+.rc-p { position: absolute; top: 253px; width: 247px; height: 60px; display: flex; align-items: center; }
+.rc-p.left { left: 24px; } .rc-p.right { left: 293px; justify-content: center; }
+.ka-stage .gi.rc-lis { position: relative; margin-left: 12px; width: 30px; height: 31px; }
+.rc-p .pic { position: relative; margin-left: 8px; width: 52px; height: 52px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 2px #F49AC1; }
+.rc-p .pic .emo { font-size: 32px; }
+.rc-p .w { position: relative; margin-left: 16px; font: 700 18px "Open Sans", sans-serif; color: #fff; letter-spacing: .04em; }
+.rc-p .w.ans { margin: 0; font-size: 22px; }
+.rc-p .sym { position: absolute; right: -6px; top: -8px; width: 20px; height: 20px; }
+.ka-stage .gi.rc-flag { top: auto; bottom: 30px; right: 14px; width: 30px; height: 32px; }
+/* snake */
+.gscene.snake { background: transparent; }
+.gclock.sn { left: 14px; top: 14px; width: 36px; height: 36px; background: #2E7FD6; }
+.sn-av { position: absolute; left: 10px; top: 92px; width: 44px; text-align: center; }
+.sn-av .bgc { position: absolute; left: 0; top: 0; width: 44px; height: 44px; }
+.sn-av .ch { position: relative; width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 30% 50%; border: 2px solid #2FB7D8; box-sizing: border-box; }
+.sn-av b { position: absolute; left: 40px; top: -2px; display: flex; align-items: center; gap: 2px; font: 11px "Lilita One", sans-serif; color: #fff; }
+.sn-av b img { width: 14px; }
+.sn-av span { display: block; font: 9px "Lilita One", sans-serif; color: #fff; margin-top: 2px; }
+.sn-word { position: absolute; left: 187px; top: 8px; width: 240px; height: 40px; border-radius: 4px; background: rgba(255,255,255,.72); display: flex; align-items: center; gap: 8px; padding: 0 8px; box-sizing: border-box; }
+.sn-word .emo { font-size: 28px; }
+.sn-word .w { flex: 1; font: 700 18px "Open Sans", sans-serif; color: #1E1D3A; text-align: center; }
+.ka-stage .gi.sn-lis { position: relative; }
+.sn-board { position: absolute; left: 58px; top: 56px; width: 506px; height: 230px; border: 2px solid #fff; border-radius: 3px; }
+.sn-field { position: absolute; inset: 0; }
+.sn-field i, .sn-field b { position: absolute; width: 23px; height: 23px; }
+.sn-field .sh { background: url("https://school.novakidschool.com/games/snake/assets/snake.87cfe96d.png") 0 0 / 300% 100% no-repeat; z-index: 2; transform-origin: 50% 50%; scale: 1.5; }
+.sn-field .sb { background: url("https://school.novakidschool.com/games/snake/assets/snake_body.6969d3ab.png") center / 100% 100%; }
+.sn-field .st { background: url("https://school.novakidschool.com/games/snake/assets/snake_tail1.df374619.png") center / 100% 100%; }
+.sn-field .egg { background: url("https://school.novakidschool.com/games/snake/assets/eggs.8c647ee5.png") 0 0 / 300% 100% no-repeat; display: flex; align-items: center; justify-content: center; font: 700 12px "Open Sans", sans-serif; color: #1E1D3A; }
+.sn-field .egg.e1 { background-position: 50% 0; } .sn-field .egg.e2 { background-position: 100% 0; }
+.sn-pad { position: absolute; left: 6px; bottom: 8px; width: 46px; display: grid; grid-template-columns: repeat(3, 15px); grid-template-rows: repeat(3, 15px); gap: 1px; }
+.ka-stage .sn-pad button { background: rgba(255,255,255,.18); border-radius: 3px; color: #fff; font-size: 8px; }
+.sn-pad [data-dir="U"] { grid-column: 2; grid-row: 1; } .sn-pad [data-dir="L"] { grid-column: 1; grid-row: 2; } .sn-pad [data-dir="D"] { grid-column: 2; grid-row: 3; } .sn-pad [data-dir="R"] { grid-column: 3; grid-row: 2; }
+.ka-stage .gi.sn-flag { top: 10px; right: 10px; width: 30px; height: 32px; }
+/* games menu: real icons */
+.gm .art img { height: 44px; }
+.gm .art .emo { font-size: 34px; }
+.qz-ic b { font-size: 30px; } .qz-ic b:first-child { color: #22C55E; } .qz-ic b:last-child { color: #EF4444; }
+.ka-stage .gm { background: repeating-linear-gradient(115deg, transparent 0 34px, rgba(255,255,255,.18) 34px 52px, transparent 52px 80px), var(--b); }
+.ka-root.bg-g-boxes .pw .tr { top: -14px; }
+.ka-root.bg-g-boxes .pw.me .tr { left: 80px; } .ka-root.bg-g-boxes .pw.enemy .tr { right: 80px; }
+.pw .av .ch { left: -22%; top: 8%; width: 140%; }
+.pw.enemy .av .ch { left: 0; top: 2%; width: 100%; }
+.gscene.snake { background: rgba(24, 22, 52, .74); }
+.sn-board { left: 52px; top: 62px; width: 520px; height: 208px; }
+.sn-field i, .sn-field b { width: 26px; height: 26px; }
+.sn-field .egg { font-size: 13px; }
+.gscene.race .tower { height: 210px; }
