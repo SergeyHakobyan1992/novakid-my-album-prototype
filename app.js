@@ -472,7 +472,7 @@
     if (ok) ses.me += 3; if (it.enemy === it.id) ses.bot += 3;
     if (ok) {
       if (it.up && it.kind === "recall") { const up = levelUp(it.id, 4); it.solved = true; say(`Yes! ${W(it.id).word}!`); if (up) say("Your card levelled up!", true); }
-      else if (it.up && it.kind === "review") { S.rev[it.id] = S.day; S.iv[it.id] *= 2; S.stars += STAR_REFRESH; ses.refreshed.push(it.id); it.solved = true; say(`Yes! ${W(it.id).word}! Shiny again!`); }
+      else if (it.up && it.kind === "review") { S.rev[it.id] = S.day; S.iv[it.id] *= 2; S.stars += STAR_REFRESH; ses.refreshed.push(it.id); it.solved = true; say(`Yes! ${W(it.id).word}!`); }
       else { it.solved = true; say(`Yes! ${W(it.id).word}!`); }
     } else {
       it.failed = true;
