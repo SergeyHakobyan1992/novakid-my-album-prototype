@@ -950,7 +950,7 @@
       S.lv[d.notyet] = 3; S.up[d.notyet] = S.day - RECALL; save(); render(); toast("Noted — the word goes back to Quiz Corner"); return;
     }
     switch (d.act) {
-      case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); say(POP_TEXT()); break;
+      case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); break;
       case "popsay": say(POP_TEXT()); break;
       case "crownok": S.crowns = []; sfx("close"); save(); render(); break;
       case "crownsay": say(CROWN_TEXT()); break;
