@@ -1,0 +1,670 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Novakid: Student Experience</title><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400..700&display=swap"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap"><style>
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:#14122a}
+body{overflow:hidden}
+#stage{position:fixed;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0}
+section{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden}
+@media screen{section:not(.on){display:none!important}}
+div{min-width:0}
+div:not([style*="display:"]){display:flex;flex-direction:column}
+h1,h2,h3,p,ul,ol,table{display:block}
+ul,ol{padding-left:32px}
+a{text-decoration:underline}
+img{display:block}
+table{border-collapse:collapse;width:100%}
+th,td{padding:.35em .6em;text-align:left;vertical-align:top;border:1px solid #d9d6e4}
+th{font-weight:700}
+#nav{position:fixed;right:14px;top:10px;display:flex;flex-direction:row;gap:6px;align-items:center;font:600 14px Arial,sans-serif;color:#fff;background:rgba(20,18,42,.78);padding:6px 8px;border-radius:10px;z-index:5}
+#nav button{all:unset;cursor:pointer;padding:2px 10px;font-size:18px;line-height:1}
+#nav button:focus-visible{outline:2px solid #F6D365}
+@media print{
+ @page{size:1920px 1080px;margin:0}
+ html,body{height:auto;overflow:visible;background:none}
+ #stage{position:static;transform:none!important;width:auto;height:auto}
+ section,section.on{display:flex;position:relative;page-break-after:always;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ #nav{display:none}
+}
+</style></head><body><main id="stage"><section id="cover" style="background:#1E1B3A;color:#F7F5EF;font-family:'Nunito Sans', Arial, sans-serif;padding:120px 128px 120px;display:flex;flex-direction:column;justify-content:space-between;gap:48px">
+<div style="display:flex;flex-direction:column;gap:28px">
+<p style="font-size:28px;color:#B9B2F5;letter-spacing:2px;text-transform:uppercase;font-weight:700">Novakid · Lead, Student Experience Squad · candidate task</p>
+<h1 style="font-family:'Rubik', Arial, sans-serif;font-size:96px;font-weight:600;line-height:1.08;color:#F7F5EF;width:1500px">One learner, three products: connecting what Novakid already knows about a child</h1>
+<p style="font-size:32px;color:#D6D3EA">November 2026</p>
+</div>
+<div style="display:flex;gap:40px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#2C2852;border-radius:20px;padding:36px 40px">
+<p style="font-size:24px;color:#B9B2F5;font-weight:700;text-transform:uppercase;letter-spacing:1px">Clickable prototype</p>
+<p style="font-size:32px;font-weight:700"><a target="_blank" rel="noopener" href="https://sergeyhakobyan1992.github.io/novakid-my-album-prototype/" style="color:#F6D365">sergeyhakobyan1992.github.io/novakid-my-album-prototype</a></p>
+<p style="font-size:24px;color:#D6D3EA">A copy of Kids Area with the new feature. Laptop or tablet, landscape, sound on. Guide with screenshots: slide 8.</p>
+</div>
+<div style="width:620px;display:flex;flex-direction:column;gap:10px;background:#2C2852;border-radius:20px;padding:36px 40px">
+<p style="font-size:24px;color:#B9B2F5;font-weight:700;text-transform:uppercase;letter-spacing:1px">Contents</p>
+<p style="font-size:26px;line-height:1.45">Part 1 Strategy · slides 2–5<br>Part 2 Kids Area initiative · slides 6–7<br>Prototype guide · slide 8<br>Part 3 Content · 9 · Part 4 · 10 · Sources · 11</p>
+</div>
+</div>
+<p style="font-size:24px;color:#A9A5C4">Mia (8) and her teacher Ms. Anna are fictional. Novakid facts come from the parent and child accounts; numbers marked “assumption” are mine.</p>
+</section>
+<section id="week" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:56px 96px 96px;display:flex;flex-direction:column;justify-content:space-between;gap:18px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 1 · Strategy · 1.1 The cost of disconnection</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">One week of Mia: each product starts from zero</h2>
+</div>
+<div style="display:flex;flex-direction:column;gap:10px;background:#ECE9F7;border-radius:14px;padding:14px 20px">
+<div style="display:flex;gap:10px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#F7F5EF;border-radius:10px;padding:8px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.2">Level</p>
+<p style="font-size:24px;line-height:1.22;color:#4A4766">One of 7 stages, Pre-K to Level 6. Mia is in Level 1</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:32px;height:18px;align-self:center"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#F7F5EF;border-radius:10px;padding:8px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.2">Unit</p>
+<p style="font-size:24px;line-height:1.22;color:#4A4766">A topic and its language. Level 1 has 13; hers is Unit 6 Food</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:32px;height:18px;align-self:center"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#F7F5EF;border-radius:10px;padding:8px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.2">Lesson</p>
+<p style="font-size:24px;line-height:1.22;color:#4A4766">Unit 6 has four lessons, then a Unit Review</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:32px;height:18px;align-self:center"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#F7F5EF;border-radius:10px;padding:8px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.2">Competency</p>
+<p style="font-size:24px;line-height:1.22;color:#4A4766">A skill: “speak about food using like / don’t like”</p>
+</div>
+</div>
+<p style="font-size:24px;line-height:1.25"><b>The competency model already exists</b> (parent account, Achievements), but it only says “unlocked”: no mastery, no evidence, no source. The Learning Engine adds those three.</p>
+</div>
+<div style="display:flex;gap:12px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#DCD6FF;border-radius:8px;padding:4px 10px"><b>Mon</b> · 1-1 lesson</p>
+<p style="font-size:24px;line-height:1.25">Says “I no like peas”, mixes up peas and grapes. Nothing recorded.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">1. Errors stay in the lesson</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#FFE7B3;border-radius:8px;padding:4px 10px"><b>Tue</b> · Kids Area</p>
+<p style="font-size:24px;line-height:1.25">Daily quest “play any game”: Memo Mix with <i>family, bike</i>, then 16 min of Streams.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">2. Practice ignores her unit</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#FFE7B3;border-radius:8px;padding:4px 10px"><b>Wed</b> · Homework</p>
+<p style="font-size:24px;line-height:1.25">Listen and pick: she recognises the words, but never says them.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">3. Trains recognition only</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#CDEBD9;border-radius:8px;padding:4px 10px"><b>Thu</b> · Group class</p>
+<p style="font-size:24px;line-height:1.25">Topic: weekends. The teacher doesn’t know her unit; Mia stays silent.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">4. No shared profile</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#D3E8F7;border-radius:8px;padding:4px 10px"><b>Fri</b> · Pandy AI</p>
+<p style="font-size:24px;line-height:1.25">Chats about Minecraft, half in her native language.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">5. Doesn’t know the week’s goal</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#F1E0F0;border-radius:8px;padding:4px 10px"><b>Sat</b> · Parent</p>
+<p style="font-size:24px;line-height:1.25">68 competencies “unlocked”, one listed four times.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">6. The payer sees no progress</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:12px;border:1px solid #E1DEEC">
+<p style="font-size:24px;line-height:1.15;background:#DCD6FF;border-radius:8px;padding:4px 10px"><b>Mon</b> · 1-1 lesson</p>
+<p style="font-size:24px;line-height:1.25">Can’t tell if she practised: 5–7 min of re-checking.</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.2;font-weight:700;color:#9A2E1C;background:#FBE3DC;border-radius:10px;padding:6px 10px">7. Practice never reaches the teacher</p>
+</div>
+</div>
+<div style="display:flex;gap:20px">
+<p style="flex:1;font-size:24px;line-height:1.25;background:#1E1B3A;color:#E9E7F3;border-radius:14px;padding:12px 20px"><b style="color:#F6D365">Hurts learning most: 1 and 7.</b> The lesson-to-practice loop is cut.</p>
+<p style="flex:1;font-size:24px;line-height:1.25;background:#1E1B3A;color:#E9E7F3;border-radius:14px;padding:12px 20px"><b style="color:#F6D365">Hurts retention most: 6, then 7.</b> Parents and teachers see nothing.</p>
+</div>
+<p style="position:absolute;left:96px;bottom:36px;width:1728px;font-size:24px;color:#6E6A88;white-space:nowrap">Source: Novakid child and parent accounts; Mia’s week is a composite. · 2</p>
+</section>
+<section id="profile" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:64px 96px 112px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 1 · Strategy · 1.2 The minimum viable learner profile</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">Ten signals on one five-step ladder per competency</h2>
+</div>
+<p style="font-size:24px;line-height:1.35;color:#4A4766">A <b>signal</b> is a child’s answer to a task tagged with a competency ID from Novakid’s existing competency model (Achievements). Every attempt, hint and response time is logged. Time spent and attendance are context, not evidence. A step needs its own kind of evidence: recognition games never lift a word past step 2.</p>
+<div style="display:flex;gap:14px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:24px;font-weight:800;background:#E6E4EE;border-radius:10px;padding:8px 14px;border:2px dashed #9A97AE">1 · Met in lesson</p>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border:1px dashed #9A97AE">
+<p style="font-size:24px;font-weight:700;line-height:1.25">Lesson record: unit and competencies taught</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">1-1 · system data. Context for every signal, not evidence</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:24px;font-weight:800;background:#F6D365;border-radius:10px;padding:8px 14px">2 · Recognises</p>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #E39B2D">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#1 Audio → picture, first try</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">Kids Area · <b>medium</b>: 1 in 4 is a guess</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #E39B2D">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#7 In-lesson interactives</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">1-1 · <b>medium</b>: the teacher may prompt</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:24px;font-weight:800;background:#C5E6A6;border-radius:10px;padding:8px 14px">3 · Says it</p>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #E39B2D">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#4 Builds a phrase or spells a word</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">Kids Area · <b>medium</b>: options can be brute-forced</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #9A97AE">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#5 Says the structure in reply</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">AI Tutor · <b>noisy</b>: child speech recognition, LLM grading</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:24px;font-weight:800;background:#6CC070;border-radius:10px;padding:8px 14px">4 · Remembers</p>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #3E9B5A">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#8 Correct 3+ days after the last contact</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">Kids Area, 1-1 · <b>reliable</b>: knowledge, not short-term memory</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:24px;font-weight:800;background:linear-gradient(90deg, #F6D365 0%, #C5E6A6 35%, #9AD0F5 70%, #D7B8F3 100%);border-radius:10px;padding:8px 14px">5 · Uses it</p>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #9A97AE">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#6 Teacher: can’t / with help / alone</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">1-1 · <b>noisy</b> (human), but the most valid speech signal</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:12px;padding:12px 14px;border-left:8px solid #9A97AE">
+<p style="font-size:24px;font-weight:700;line-height:1.25">#9 Uses it in a new context</p>
+<p style="font-size:24px;line-height:1.25;color:#4A4766">Group, AI Tutor · <b>noisy</b> and rare, strongest evidence</p>
+</div>
+</div>
+</div>
+<div style="display:flex;gap:14px;align-items:stretch">
+<p style="font-size:24px;font-weight:800;width:200px;line-height:1.25">Across all steps</p>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 14px;border-left:8px solid #3E9B5A">
+<p style="font-size:24px;font-weight:700">#2 Attempts and hints before the right answer</p>
+<p style="font-size:24px;color:#4A4766">Kids Area · <b>reliable</b> if every attempt is logged</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 14px;border-left:8px solid #9A97AE">
+<p style="font-size:24px;font-weight:700">#3 Response time on known items</p>
+<p style="font-size:24px;color:#4A4766">Kids Area · <b>noisy</b>: trend only</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 14px;border-left:8px solid #3E9B5A">
+<p style="font-size:24px;font-weight:700">#10 Unit Review, competency checks</p>
+<p style="font-size:24px;color:#4A4766">1-1 · <b>reliable</b>, once per chapter</p>
+</div>
+</div>
+<p style="font-size:24px;line-height:1.35;color:#4A4766"><b style="color:#1E1B3A">One score per answer:</b> correct × attempt factor (1 → 0.8 → 0.6…) × 0.6 if a hint was used, corrected for guessing. Average per competency → difficulty zone; 0.75–0.95 is the right challenge.</p>
+<p style="position:absolute;left:96px;bottom:44px;width:1728px;font-size:24px;color:#6E6A88">Based on: <a target="_blank" rel="noopener" href="https://books.yandex.ru/books/p1Veeihh" style="color:#5B47D6">Abbakumov 2025</a> (signals, score, zones) · <a target="_blank" rel="noopener" href="https://myweb.fsu.edu/vshute/pdf/shute%20pres_h.pdf" style="color:#5B47D6">Shute 2011</a> (evidence in games) · <a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.1551-6709.2012.01245.x" style="color:#5B47D6">Koedinger et al. 2012</a> (task → competency map) · <a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.0023-8333.2004.00260.x" style="color:#5B47D6">Laufer &amp; Goldstein 2004</a> (recognise before produce) · 3</p>
+</section>
+<section id="loop" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:64px 96px 112px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 1 · Strategy · 1.2 First closed loop · 1.3 North Star</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">The last lesson drives practice; practice comes back to the teacher</h2>
+</div>
+<div style="display:flex;gap:14px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column;gap:6px;background:#DCD6FF;border-radius:16px;padding:16px 18px">
+<p style="font-size:26px;font-weight:800">1-1 lesson writes</p>
+<p style="font-size:24px;line-height:1.3">Unit and competencies taught. System data, zero teacher time</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:44px;height:26px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="width:250px;display:flex;flex-direction:column;gap:6px;background:#1E1B3A;border-radius:16px;padding:16px 18px">
+<p style="font-size:26px;font-weight:800;color:#F6D365">Learning Engine</p>
+<p style="font-size:24px;line-height:1.3;color:#E9E7F3">Step per competency, next due date</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:44px;height:26px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="width:250px;display:flex;flex-direction:column;gap:6px;background:#FFE7B3;border-radius:16px;padding:16px 18px">
+<p style="font-size:26px;font-weight:800">Kids Area reads</p>
+<p style="font-size:24px;line-height:1.3">Lesson words become album cards, played at the right step</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:44px;height:26px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#5B47D6"/></svg>
+<div style="width:250px;display:flex;flex-direction:column;gap:6px;background:#DCD6FF;border-radius:16px;padding:16px 18px">
+<p style="font-size:26px;font-weight:800">Teacher card</p>
+<p style="font-size:24px;line-height:1.3">Before the next lesson: “peas: remembers · don’t like: with help”</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:16px 20px;border:1px solid #E1DEEC">
+<p style="font-size:26px;font-weight:800;color:#5B47D6">Why this loop first</p>
+<ul style="font-size:24px;line-height:1.3">
+<li>The data already exists and is reliable</li>
+<li>The reading side is all ours: about 6 weeks</li>
+<li>It feeds the teacher bond that drives retention</li>
+<li>Effect shows within weeks</li>
+</ul>
+</div>
+</div>
+<hr style="border-top:2px solid #E1DEEC;width:1728px">
+<div style="display:flex;gap:14px;align-items:center">
+<div style="width:210px;display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:16px 18px;border:2px solid #9A97AE">
+<p style="font-size:26px;font-weight:800">Renewal</p>
+<p style="font-size:24px;line-height:1.3;color:#4A4766">1-1 subscription; the parent decides</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:44px;height:26px;"><polygon points="100,30 40,30 40,0 0,50 40,100 40,70 100,70" fill="#9A97AE"/></svg>
+<div style="width:430px;display:flex;flex-direction:column;gap:8px;background:#5B47D6;border-radius:16px;padding:20px 22px">
+<p style="font-size:24px;font-weight:700;color:#DCD6FF;text-transform:uppercase;letter-spacing:1px">North Star</p>
+<p style="font-size:30px;font-weight:800;color:#FFFFFF;line-height:1.15">Weekly Learners with Retained Progress</p>
+<p style="font-size:24px;line-height:1.3;color:#F1EFFB">Share of active learners who in a week moved 1+ target competency up a step and passed a check 3+ days later.</p>
+<p style="font-size:24px;line-height:1.3;color:#F6D365">Counts knowledge, not stars; needs a return visit; moves weekly; parents get it.</p>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:44px;height:26px;"><polygon points="100,30 40,30 40,0 0,50 40,100 40,70 100,70" fill="#9A97AE"/></svg>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px;border:1px solid #E1DEEC">
+<p style="font-size:24px;font-weight:800">1 · Practice habit</p>
+<p style="font-size:24px;line-height:1.28;color:#4A4766">Kids Area active days (1.39 ↑) · W1 retention, levels 0–1 (&gt;20%) · AI Tutor retention (30% → 36%)</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px;border:1px solid #E1DEEC">
+<p style="font-size:24px;font-weight:800">2 · Practice quality</p>
+<p style="font-size:24px;line-height:1.28;color:#4A4766">Tasks at the right difficulty (score 0.75–0.95) · first-try, no-hint accuracy</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px;border:2px solid #3E9B5A">
+<p style="font-size:24px;font-weight:800">3 · Learning progress</p>
+<p style="font-size:24px;line-height:1.28;color:#4A4766">Ladder steps gained per learner per week · 3-day recall · Unit Review results</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px;border:1px solid #E1DEEC">
+<p style="font-size:24px;font-weight:800">4 · Lesson link</p>
+<p style="font-size:24px;line-height:1.28;color:#4A4766">1-1 and group attendance · 1-1 lessons with practice in between</p>
+</div>
+</div>
+</div>
+<p style="font-size:24px;background:#ECE9F7;border-radius:12px;padding:10px 18px"><b>Guardrails:</b> stars earned on mastered or too-easy content · teacher input ≤ 30 s per lesson · Pandy safety incidents · daily screen time</p>
+<p style="position:absolute;left:96px;bottom:44px;width:1728px;font-size:24px;color:#6E6A88">“Passed a check 3+ days later” follows the spacing and testing effects: <a target="_blank" rel="noopener" href="https://doi.org/10.1037/0033-2909.132.3.354" style="color:#5B47D6">Cepeda et al. 2006</a> · <a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.1467-9280.2006.01693.x" style="color:#5B47D6">Roediger &amp; Karpicke 2006</a> · 4</p>
+</section>
+<section id="roadmap" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:64px 96px 112px;display:flex;flex-direction:column;gap:9px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 1 · Strategy · 1.4 Two-quarter roadmap</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">Measure first, close one loop, then widen it</h2>
+</div>
+<div style="display:flex;gap:16px">
+<div style="width:250px"></div>
+<div style="flex:1;display:flex;gap:6px">
+<p style="flex:1;font-size:24px;font-weight:800;background:#1E1B3A;color:#F7F5EF;border-radius:8px;padding:4px 12px">Q1 · weeks 1–13</p>
+<p style="flex:1;font-size:24px;font-weight:800;background:#1E1B3A;color:#F7F5EF;border-radius:8px;padding:4px 12px">Q2 · weeks 14–26</p>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column">
+<p style="font-size:24px;font-weight:800;line-height:1.15">Learning Engine</p>
+<p style="font-size:24px;color:#4A4766;line-height:1.15">2 → 3 eng. (incl. data/ML)</p>
+</div>
+<div style="position:relative;width:1462px;height:66px;background:#EFEDE6;border-radius:10px">
+<p style="position:absolute;left:0px;top:2px;width:219px;font-size:24px;line-height:1.1;background:#1E1B3A;color:#F7F5EF;border-radius:10px;padding:4px 10px">Competency map, attempt log</p>
+<p style="position:absolute;left:394px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#1E1B3A;color:#F7F5EF;border-radius:10px;padding:4px 10px">Ladder statuses v1 (5 steps)</p>
+<p style="position:absolute;left:731px;top:2px;width:388px;font-size:24px;line-height:1.1;background:#1E1B3A;color:#F7F5EF;border-radius:10px;padding:4px 10px">Teacher one-tap rating feeds steps</p>
+<p style="position:absolute;left:1125px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#1E1B3A;color:#F7F5EF;border-radius:10px;padding:4px 10px">Pandy reads unit goals</p>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column">
+<p style="font-size:24px;font-weight:800;line-height:1.15">Kids Area</p>
+<p style="font-size:24px;color:#4A4766;line-height:1.15">3 → 2 eng., 1 designer</p>
+</div>
+<div style="position:relative;width:1462px;height:66px;background:#EFEDE6;border-radius:10px">
+<p style="position:absolute;left:0px;top:2px;width:219px;font-size:24px;line-height:1.1;background:#F6D365;border-radius:10px;padding:4px 10px">Baseline scores, too-easy list</p>
+<p style="position:absolute;left:225px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#F6D365;border-radius:10px;padding:4px 10px">Loop v0 + My Album A/B</p>
+<p style="position:absolute;left:731px;top:2px;width:388px;font-size:24px;line-height:1.1;background:#F6D365;border-radius:10px;padding:4px 10px">Album v2: teacher piece, more units</p>
+<p style="position:absolute;left:1125px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#F6D365;border-radius:10px;padding:4px 10px">Pandy practises album words</p>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column">
+<p style="font-size:24px;font-weight:800;line-height:1.15">Teachers, parents, group</p>
+<p style="font-size:24px;color:#4A4766;line-height:1.15">1 designer + partners</p>
+</div>
+<div style="position:relative;width:1462px;height:66px;background:#EFEDE6;border-radius:10px">
+<p style="position:absolute;left:394px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#DCD6FF;border-radius:10px;padding:4px 10px">Teacher pre-lesson card, pilot</p>
+<p style="position:absolute;left:731px;top:2px;width:388px;font-size:24px;line-height:1.1;background:#DCD6FF;border-radius:10px;padding:4px 10px">Parent progress page v2</p>
+<p style="position:absolute;left:1125px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#DCD6FF;border-radius:10px;padding:4px 10px">Group class: transfer pilot</p>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column">
+<p style="font-size:24px;font-weight:800;line-height:1.15">Content</p>
+<p style="font-size:24px;color:#4A4766;line-height:1.15">1 eng. tooling, 4 method.</p>
+</div>
+<div style="position:relative;width:1462px;height:66px;background:#EFEDE6;border-radius:10px">
+<p style="position:absolute;left:0px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#C5E6A6;border-radius:10px;padding:4px 10px">Tag tasks to competencies</p>
+<p style="position:absolute;left:337px;top:2px;width:388px;font-size:24px;line-height:1.1;background:#C5E6A6;border-radius:10px;padding:4px 10px">Pipeline v1: spec → AI → checks</p>
+<p style="position:absolute;left:731px;top:2px;width:725px;font-size:24px;line-height:1.1;background:#C5E6A6;border-radius:10px;padding:4px 10px">Every new unit: one spec for four products, soft launch to 5%</p>
+</div>
+</div>
+<div style="display:flex;gap:16px;align-items:center">
+<div style="width:250px;display:flex;flex-direction:column">
+<p style="font-size:24px;font-weight:800;line-height:1.15">Analytics</p>
+<p style="font-size:24px;color:#4A4766;line-height:1.15">shared analyst</p>
+</div>
+<div style="position:relative;width:1462px;height:66px;background:#EFEDE6;border-radius:10px">
+<p style="position:absolute;left:0px;top:2px;width:331px;font-size:24px;line-height:1.1;background:#9AD0F5;border-radius:10px;padding:4px 10px">Metric definitions, tracking</p>
+<p style="position:absolute;left:337px;top:2px;width:1119px;font-size:24px;line-height:1.1;background:#9AD0F5;border-radius:10px;padding:4px 10px">Experiments: My Album A/B, long-term holdout, content variant tests</p>
+</div>
+</div>
+<div style="display:flex;gap:20px;align-items:stretch">
+<div style="width:700px;display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:16px 22px;border:1px solid #E1DEEC">
+<p style="font-size:26px;font-weight:800;color:#9A2E1C">Not doing in these two quarters</p>
+<ul style="font-size:24px;line-height:1.28">
+<li>New game worlds: we re-point existing games</li>
+<li>More Streams; leaderboards</li>
+<li>Our own child speech recognition</li>
+<li>IRT, knowledge tracing before data allows</li>
+<li>Group changes beyond reading the profile</li>
+<li>New curriculum levels</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px;background:#FFFFFF;border-radius:16px;padding:16px 22px;border:1px solid #E1DEEC">
+<p style="font-size:26px;font-weight:800;color:#5B47D6">Dependencies: new asks only in Q2, once value is shown</p>
+<table style="font-size:24px;color:#1E1B3A;border-collapse:collapse">
+<tr><td style="width:32%;padding:4px 10px">Curriculum</td><td style="width:68%;padding:4px 10px">Sign-off on task-to-competency tagging</td></tr>
+<tr><td>Classroom platform</td><td>Lesson-end rating: agree Q1, ship Q2</td></tr>
+<tr><td>Teacher Operations</td><td>Co-own the pilot; cap of 30 s per lesson</td></tr>
+<tr><td>Data engineering</td><td>Events into the existing progress service</td></tr>
+<tr><td>Parent journey, Legal</td><td>Shared “report opened”; child-data review</td></tr>
+</table>
+</div>
+</div>
+<p style="position:absolute;left:96px;bottom:44px;width:1728px;font-size:24px;color:#6E6A88">Capacity: 6 engineers, 2 designers, a shared analyst, 4 methodologists. Bars show stages, not a committed plan. · 5</p>
+</section>
+<section id="album" style="background:#FFF8EA;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:64px 96px 112px;display:flex;flex-direction:column;gap:11px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#B5651D;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 2 · Kids Area initiative · opportunity and gamification</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">My Album: the last lesson becomes a collection</h2>
+</div>
+<div style="display:flex;gap:24px;align-items:stretch">
+<div style="width:520px;display:flex;flex-direction:column;gap:12px">
+<p style="font-size:28px;font-weight:800">Why kids don’t come back (hypotheses)</p>
+<ol style="font-size:24px;line-height:1.3">
+<li><b>No reason to return tomorrow.</b> Daily quests count games; the first shop item costs 1,200 stars at 25–50 a day.</li>
+<li><b>Practice isn’t about “my” lessons:</b> game words ignore the unit.</li>
+<li><b>Nobody sees the effort:</b> not the teacher, not the parent.</li>
+<li><b>Too easy, or no English needed:</b> shape-matching silhouettes, passive Streams.</li>
+</ol>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px">
+<p style="font-size:24px;line-height:1.3"><b>Segment:</b> ages 7–9, levels 0–1, first 8 weeks. Habits form here, the W1 target sits here, and these parents are least sure about renewing.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:4px;background:#FFFFFF;border-radius:14px;padding:12px 16px">
+<p style="font-size:24px;line-height:1.3"><b>First metric: active days per week.</b> The mechanic only rewards coming back on a different day, and it reads in 1–2 weeks of an A/B test.</p>
+</div>
+</div>
+<div style="width:560px;display:flex;flex-direction:column;gap:10px">
+<img src="03-album-toys.jpg" alt="Prototype: the Toys page of My Album, with gold cards, half-built puzzle cards and PLAY buttons" style="width:560px;height:280px;object-fit:cover;border-radius:14px;border:1px solid #E7DCC4">
+<p style="font-size:24px;font-weight:800">A card = 5 puzzle pieces = the 5 steps from 1.2</p>
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;line-height:1.2;background:#E6E4EE;border:2px dashed #9A97AE;border-radius:8px;padding:4px 10px"><b>1 Met in lesson</b> · added after the 1-1 lesson</p>
+<p style="font-size:24px;line-height:1.2;background:#F6D365;border-radius:8px;padding:4px 10px"><b>2 Recognises</b> · Memo Mix, Box Battle</p>
+<p style="font-size:24px;line-height:1.2;background:#C5E6A6;border-radius:8px;padding:4px 10px"><b>3 Says it</b> · Pinocchio, Bubbles, Racing, Snake</p>
+<p style="font-size:24px;line-height:1.2;background:#6CC070;border-radius:8px;padding:4px 10px"><b>4 Remembers</b> · Quiz Corner, 3+ days later</p>
+<p style="font-size:24px;line-height:1.2;background:linear-gradient(90deg, #F6D365 0%, #C5E6A6 35%, #9AD0F5 70%, #D7B8F3 100%);border-radius:8px;padding:4px 10px"><b>5 Uses it</b> · tells Ms. Anna → gold frame</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px">
+<p style="font-size:28px;font-weight:800">Why they come back, and learn</p>
+<ul style="font-size:24px;line-height:1.28">
+<li><b>Next piece in 3 days:</b> the button counts down the days. <a target="_blank" rel="noopener" href="https://doi.org/10.1037/0033-2909.132.3.354" style="color:#B5651D">Spacing effect</a></li>
+<li><b>Dusty cards:</b> after 7, 14, 28 days a card fades and asks for a refresh; a miss drops it to 3 pieces, nothing is lost. <a target="_blank" rel="noopener" href="https://aclanthology.org/P16-1174/" style="color:#B5651D">Half-life regression</a></li>
+<li><b>The card is the content:</b> tap it to hear the word; one PLAY button, the engine picks the game. <a target="_blank" rel="noopener" href="https://shura.shu.ac.uk/3556/" style="color:#B5651D">Intrinsic integration</a></li>
+<li><b>Stars only for progress:</b> +10 a piece, +5 a refresh, nothing for replays.</li>
+<li><b>No streaks, no random packs:</b> <a target="_blank" rel="noopener" href="https://blog.duolingo.com/which-generation-most-serious-about-streak/" style="color:#B5651D">long streaks are kept mostly by adults</a>; the <a target="_blank" rel="noopener" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/" style="color:#B5651D">UK Children’s Code</a> warns against FOMO loops.</li>
+<li><b>Adults see it:</b> teacher card and parent page. <a target="_blank" rel="noopener" href="https://doi.org/10.1037/0003-066X.55.1.68" style="color:#B5651D">Competence, autonomy, relatedness</a></li>
+</ul>
+</div>
+</div>
+<div style="display:flex;gap:16px">
+<p style="flex:1;font-size:24px;line-height:1.3;background:#1E1B3A;color:#E9E7F3;border-radius:14px;padding:12px 18px"><b style="color:#F6D365">Not only words.</b> A card can hold a structure (“I don’t like…”) or a sound (l / r from the Food unit): the ladder is per competency, not per word.</p>
+<p style="flex:1;font-size:24px;line-height:1.3;background:#1E1B3A;color:#E9E7F3;border-radius:14px;padding:12px 18px"><b style="color:#F6D365">The simplest collectible.</b> An album is cheap to build and test. On the same ladder it can grow into a richer world, e.g. a Word Garden where lessons plant seeds.</p>
+</div>
+<p style="position:absolute;left:96px;bottom:44px;width:1728px;font-size:24px;color:#6E6A88"><a target="_blank" rel="noopener" href="https://doi.org/10.1037/0033-2909.132.3.354" style="color:#B5651D">Cepeda et al. 2006</a> · <a target="_blank" rel="noopener" href="https://aclanthology.org/P16-1174/" style="color:#B5651D">Settles &amp; Meeder 2016</a> · <a target="_blank" rel="noopener" href="https://shura.shu.ac.uk/3556/" style="color:#B5651D">Habgood &amp; Ainsworth 2011</a> · <a target="_blank" rel="noopener" href="https://doi.org/10.1037/0003-066X.55.1.68" style="color:#B5651D">Ryan &amp; Deci 2000</a> · <a target="_blank" rel="noopener" href="https://blog.duolingo.com/which-generation-most-serious-about-streak/" style="color:#B5651D">Duolingo 2023</a> · <a target="_blank" rel="noopener" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/" style="color:#B5651D">ICO Children’s Code</a> · <a target="_blank" rel="noopener" href="https://doi.org/10.1007/s11423-020-09807-z" style="color:#B5651D">Huang et al. 2020</a> · 6</p>
+</section>
+<section id="metrics" style="background:#FFF8EA;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:64px 96px 112px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:6px">
+<p style="font-size:24px;color:#B5651D;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 2 · Kids Area initiative · metrics, MVP, engine</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">More days, short sessions, and words that stay</h2>
+</div>
+<div style="display:flex;gap:28px;align-items:stretch">
+<div style="width:930px;display:flex;flex-direction:column;gap:14px">
+<table style="font-size:24px;color:#1E1B3A;border-collapse:collapse">
+<tr style="background:#F3E6C8"><th style="width:28%">Metric</th><th style="width:17%">Baseline</th><th style="width:55%">Expected change (A/B, segment)</th></tr>
+<tr><td>Active days per week</td><td>1.39</td><td>Up: +15–20% in 4 weeks (assumption)</td></tr>
+<tr><td>Time spent</td><td>—</td><td>Same or shorter sessions (3–6 min) on more days; Streams share down</td></tr>
+<tr><td>Repeat use</td><td>—</td><td>More returns for the 3-day check; share of lesson cards reaching piece 4</td></tr>
+<tr><td>W1 retention, levels 0–1</td><td>target &gt;20%</td><td>Up, towards the target</td></tr>
+<tr><td>AI Tutor retention</td><td>~30%</td><td>Up in Q2, once Pandy practises album words</td></tr>
+<tr><td>Learning</td><td>—</td><td>North Star up; next-lesson accuracy higher on practised competencies</td></tr>
+</table>
+<div style="display:flex;flex-direction:column;gap:6px;background:#1E1B3A;border-radius:16px;padding:16px 22px">
+<p style="font-size:26px;font-weight:800;color:#F6D365">Parent guardrail: useful-time share</p>
+<p style="font-size:24px;line-height:1.3;color:#E9E7F3">≥ 70% of Kids Area minutes go to current-unit tasks at the right difficulty. If active days rise while this falls, kids came for the album, not the learning.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:16px 22px">
+<p style="font-size:26px;font-weight:800">MVP</p>
+<p style="font-size:24px;line-height:1.3">Units 5–6 of Level 1; cards from the last lesson; pieces 1–4 via three existing games; the 3-day check. Teacher’s piece and parent view: Q2.</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<p style="font-size:26px;font-weight:800">Biggest assumption</p>
+<p style="font-size:24px;line-height:1.3">“Next piece in 3 days” brings a 7–9-year-old back, rather than disappointing them.</p>
+<div style="display:flex;gap:8px;align-items:center">
+<p style="flex:1;font-size:24px;line-height:1.2;background:#F6D365;border-radius:10px;padding:8px 10px"><b>Playtest</b><br>6–8 kids, 1–2 days</p>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:28px;height:16px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#B5651D"/></svg>
+<p style="flex:1;font-size:24px;line-height:1.2;background:#F6D365;border-radius:10px;padding:8px 10px"><b>Painted door</b><br>in daily quest, 1 week</p>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:28px;height:16px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#B5651D"/></svg>
+<p style="flex:1;font-size:24px;line-height:1.2;background:#F6D365;border-radius:10px;padding:8px 10px"><b>A/B, 4 weeks</b><br>+ long-term holdout</p>
+</div>
+<p style="font-size:24px;line-height:1.3;color:#4A4766">Stop if day-3 return isn’t better after 2 weeks.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:14px 20px;border-left:8px solid #5B47D6">
+<p style="font-size:24px;line-height:1.3"><b>Reads from the engine:</b> the last lesson’s unit and competencies (exists today), each word’s step and due date; the teacher’s rating from Q2.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:14px 20px;border-left:8px solid #5B47D6">
+<p style="font-size:24px;line-height:1.3"><b>Sends back:</b> every attempt, hint and time with its competency ID, 3-day checks, Pandy speech from Q2. This feeds the teacher card and the parent page.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:6px;background:#FFFFFF;border-radius:16px;padding:14px 20px;border-left:8px solid #9A97AE">
+<p style="font-size:24px;line-height:1.3"><b>If the engine isn’t ready:</b> cards follow the child’s programme position; steps come from Kids Area’s own logs. Only the teacher card and last piece wait.</p>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:96px;bottom:44px;width:1728px;font-size:24px;color:#6E6A88">Baselines from the task. Expected changes are hypotheses to test, not forecasts. · 7</p>
+</section>
+<section id="prototype" style="background:#FFF8EA;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:56px 96px 100px;display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-size:24px;color:#B5651D;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 2 · Prototype guide</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">Try it in five minutes</h2>
+</div>
+<p style="font-size:26px;line-height:1.3"><a target="_blank" rel="noopener" href="https://sergeyhakobyan1992.github.io/novakid-my-album-prototype/" style="color:#B5651D;font-weight:800">sergeyhakobyan1992.github.io/novakid-my-album-prototype</a> · laptop or tablet, landscape, sound on. The bottom bar switches between the child, teacher, parent and engine views, jumps 3 days ahead and resets.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:18px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="01-popup.jpg" alt="Popup after the lesson with six new Food words" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>1</b> After the lesson: Ms. Anna added 6 Food words. Press OPEN.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="03-album-toys.jpg" alt="Album page with gold and half-built cards" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>2</b> A page per unit. Gold = all 5 pieces. Tap a card to hear it.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="04-boxbattle.jpg" alt="Box Battle game with food and family chests" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>3</b> PLAY: the engine picks the game, here Box Battle.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="05-summary.jpg" alt="Session summary with new puzzle pieces and stars" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>4</b> New pieces; stars only for progress.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="06-dusty.jpg" alt="Dusty grey cards asking for a refresh" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>5</b> “3 days later”: old cards got dusty and ask for a refresh.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="07-quiz.jpg" alt="Quiz Corner asking which word matches the robot" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>6</b> Quiz Corner checks memory: first try, no hint.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="08-teacher.jpg" alt="Teacher view before the next lesson" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>7</b> Teacher: which words to ask for the last piece.</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<img src="09-parent.jpg" alt="Parent view with progress through the programme and words to practise" style="width:417px;height:235px;object-fit:cover;border-radius:12px">
+<p style="font-size:24px;line-height:1.25"><b>8</b> Parent: progress against the programme, words to practise.</p>
+</div>
+</div>
+<p style="position:absolute;left:96px;bottom:40px;width:1728px;font-size:24px;color:#6E6A88">Games and art are Kids Area’s own, rebuilt for the prototype; word pictures are generated. Fits 7+: voice-first, almost no reading, 3–5 minute sessions. · 8</p>
+</section>
+<section id="content" style="background:#F2F7F1;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:56px 96px 100px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-size:24px;color:#2F7A43;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 3 · Content production and testing</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">One unit spec feeds four products; content is judged by recall</h2>
+</div>
+<div style="display:flex;gap:28px;align-items:stretch">
+<div style="width:1010px;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:28px;font-weight:800">3.1 One unit, many products: Level 1, Unit 6 Food</p>
+<div style="display:flex;gap:12px;align-items:center">
+<div style="width:390px;display:flex;flex-direction:column;gap:4px;background:#1E1B3A;border-radius:16px;padding:14px 18px">
+<p style="font-size:24px;font-weight:800;color:#F6D365">Shared: the unit spec</p>
+<ul style="font-size:24px;line-height:1.22;color:#E9E7F3">
+<li>Competency IDs</li>
+<li>11 food words; <i>I like / I don’t like / Do you like…?</i>; sounds l, r</li>
+<li>Typical errors (“I no like”) → distractors, hints</li>
+<li>Evidence rule per step</li>
+<li>Parent “can do” line</li>
+<li>One picture and audio library</li>
+<li>Safety: no diets, weight, “bad food”</li>
+</ul>
+</div>
+<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="flex:none;width:36px;height:22px;"><polygon points="0,30 60,30 60,0 100,50 60,100 60,70 0,70" fill="#2F7A43"/></svg>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:8px 14px;border-left:8px solid #DCD6FF">
+<p style="font-size:24px;line-height:1.22"><b>1-1:</b> four lessons teach the words; a warm-up re-checks them; the teacher rates “I don’t like…” in one tap</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:8px 14px;border-left:8px solid #CDEBD9">
+<p style="font-size:24px;line-height:1.22"><b>Group:</b> kids ask each other “Do you like…?” using the food words; one card pack per level band</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:8px 14px;border-left:8px solid #FFE7B3">
+<p style="font-size:24px;line-height:1.22"><b>Kids Area:</b> words and pictures become album cards; “I no like” becomes a wrong option in games</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:8px 14px;border-left:8px solid #D3E8F7">
+<p style="font-size:24px;line-height:1.22"><b>AI Tutor:</b> “Picnic with Pandy” asks about 3 foods, listens for <i>I like / don’t like</i>, avoids diets</p>
+</div>
+</div>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:8px">
+<p style="font-size:28px;font-weight:800">3.3 How we know content works</p>
+<table style="font-size:24px;color:#1E1B3A;border-collapse:collapse">
+<tr style="background:#DDEBDA"><th style="width:28%">Axis</th><th style="width:72%">Works when</th></tr>
+<tr><td>Engagement</td><td>Completion, replays ≥ Kids Area average; no drop-off cliff</td></tr>
+<tr><td>Difficulty</td><td>Score 0.75–0.95; every distractor gets picked</td></tr>
+<tr><td>Learning</td><td>3-day recall, next-lesson rating: practised beats unpractised</td></tr>
+<tr><td>Safety</td><td>Zero Pandy incidents in zero-tolerance categories</td></tr>
+</table>
+<p style="font-size:24px;line-height:1.25;color:#4A4766"><b style="color:#1E1B3A">Small segments:</b> randomise within age (7–9, 10–12) × level (0, 1); variant A on some competencies, B on others in the same child. Primary: 3-day recall; 1–2 weeks.</p>
+</div>
+</div>
+<p style="font-size:28px;font-weight:800">3.2 The pipeline</p>
+<div style="display:flex;gap:6px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">1 Unit spec</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">A methodologist, once per unit</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">2 AI drafts</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">Items, distractors, Pandy script, group cards</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">3 Pictures, audio</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">Library first; AI art in house style; voice</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">4 Auto checks</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">Level words, 1 right answer, grammar, assets</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FBE3DC;border-radius:12px;padding:10px 12px;border:2px solid #9A2E1C">
+<p style="font-size:24px;font-weight:800;line-height:1.15">5 Review by risk</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">10% of approved templates; 100% of new ones</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">6 Safety QA</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">Classifier + human; child-like attacks on Pandy</p>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:2px;background:#FFFFFF;border-radius:12px;padding:10px 12px">
+<p style="font-size:24px;font-weight:800;line-height:1.15">7 Soft launch</p>
+<p style="font-size:24px;line-height:1.2;color:#4A4766">5% of kids; difficulty from real answers</p>
+</div>
+</div>
+<p style="font-size:24px;line-height:1.3;background:#1E1B3A;color:#E9E7F3;border-radius:14px;padding:12px 18px"><b style="color:#F6D365">Bottleneck: step 5,</b> four methodologists. More throughput, same quality: approve templates, not items · catch mechanical errors automatically · let soft-launch data flag weak items.</p>
+<p style="position:absolute;left:96px;bottom:40px;width:1728px;font-size:24px;color:#6E6A88">Unit 6 Food, its lessons and competencies are taken from the real Level 1 programme. · 9</p>
+</section>
+<section id="scenarios" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:56px 96px 96px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Part 4 · Judgment scenarios · each under 150 words</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">Weighing competing goals</h2>
+</div>
+<div style="display:flex;gap:28px;align-items:stretch">
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFFFF;border-radius:16px;padding:18px 22px">
+<p style="font-size:28px;font-weight:800;color:#5B47D6">A. Engagement without learning</p>
+<div data-text style="font-size:24px;line-height:1.25">
+<p>I keep the habit, because it is the hard part, but I treat active days as a condition for learning, not the goal.</p>
+<p><b>Week 1, diagnose.</b> How much of the lift comes from children replaying level 0 games they have already passed? What is the difficulty score of those games (above 0.95 means they test nothing)? Can a noisy teacher rating move in six weeks at all?</p>
+<p><b>Week 2, a fast A/B.</b> Stars only for new progress, so replaying mastered content earns nothing, and daily quests point to the current unit. Primary metric: 3-day recall accuracy; guardrail: active days.</p>
+<p><b>To leadership:</b> “We built the habit, which is the hard part. Right now it points at stars, but parents pay for progress, and farming will cost their trust. In two weeks we change the reward rules. Success: active days drop no more than 10% while the learning metric rises.”</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFFFF;border-radius:16px;padding:18px 22px">
+<p style="font-size:28px;font-weight:800;color:#5B47D6">B. Foundation versus visible wins</p>
+<div data-text style="font-size:24px;line-height:1.25">
+<p>It is a false choice if the engine is built in thin vertical slices rather than layers.</p>
+<p>This quarter’s visible win uses data that already exists: the last lesson’s unit feeds My Album in Kids Area and a “can do” line for parents. The renewal campaign gets a real feature, and it is also engine v0: competency IDs, an attempt log, the first loop. The two engineers on the foundation are protected from extra feature requests.</p>
+<p><b>To the commercial team:</b> dated, concrete material for the campaign (“your child can now say…”, practice from their own lessons), and an honest list of what we won’t promise this quarter, such as full personalisation.</p>
+<p><b>To engineering:</b> the win is built on the future engine’s schema, not thrown away, and every stage ships something users see, so there are no silent quarters.</p>
+<p>Both groups see one plan and a monthly demo.</p>
+</div>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px;background:#FFFFFF;border-radius:16px;padding:18px 22px">
+<p style="font-size:28px;font-weight:800;color:#5B47D6">C. Data at the cost of teacher time</p>
+<div data-text style="font-size:24px;line-height:1.25">
+<p>Principle: ask teachers only for what we can’t get any other way.</p>
+<ol>
+<li><b>Automatic signals first:</b> in-lesson interactive results and a recall warm-up at the start of each lesson already cover recognition and memory.</li>
+<li><b>One tap, not a form:</b> the teacher rates 1–3 lesson competencies, pre-filled from the lesson plan, as can’t / with help / alone, on the end-of-lesson screen they already use. Under 30 seconds.</li>
+<li><b>Give time back:</b> a pre-lesson card on each student saves 5–7 minutes of re-checking, so teachers gain more than they give.</li>
+<li><b>A pilot with about 50 volunteers,</b> run with Teacher Operations: we measure input time, completion and agreement between raters on reference recordings. It becomes mandatory only after the benefit is proven.</li>
+<li><b>Later:</b> speech recognition on lesson recordings suggests the rating, and the teacher only confirms it.</li>
+</ol>
+</div>
+</div>
+</div>
+<p style="position:absolute;left:96px;bottom:36px;width:1728px;font-size:24px;color:#6E6A88">Word counts: A 148 · B 147 · C 138 · 10</p>
+</section>
+<section id="sources" style="background:#F7F5EF;color:#1E1B3A;font-family:'Nunito Sans', Arial, sans-serif;padding:56px 96px 96px;display:flex;flex-direction:column;gap:18px">
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-size:24px;color:#5B47D6;font-weight:700;text-transform:uppercase;letter-spacing:1px">Appendix · Sources</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:52px;font-weight:600;line-height:1.1">What the decisions rest on</h2>
+</div>
+<div style="display:flex;gap:40px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:28px;font-weight:800;color:#5B47D6">Measuring knowledge (Part 1)</p>
+<ul style="font-size:24px;line-height:1.28">
+<li><a target="_blank" rel="noopener" href="https://books.yandex.ru/books/p1Veeihh" style="color:#5B47D6"><b>Abbakumov, D. (2025).</b> <i>Psychometrics in EdTech: first steps.</i></a> MIF. → signals are observed answers; log every attempt; one score per answer; difficulty zones (0.75–0.95).</li>
+<li><a target="_blank" rel="noopener" href="https://myweb.fsu.edu/vshute/pdf/shute%20pres_h.pdf" style="color:#5B47D6"><b>Shute, V. (2011).</b> Stealth assessment in computer-based games.</a> → which game behaviour is evidence of which skill.</li>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.1551-6709.2012.01245.x" style="color:#5B47D6"><b>Koedinger, K., Corbett, A., Perfetti, C. (2012).</b> The Knowledge-Learning-Instruction framework.</a> <i>Cognitive Science.</i> → task → competency map.</li>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.0023-8333.2004.00260.x" style="color:#5B47D6"><b>Laufer, B., Goldstein, Z. (2004).</b> Testing vocabulary knowledge.</a> <i>Language Learning.</i> → recognition comes before production.</li>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1007/BF01099821" style="color:#5B47D6"><b>Corbett &amp; Anderson (1995)</b> knowledge tracing</a>; <a target="_blank" rel="noopener" href="https://blog.duolingo.com/learning-how-to-help-you-learn-introducing-birdbrain" style="color:#5B47D6"><b>Duolingo Birdbrain.</b></a> → the models we postpone until data can calibrate them.</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:10px">
+<p style="font-size:28px;font-weight:800;color:#B5651D">Memory and motivation (Part 2)</p>
+<ul style="font-size:24px;line-height:1.28">
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1037/0033-2909.132.3.354" style="color:#B5651D"><b>Cepeda, N. et al. (2006).</b> Distributed practice in verbal recall tasks.</a> <i>Psychological Bulletin.</i> <a target="_blank" rel="noopener" href="https://doi.org/10.1111/j.1467-9280.2006.01693.x" style="color:#B5651D"><b>Roediger &amp; Karpicke (2006).</b> Test-enhanced learning.</a> → 3-day piece, Quiz Corner.</li>
+<li><a target="_blank" rel="noopener" href="https://aclanthology.org/P16-1174/" style="color:#B5651D"><b>Settles, B., Meeder, B. (2016).</b> A trainable spaced repetition model for language learning.</a> ACL. → cards fade after 7, 14, 28 days.</li>
+<li><a target="_blank" rel="noopener" href="https://shura.shu.ac.uk/3556/" style="color:#B5651D"><b>Habgood, J., Ainsworth, S. (2011).</b> Intrinsic integration in educational games.</a> <i>J. of the Learning Sciences.</i> → the card is the content.</li>
+<li><a target="_blank" rel="noopener" href="https://doi.org/10.1037/0003-066X.55.1.68" style="color:#B5651D"><b>Ryan &amp; Deci (2000)</b> self-determination theory</a>; <a target="_blank" rel="noopener" href="https://doi.org/10.1007/s11423-020-09807-z" style="color:#B5651D"><b>Huang et al. (2020)</b> gamification meta-analysis</a>, g ≈ 0.46. → competence, autonomy, relatedness.</li>
+<li><a target="_blank" rel="noopener" href="https://blog.duolingo.com/which-generation-most-serious-about-streak/" style="color:#B5651D"><b>Duolingo (2023)</b>, who keeps long streaks</a>; <a target="_blank" rel="noopener" href="https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/childrens-information/childrens-code-guidance-and-resources/" style="color:#B5651D"><b>UK ICO</b> Children’s Code guidance</a>. → no streaks, no random packs.</li>
+<li><a target="_blank" rel="noopener" href="https://www.cambridgeenglish.org/Images/747227-parent-take-a-look-sheet-primary.pdf" style="color:#B5651D"><b>Cambridge English</b> “can do” statements for parents.</a> → the parent line.</li>
+</ul>
+</div>
+</div>
+<p style="position:absolute;left:96px;bottom:36px;width:1728px;font-size:24px;color:#6E6A88">Novakid facts (programme, competencies, Kids Area economy) come from the child and parent accounts, seen in November 2026. · 11</p>
+</section>
+</main><nav id="nav" aria-label="Slides"><button id="p" aria-label="Previous slide">‹</button><span id="c" aria-live="polite"></span><button id="n" aria-label="Next slide">›</button></nav><script>
+const S=[...document.querySelectorAll('section')],st=document.getElementById('stage'),c=document.getElementById('c');let i=0;
+function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);st.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`}
+function go(n,push=true){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,j)=>s.classList.toggle('on',j===i));c.textContent=(i+1)+' / '+S.length;if(push)history.replaceState(null,'','#'+(i+1))}
+addEventListener('resize',fit);
+addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(i+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(i-1)}if(e.key==='Home')go(0);if(e.key==='End')go(S.length-1)});
+addEventListener('hashchange',()=>go((parseInt(location.hash.slice(1))||1)-1,false));
+document.getElementById('p').onclick=()=>go(i-1);document.getElementById('n').onclick=()=>go(i+1);
+let x0=null;addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});addEventListener('touchend',e=>{if(x0===null)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>50)go(i+(d<0?1:-1));x0=null});
+fit();go((parseInt(location.hash.slice(1))||1)-1,false);
+</script></body></html>
