@@ -580,7 +580,7 @@
   }
   const ansHTML = (it) => Array.from({ length: 5 }, (_, k) => { const w = RACE ? RACE.wrong[k] : null; return w ? `<b class="bad">${w}</b>` : it.solved && k === (RACE ? RACE.wrong.length : 0) ? `<b class="ok">${letters(it.id)[it.miss]}</b>` : "<b>-</b>"; }).join("");
   // Snake — as in Kids Area: the snake glides after the pointer / finger; eat the egg with the first letter (30 s per word)
-  const SB = { w: 593, h: 284 }, SPEED = 82, TURN = 5.2, GAP = 13, HEAD = 74, WORD_SEC = 30;
+  const SB = { w: 585, h: 276 }, SPEED = 82, TURN = 5.2, GAP = 13, HEAD = 74, WORD_SEC = 30;
   let SN = null, snRAF = null;
   function snReset() {
     SN = { x: 210, y: 120, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };

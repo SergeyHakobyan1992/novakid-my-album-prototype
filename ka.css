@@ -748,3 +748,7 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .sn-board { border: 0; }
 .sn-board::before { left: 0; top: 0; width: 2px; height: 100vh; }
 .sn-board::after { left: 0; top: 0; width: 100vw; }
+
+/* snake: the field is a closed white frame that always fits on screen */
+.sn-board { left: 23px; top: 36px; width: 585px; height: 276px; box-sizing: border-box; border: 2px solid #fff; border-radius: 6px; }
+.sn-board::before, .sn-board::after { content: none; }
