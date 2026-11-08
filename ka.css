@@ -716,3 +716,31 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .pw .av .in, .sn-av .av .in { top: 7%; left: 7%; width: 86%; height: 86%; box-shadow: 0 0 0 1.5px #0B4F63; }
 .pw .av .in .ch, .sn-av .av .in .ch { width: 135%; left: -30%; top: -6%; }
 .pw.enemy .av .in .ch { width: 100%; left: 0; top: 4%; }
+/* pictures fill their tiles */
+.fp { position: absolute; display: flex; align-items: center; justify-content: center; overflow: hidden; background-size: 4000% 4000%; background-position: 2% 2%; background-repeat: no-repeat; }
+.fp img { display: block; height: 100%; width: auto; }
+.ka-stage .mm-c { width: 78px; height: 62px; }
+.mm-c .fp { inset: 3px 3px 5px; border-radius: 4px; }
+.mm-c .w { font-size: 12px; }
+.ka-stage .bx-card { width: 118px; height: 91px; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.bx-card .fp { inset: 5px; border-radius: 8px; }
+.ka-stage .gi.card-lis { top: auto; bottom: 8px; right: 8px; }
+.bx-slot .emo .wimg { width: 42px; height: 42px; border-radius: 3px; }
+.qz-q .fp { inset: 9px 10px 11px; border-radius: 10px; }
+.bb-mis .fp { inset: 5px 5px 7px; border-radius: 3px; }
+.rc-p .pic { overflow: hidden; }
+.rc-p .pic .wimg { display: block; width: 52px; height: 52px; border-radius: 0; }
+/* snake: the field runs to the window edges, nothing is clipped */
+.ka-root.bg-g-snake { background: linear-gradient(rgba(37,35,65,.45), rgba(37,35,65,.45)), url("https://school.novakidschool.com/games/snake/assets/background.ece45b59.svg") 0 0 / calc(420px * var(--z, 1)) auto repeat, #252341; }
+.ka-root.bg-g-snake .ka-stage { overflow: visible; }
+.sn-board { background: none; overflow: visible; }
+.sn-board::before { inset: auto; left: -2px; top: 100%; width: 2px; height: 100vh; background: #fff; }
+.sn-board::after { content: ""; position: absolute; left: 100%; top: -2px; width: 100vw; height: 2px; background: #fff; pointer-events: none; }
+/* quiz question panel: the frame SVG keeps its own ratio and came out narrower than the panel, so it is drawn in CSS */
+.qz-q .t { display: none; }
+.qz-q { box-sizing: border-box; background: #FFF6DF; border: 5px solid #F8C94E; border-radius: 16px; box-shadow: inset 0 0 0 2px #FFE7A3, 0 2px 0 rgba(13,59,78,.22); }
+.qz-q .fp { inset: 3px; border-radius: 9px; }
+.sp-card .emo { display: block; line-height: 0; }
+.sp-card .wimg { width: 150px; height: 150px; border-radius: 10px; mix-blend-mode: normal; }
+.sp-card:has(.sp-w) .wimg { width: 124px; height: 124px; }
+.sp-card .sp-w { line-height: 1.2; }

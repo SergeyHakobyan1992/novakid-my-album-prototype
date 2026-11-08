@@ -123,6 +123,8 @@
   // custom UI icons (Gemini sheets cut into round badges) instead of emoji
   const ICO = (n, cls = "") => `<img class="ico ${cls}" src="assets/img/ui/${n}.jpg" alt="">`;
   const TICO = (u, cls = "") => `<img class="ico tico ${cls}" src="assets/img/ui/t-${u.id || u}.jpg" alt="">`;
+  // picture that fills a tile: the backdrop is the image's own corner colour, magnified, so nothing is cropped
+  const fpic = (id, cls = "") => { const w = W(id); return w.img ? `<span class="fp ${cls}" style="background-image:url(${w.img})"><img src="${w.img}" alt=""></span>` : pic(id); };
   const pic = (id) => { const w = W(id); return `<span class="emo">${w.img ? `<img class="wimg" src="${w.img}" alt="">` : w.emo}</span>`; };
   let toastT;
   function toast(m) { let t = $(".ka-toast"); if (!t) { t = document.createElement("div"); t.className = "ka-toast"; t.setAttribute("role", "status"); document.body.appendChild(t); } t.textContent = m; clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2600); }
@@ -184,7 +186,7 @@
   const recommended = () => (S.engine ? queue().slice(0, 3).map((q) => q.id) : []);
 
   // ---------- scaling (same as Kids Area: 616×320 canvas + CSS zoom) ----------
-  function fit() { const Wd = window.innerWidth, H = window.innerHeight - 52; $("#stage").style.setProperty("--zoom", Math.max(0.4, Math.min(Wd / 616, H / 320)).toFixed(4)); }
+  function fit() { const Wd = window.innerWidth, H = window.innerHeight - 52; const z = Math.max(0.4, Math.min(Wd / 616, H / 320)).toFixed(4); $("#stage").style.setProperty("--zoom", z); $("#kaRoot").style.setProperty("--z", z); }
   window.addEventListener("resize", fit);
 
   // ---------- shared pieces ----------
@@ -601,7 +603,7 @@
     if (SN.tx !== null && !it.solved && !it.failed && Math.hypot(SN.tx - SN.x, SN.ty - SN.y) > 6) {
       let d = Math.atan2(SN.ty - SN.y, SN.tx - SN.x) - SN.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
       SN.a += Math.max(-TURN * dt, Math.min(TURN * dt, d));
-      SN.x = Math.max(14, Math.min(SB.w - 14, SN.x + Math.cos(SN.a) * SPEED * dt)); SN.y = Math.max(14, Math.min(SB.h - 14, SN.y + Math.sin(SN.a) * SPEED * dt));
+      SN.x = Math.max(32, Math.min(SB.w - 32, SN.x + Math.cos(SN.a) * SPEED * dt)); SN.y = Math.max(32, Math.min(SB.h - 32, SN.y + Math.sin(SN.a) * SPEED * dt));
       SN.trail.unshift({ x: SN.x, y: SN.y }); if (SN.trail.length > 500) SN.trail.length = 500;
       for (const e of SN.eggs) {
         if (e.gone || Math.hypot(e.x - SN.x, e.y - SN.y) > 22) continue;
@@ -693,20 +695,20 @@
         <div class="qz-rib"><img src="${GA.blueShort}" alt="">${prim(`${ses.i + 1}/${ses.items.length}`, 16)}</div><div class="qz-line"></div>
         ${ico(GA.back, "qexit", `data-act="quit"`, "Leave the game")}
         ${widget("me", ses)}${widget("enemy", ses)}
-        <div class="qz-q"><img class="t" src="${GA.qTile}" alt="">${pic(it.id)}</div>
+        <div class="qz-q"><img class="t" src="${GA.qTile}" alt="">${fpic(it.id)}</div>
         ${it.opts.map((o, k) => `<button class="qz-o" style="left:${[105, 242, 380][k]}px" data-quiz="${esc(o)}" ${it.pick ? "disabled" : ""}><img class="t" src="${tile(o)}" alt=""><span>${esc(W(o).word)}</span></button>`).join("")}`;
     }
     if (g === "memo") {
-      const cols = 4, rows = Math.ceil(ses.cards.length / cols), tw = 64, th = 50, gap = 6, x0 = (616 - (cols * tw + (cols - 1) * gap)) / 2, y0 = 120 + (3 - rows) * 28;
+      const cols = 4, rows = Math.ceil(ses.cards.length / cols), tw = 78, th = 62, gap = 6, x0 = (616 - (cols * tw + (cols - 1) * gap)) / 2, y0 = 112 + (3 - rows) * 34;
       return `<div class="gscene sky"></div>
         <div class="mm-rib"><img src="${GA.memoTitle}" alt="">${prim("MEMO MIX", 14)}</div>
         ${quitBtn()}${widget("me", ses, ses.turn === "me" && !ses.preview)}${widget("enemy", ses, ses.turn === "bot")}
         ${ses.cards.map((c, k) => `<button class="mm-c ${c.matched ? "ok" : ""}" style="left:${x0 + (k % cols) * (tw + gap)}px;top:${y0 + Math.floor(k / cols) * (th + gap)}px" data-memo="${k}">
-          <img class="t" src="${GA.memoCard}" alt="">${c.open || c.matched ? (c.t === "pic" ? `${pic(c.id)}` : `<span class="w">${esc(W(c.id).word)}</span>`) : ""}</button>`).join("")}
+          <img class="t" src="${GA.memoCard}" alt="">${c.open || c.matched ? (c.t === "pic" ? fpic(c.id) : `<span class="w">${esc(W(c.id).word)}</span>`) : ""}</button>`).join("")}
         ${ses.preview ? `<div class="mm-hint">${prim("REMEMBER!", 13)}</div>` : ""}`;
     }
     if (g === "boxes") {
-      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt="">${pic(id)}${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
+      const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt="">${fpic(id)}${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
       const slots = ses.deck.map((_, k) => `<div class="bx-slot" style="left:${362 + (k % 5) * 49}px;top:${221 + Math.floor(k / 5) * 52}px"><img src="${GA.boxSlot}" alt=""></div>`).join("");
       const name = (u) => UNITS.find((x) => x.id === u).name.toLowerCase();
       return `<div class="gscene sky"></div>
@@ -721,7 +723,7 @@
       const it = cur(), need = letters(it.id)[it.pos];
       return `<div class="gscene bub"></div>
         ${helpBtn()}${timer(ses)}<button class="bb-hint" data-act="hint" ${it.hint || it.solved ? "disabled" : ""}><img src="${GA.bubHintBtn}" alt=""><span>HINT</span></button>
-        <div class="bb-mis"><img class="t" src="${GA.bubMission}" alt="">${pic(it.id)}${listenBtn(it.id, "mis-lis")}</div>
+        <div class="bb-mis"><img class="t" src="${GA.bubMission}" alt="">${fpic(it.id)}${listenBtn(it.id, "mis-lis")}</div>
         <div class="bb-en"><img class="t" src="${GA.bubEnemy}" alt=""><div class="mini">${Array.from({ length: 9 }, () => `<img src="${GA.bubMini}" alt="">`).join("")}</div>
           <div class="en-name"><img src="${GA.trophy}" alt=""><b id="gbot">${ses.bot}</b><span>${ENEMY}</span><img class="ea" src="${GA.enemyAv}" alt=""></div></div>
         ${widget("me", ses)}${quitBtn()}
