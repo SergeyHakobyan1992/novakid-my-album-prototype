@@ -305,24 +305,33 @@
     return `<div class="ka-teacher"><div><img class="photo" src="${IMG}teacher-anna.jpg" alt=""></div></div>
           <div class="ka-info"><span class="t-mikado">Next class:</span><span class="t-mikado" style="color:#6D3DE4">${dayName(S.day < 4 ? 4 : S.day + 2)}, 05:00 pm</span></div>`;
   }
-  let tellId = null;
+  let tellText = "";
   const TELL_TEXT = (id) => `Tell ${TEACHER} the word ${W(id).word} in your next class to get the last puzzle piece!`;
   // The popup closes when the voice ends; the timer covers browsers that never report the end of speech
   let tellTok = 0, tellT = null;
   function closeTell() { tellTok++; clearTimeout(tellT); const p = $("#tellPop"); if (p) { p.remove(); try { speechSynthesis.cancel(); } catch (e) {} } }
   function sayTell() {
-    const tok = ++tellTok, text = TELL_TEXT(tellId), done = () => { if (tok === tellTok) closeTell(); };
+    const tok = ++tellTok, text = tellText, done = () => { if (tok === tellTok) closeTell(); };
     clearTimeout(tellT); tellT = setTimeout(done, 3000 + text.length * 110);
     say(text, false, () => setTimeout(done, 600));
   }
-  function showTell(id) {
-    tellId = id;
-    $("#stage").insertAdjacentHTML("beforeend", `<div class="ka-pop-wrap" id="tellPop"><div class="ka-board tell-board">
+  function infoPop(id, text, cls, msg, side) {
+    tellText = text;
+    $("#stage").insertAdjacentHTML("beforeend", `<div class="ka-pop-wrap" id="tellPop"><div class="ka-board tell-board ${cls}">
       <button class="ka-close" data-act="tellclose" aria-label="close">✕</button>
       <div class="in"><div class="tell-card">${cardHTML(id, { static: true })}</div>
-        <div class="tell-side"><div class="msg">Say “${esc(W(id).word)}” to ${esc(TEACHER)} and get the last piece!</div><div class="ka-lesson">${nextClass()}</div></div>
+        <div class="tell-side"><div class="msg">${msg}</div>${side}</div>
         <button class="pop-spk" data-act="tellsay" aria-label="Listen">${ICO("speaker")}</button></div>
       <button class="ka-btn" data-act="tellclose"><div class="bi"><span>OK</span></div></button></div></div>`);
+    sayTell();
+  }
+  const showTell = (id) => infoPop(id, TELL_TEXT(id), "", `Say “${esc(W(id).word)}” to ${esc(TEACHER)} and get the last piece!`, `<div class="ka-lesson">${nextClass()}</div>`);
+  // Waiting for the next piece: one moon per sleep between today and the day the piece is ready
+  function showWait(id, left) {
+    const day = dayName(S.day + left), when = left === 1 ? "tomorrow" : `on ${day}`;
+    let strip = `<div class="wd today"><small>Today</small><b>${ICO("wait")}</b></div>`;
+    for (let k = 1; k <= left; k++) strip += `<i class="wm">🌙</i>` + (k < left ? `<div class="wd"><small>${dayName(S.day + k).slice(0, 3)}</small><b></b></div>` : `<div class="wd goal"><small>${left === 1 ? "Tomorrow" : day.slice(0, 3)}</small><b>🧩</b></div>`);
+    infoPop(id, `Come back ${when} to get the next puzzle piece for ${W(id).word}!`, "wait", `Come back ${when}!<small>Your next puzzle piece will be ready.</small>`, `<div class="wstrip">${strip}</div>`);
   }
 
   function popBoard(inner, act, sayAct, btn, gold) {
@@ -809,8 +818,8 @@
   function onCard(id) {
     const st = nextStep(id), w = W(id).word;
     if (st.game) { if (st.k === "review") say(`Is your ${w} card dusty? Let's make it shiny again!`); startGame(st.game, id, "album"); return; }
-    if (st.k === "wait") say(`Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
-    if (st.k === "teacher") { S.tellAsked[id] = S.day; save(); showTell(id); sayTell(); }
+    if (st.k === "wait") showWait(id, st.left);
+    if (st.k === "teacher") { S.tellAsked[id] = S.day; save(); showTell(id); }
   }
 
   // ---------- adult views ----------

@@ -761,3 +761,16 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .tell-side .msg { font-size: 15px; }
 .tell-side .ka-lesson { filter: drop-shadow(0 1px 1px rgba(0,0,0,.2)); }
 .tell-board .ka-close { z-index: 2; }
+
+/* waiting card: when the next piece is ready, as a strip of days with a moon per sleep */
+.tell-board.wait { width: 396px; }
+.tell-side .msg small { display: block; font-size: 11px; font-weight: 700; color: #3E5A63; margin-top: 2px; }
+.wstrip { display: flex; align-items: center; gap: 3px; }
+.wm { font-style: normal; font-size: 11px; line-height: 1; }
+.wd { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 44px; }
+.wd small { font: 700 10px "Open Sans", sans-serif; color: #1E1D3A; white-space: nowrap; }
+.wd b { box-sizing: border-box; width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid #C9BDEB; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.wd .ico { width: 18px; height: 18px; }
+.wd.today b { border-color: #6D3DE4; }
+.wd.goal b { background: #FFE27A; border-color: #E0A100; box-shadow: 0 2px 0 #B98500; }
+.wd.goal small { color: #6D3DE4; font-weight: 800; }
