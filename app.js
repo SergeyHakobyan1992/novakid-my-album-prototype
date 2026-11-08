@@ -133,11 +133,11 @@
   let voice = null;
   function pickVoice() { try { const vs = speechSynthesis.getVoices(); voice = vs.find((v) => /Samantha|Google US English|Karen|Daniel/.test(v.name)) || vs.find((v) => /^en(-|_)(US|GB)/i.test(v.lang)) || null; } catch (e) {} }
   if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
-  function say(text, queue = false) {
+  function say(text, queue = false, onEnd = null) {
     try {
       if (!("speechSynthesis" in window)) return;
       if (!queue) speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; u.rate = 0.9; if (voice) u.voice = voice;
+      const u = new SpeechSynthesisUtterance(text); u.lang = "en-US"; u.rate = 0.9; if (voice) u.voice = voice; if (onEnd) u.onend = onEnd;
       setTimeout(() => { try { speechSynthesis.resume(); speechSynthesis.speak(u); } catch (e) {} }, queue ? 90 : 60);
     } catch (e) {}
   }
@@ -307,6 +307,14 @@
   }
   let tellId = null;
   const TELL_TEXT = (id) => `Tell ${TEACHER} the word ${W(id).word} in your next class to get the last puzzle piece!`;
+  // The popup closes when the voice ends; the timer covers browsers that never report the end of speech
+  let tellTok = 0, tellT = null;
+  function closeTell() { tellTok++; clearTimeout(tellT); const p = $("#tellPop"); if (p) { p.remove(); try { speechSynthesis.cancel(); } catch (e) {} } }
+  function sayTell() {
+    const tok = ++tellTok, text = TELL_TEXT(tellId), done = () => { if (tok === tellTok) closeTell(); };
+    clearTimeout(tellT); tellT = setTimeout(done, 3000 + text.length * 110);
+    say(text, false, () => setTimeout(done, 600));
+  }
   function showTell(id) {
     tellId = id;
     $("#stage").insertAdjacentHTML("beforeend", `<div class="ka-pop-wrap" id="tellPop"><div class="ka-board tell-board">
@@ -802,7 +810,7 @@
     const st = nextStep(id), w = W(id).word;
     if (st.game) { if (st.k === "review") say(`Is your ${w} card dusty? Let's make it shiny again!`); startGame(st.game, id, "album"); return; }
     if (st.k === "wait") say(`Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
-    if (st.k === "teacher") { say(TELL_TEXT(id)); S.tellAsked[id] = S.day; save(); showTell(id); }
+    if (st.k === "teacher") { S.tellAsked[id] = S.day; save(); showTell(id); sayTell(); }
   }
 
   // ---------- adult views ----------
@@ -965,6 +973,7 @@
     if ((m === "U" || m === "D") && S.session && S.session.game === "racing") { ev.preventDefault(); raceShip(m === "U" ? -1 : 1); }
   });
   document.addEventListener("click", (ev) => {
+    if ($("#tellPop") && !ev.target.closest(".tell-board")) closeTell();
     const t = ev.target.closest("button"); if (!t) return;
     const d = t.dataset;
     if (t.closest("#stage")) sfx("click", 0.4);
@@ -997,8 +1006,8 @@
       S.lv[d.notyet] = 3; S.up[d.notyet] = S.day - RECALL; save(); render(); toast("Noted — the word goes back to Quiz Corner"); return;
     }
     switch (d.act) {
-      case "tellclose": { const p = $("#tellPop"); if (p) p.remove(); break; }
-      case "tellsay": say(TELL_TEXT(tellId)); break;
+      case "tellclose": closeTell(); break;
+      case "tellsay": sayTell(); break;
       case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); break;
       case "popsay": say(POP_TEXT()); break;
       case "crownok": S.crowns = []; sfx("close"); save(); render(); break;
