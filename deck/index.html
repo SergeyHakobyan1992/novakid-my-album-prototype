@@ -16,7 +16,8 @@ th,td{padding:.35em .6em;text-align:left;vertical-align:top;border:1px solid #d9
 th{font-weight:700}
 #nav{position:fixed;right:14px;top:10px;display:flex;flex-direction:row;gap:6px;align-items:center;font:600 14px Arial,sans-serif;color:#fff;background:rgba(20,18,42,.78);padding:6px 8px;border-radius:10px;z-index:5}
 #nav button{all:unset;cursor:pointer;padding:2px 10px;font-size:18px;line-height:1}
-#nav button:focus-visible{outline:2px solid #F6D365}
+#nav button:focus-visible,#dl:focus-visible{outline:2px solid #F6D365}
+#dl{color:#1E1B3A;background:#F6D365;border-radius:7px;padding:4px 10px;text-decoration:none;font-weight:700;margin-right:6px}
 @media print{
  @page{size:1920px 1080px;margin:0}
  html,body{height:auto;overflow:visible;background:none}
@@ -657,7 +658,7 @@ th{font-weight:700}
 </div>
 <p style="position:absolute;left:96px;bottom:36px;width:1728px;font-size:24px;color:#6E6A88">Novakid facts (programme, competencies, Kids Area economy) come from the child and parent accounts, seen in November 2026. · 11</p>
 </section>
-</main><nav id="nav" aria-label="Slides"><button id="p" aria-label="Previous slide">‹</button><span id="c" aria-live="polite"></span><button id="n" aria-label="Next slide">›</button></nav><script>
+</main><nav id="nav" aria-label="Slides"><a id="dl" href="Novakid-Student-Experience.pdf" download aria-label="Download PDF">Download PDF</a><button id="p" aria-label="Previous slide">‹</button><span id="c" aria-live="polite"></span><button id="n" aria-label="Next slide">›</button></nav><script>
 const S=[...document.querySelectorAll('section')],st=document.getElementById('stage'),c=document.getElementById('c');let i=0;
 function fit(){const k=Math.min(innerWidth/1920,innerHeight/1080);st.style.transform=`translate(${(innerWidth-1920*k)/2}px,${(innerHeight-1080*k)/2}px) scale(${k})`}
 function go(n,push=true){i=Math.max(0,Math.min(S.length-1,n));S.forEach((s,j)=>s.classList.toggle('on',j===i));c.textContent=(i+1)+' / '+S.length;if(push)history.replaceState(null,'','#'+(i+1))}
