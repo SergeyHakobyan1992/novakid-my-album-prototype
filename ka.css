@@ -731,7 +731,7 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .rc-p .pic { overflow: hidden; }
 .rc-p .pic .wimg { display: block; width: 52px; height: 52px; border-radius: 0; }
 /* snake: the field runs to the window edges, nothing is clipped */
-.ka-root.bg-g-snake { background: linear-gradient(rgba(37,35,65,.45), rgba(37,35,65,.45)), url("https://school.novakidschool.com/games/snake/assets/background.ece45b59.svg") 0 0 / calc(420px * var(--z, 1)) auto repeat, #252341; }
+.ka-root.bg-g-snake { background: linear-gradient(rgba(37,35,65,.45), rgba(37,35,65,.45)), url("https://school.novakidschool.com/games/snake/assets/background.ece45b59.svg") center / cover no-repeat, #252341; }
 .ka-root.bg-g-snake .ka-stage { overflow: visible; }
 .sn-board { background: none; overflow: visible; }
 .sn-board::before { inset: auto; left: -2px; top: 100%; width: 2px; height: 100vh; background: #fff; }

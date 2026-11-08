@@ -583,14 +583,14 @@
   const SB = { w: 593, h: 284 }, SPEED = 82, TURN = 5.2, GAP = 13, HEAD = 74, WORD_SEC = 30;
   let SN = null, snRAF = null;
   function snReset() {
-    SN = { x: 110, y: 104, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };
-    for (let k = 0; k < 120; k++) SN.trail.push({ x: 110 - k * 1.5, y: 104 });
+    SN = { x: 210, y: 120, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };
+    for (let k = 0; k < 120; k++) SN.trail.push({ x: 210 - k * 1.5, y: 120 });
   }
   function snEggs(it) {
     const need = letters(it.id)[0]; it.need = need;
     const spots = []; let guard = 0;
-    while (spots.length < 3 && guard++ < 500) { const q = { x: 70 + Math.random() * (SB.w - 120), y: 56 + Math.random() * (SB.h - 96) }; if (Math.hypot(q.x - SN.x, q.y - SN.y) > 90 && spots.every((o) => Math.hypot(q.x - o.x, q.y - o.y) > 80)) spots.push(q); }
-    SN.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, spots[k] || { x: 300 + k * 60, y: 60 + k * 40 }));
+    while (spots.length < 3 && guard++ < 500) { const q = { x: 90 + Math.random() * (SB.w - 140), y: 66 + Math.random() * (SB.h - 106) }; if (Math.hypot(q.x - SN.x, q.y - SN.y) > 90 && spots.every((o) => Math.hypot(q.x - o.x, q.y - o.y) > 80)) spots.push(q); }
+    SN.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, spots[k] || { x: 300 + k * 60, y: 70 + k * 40 }));
   }
   function snAim(ev) {
     const b = $("#snakeBoard"); if (!b || !SN) return; const r = b.getBoundingClientRect();
@@ -603,7 +603,7 @@
     if (SN.tx !== null && !it.solved && !it.failed && Math.hypot(SN.tx - SN.x, SN.ty - SN.y) > 6) {
       let d = Math.atan2(SN.ty - SN.y, SN.tx - SN.x) - SN.a; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
       SN.a += Math.max(-TURN * dt, Math.min(TURN * dt, d));
-      SN.x = Math.max(32, Math.min(SB.w - 32, SN.x + Math.cos(SN.a) * SPEED * dt)); SN.y = Math.max(32, Math.min(SB.h - 32, SN.y + Math.sin(SN.a) * SPEED * dt));
+      SN.x = Math.max(76, Math.min(SB.w - 32, SN.x + Math.cos(SN.a) * SPEED * dt)); SN.y = Math.max(62, Math.min(SB.h - 32, SN.y + Math.sin(SN.a) * SPEED * dt));
       SN.trail.unshift({ x: SN.x, y: SN.y }); if (SN.trail.length > 500) SN.trail.length = 500;
       for (const e of SN.eggs) {
         if (e.gone || Math.hypot(e.x - SN.x, e.y - SN.y) > 22) continue;
@@ -633,7 +633,7 @@
       el.style.display = ""; el.className = k === 0 ? "sh" : last ? "st" : "sb";
       el.style.width = el.style.height = sz + "px"; el.style.zIndex = 100 - k;
       if (k > 0 && !last) el.style.filter = `hue-rotate(${-Math.round((k / n) * 42)}deg) saturate(${1 + (k / n) * 0.5})`;
-      const back = last ? 12 : 0, cx = p.x - Math.cos(p.a) * back, cy = p.y - Math.sin(p.a) * back;
+      const back = last ? 3 : 0, cx = p.x - Math.cos(p.a) * back, cy = p.y - Math.sin(p.a) * back;
       el.style.transform = k === 0 ? `translate(${p.x - sz / 2}px, ${p.y - sz / 2}px) rotate(${SN.a - Math.PI / 2}rad)`
         : `translate(${cx - sz / 2}px, ${cy - sz / 2}px) rotate(${p.a + (last ? Math.PI / 2 : 0)}rad)`;
     });
