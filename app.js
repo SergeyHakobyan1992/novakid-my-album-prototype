@@ -580,7 +580,7 @@
   }
   const ansHTML = (it) => Array.from({ length: 5 }, (_, k) => { const w = RACE ? RACE.wrong[k] : null; return w ? `<b class="bad">${w}</b>` : it.solved && k === (RACE ? RACE.wrong.length : 0) ? `<b class="ok">${letters(it.id)[it.miss]}</b>` : "<b>-</b>"; }).join("");
   // Snake — as in Kids Area: the snake glides after the pointer / finger; eat the egg with the first letter (30 s per word)
-  const SB = { w: 593, h: 284 }, SPEED = 82, TURN = 5.2, GAP = 9.5, HEAD = 74, WORD_SEC = 30;
+  const SB = { w: 593, h: 284 }, SPEED = 82, TURN = 5.2, GAP = 13, HEAD = 74, WORD_SEC = 30;
   let SN = null, snRAF = null;
   function snReset() {
     SN = { x: 110, y: 104, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };
@@ -629,12 +629,13 @@
     SN.segEls.forEach((el, k) => {
       if (k >= pts.length) { el.style.display = "none"; return; }
       // sprite frames have wide transparent margins: body circle ≈ 37% of its frame, head ≈ 75%
-      const p = pts[k], last = k === pts.length - 1, n = pts.length, sz = k === 0 ? HEAD : last ? 66 : Math.max(52, 84 - k * 4);
+      const p = pts[k], last = k === pts.length - 1, n = pts.length, sz = k === 0 ? HEAD : last ? 124 : 84 - ((k - 1) / Math.max(1, n - 2)) * 34;
       el.style.display = ""; el.className = k === 0 ? "sh" : last ? "st" : "sb";
       el.style.width = el.style.height = sz + "px"; el.style.zIndex = 100 - k;
-      if (k > 0 && !last) el.style.filter = `hue-rotate(${-Math.round((k / n) * 32)}deg) saturate(${1 + (k / n) * 0.3})`;
-      el.style.transform = k === 0 ? `translate(${p.x - sz / 2}px, ${p.y - sz / 2 - 4}px) scaleX(${Math.cos(SN.a) < -0.2 ? -1 : 1})`
-        : `translate(${p.x - sz / 2}px, ${p.y - sz / 2}px) rotate(${p.a + (last ? Math.PI / 2 : 0)}rad)`;
+      if (k > 0 && !last) el.style.filter = `hue-rotate(${-Math.round((k / n) * 42)}deg) saturate(${1 + (k / n) * 0.5})`;
+      const back = last ? 12 : 0, cx = p.x - Math.cos(p.a) * back, cy = p.y - Math.sin(p.a) * back;
+      el.style.transform = k === 0 ? `translate(${p.x - sz / 2}px, ${p.y - sz / 2}px) rotate(${SN.a - Math.PI / 2}rad)`
+        : `translate(${cx - sz / 2}px, ${cy - sz / 2}px) rotate(${p.a + (last ? Math.PI / 2 : 0)}rad)`;
     });
   }
 

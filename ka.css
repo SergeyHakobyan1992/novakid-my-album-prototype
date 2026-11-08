@@ -744,3 +744,7 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .sp-card .wimg { width: 150px; height: 150px; border-radius: 10px; mix-blend-mode: normal; }
 .sp-card:has(.sp-w) .wimg { width: 124px; height: 124px; }
 .sp-card .sp-w { line-height: 1.2; }
+/* one continuous white border line per side */
+.sn-board { border: 0; }
+.sn-board::before { left: 0; top: 0; width: 2px; height: 100vh; }
+.sn-board::after { left: 0; top: 0; width: 100vw; }
