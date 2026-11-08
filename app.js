@@ -292,8 +292,7 @@
     if (S.crowns.length) pop = popBoard(`<div class="mini-row">${S.crowns.map((id) => cardHTML(id, { static: true })).join("")}</div>`, "crownok", "crownsay", "OK", true);
     else if (S.engine && !S.popupSeen) pop = popBoard(`<div class="mini-row">${WORDS.filter((w) => w.u === CURRENT && lv(w.id) === 1).map((w) => cardHTML(w.id, { static: true })).join("")}</div>`, "popopen", "popsay", "OPEN");
     return `<header class="ka-header">
-        <button class="ka-lesson" data-soon><div class="ka-teacher"><div><img class="photo" src="${IMG}teacher-anna.jpg" alt=""></div></div>
-          <div class="ka-info"><span class="t-mikado">Next class:</span><span class="t-mikado" style="color:#6D3DE4">${dayName(S.day < 4 ? 4 : S.day + 2)}, 05:00 pm</span></div></button>
+        <button class="ka-lesson" data-soon>${nextClass()}</button>
         <button class="ka-icon-btn ka-dq" aria-label="daily quest" data-soon><img src="${A.dq}" alt=""></button>
         <button class="ka-icon-btn ka-shop" data-soon><img src="${A.shop}" alt=""></button>
         ${coins()}
@@ -301,6 +300,23 @@
       </header>
       <div class="ka-tiles g6">${tiles}</div>${pop}`;
   }
+  // Same "Next class" widget as the top-left of the Kids Area home screen
+  function nextClass() {
+    return `<div class="ka-teacher"><div><img class="photo" src="${IMG}teacher-anna.jpg" alt=""></div></div>
+          <div class="ka-info"><span class="t-mikado">Next class:</span><span class="t-mikado" style="color:#6D3DE4">${dayName(S.day < 4 ? 4 : S.day + 2)}, 05:00 pm</span></div>`;
+  }
+  let tellId = null;
+  const TELL_TEXT = (id) => `Tell ${TEACHER} the word ${W(id).word} in your next class to get the last puzzle piece!`;
+  function showTell(id) {
+    tellId = id;
+    $("#stage").insertAdjacentHTML("beforeend", `<div class="ka-pop-wrap" id="tellPop"><div class="ka-board tell-board">
+      <button class="ka-close" data-act="tellclose" aria-label="close">✕</button>
+      <div class="in"><div class="tell-card">${cardHTML(id, { static: true })}</div>
+        <div class="tell-side"><div class="msg">Say “${esc(W(id).word)}” to ${esc(TEACHER)} and get the last piece!</div><div class="ka-lesson">${nextClass()}</div></div>
+        <button class="pop-spk" data-act="tellsay" aria-label="Listen">${ICO("speaker")}</button></div>
+      <button class="ka-btn" data-act="tellclose"><div class="bi"><span>OK</span></div></button></div></div>`);
+  }
+
   function popBoard(inner, act, sayAct, btn, gold) {
     return `<div class="ka-pop-wrap"><div class="ka-board" style="min-width:280px">
       <button class="ka-close" data-act="${act}" aria-label="close">✕</button>
@@ -786,7 +802,7 @@
     const st = nextStep(id), w = W(id).word;
     if (st.game) { if (st.k === "review") say(`Is your ${w} card dusty? Let's make it shiny again!`); startGame(st.game, id, "album"); return; }
     if (st.k === "wait") say(`Come back in ${st.left === 1 ? "one day" : st.left + " days"} to get the next puzzle piece for ${w}!`);
-    if (st.k === "teacher") { say(`Tell ${TEACHER} about ${w} to get the last level of the card!`); S.tellAsked[id] = S.day; save(); }
+    if (st.k === "teacher") { say(TELL_TEXT(id)); S.tellAsked[id] = S.day; save(); showTell(id); }
   }
 
   // ---------- adult views ----------
@@ -981,6 +997,8 @@
       S.lv[d.notyet] = 3; S.up[d.notyet] = S.day - RECALL; save(); render(); toast("Noted — the word goes back to Quiz Corner"); return;
     }
     switch (d.act) {
+      case "tellclose": { const p = $("#tellPop"); if (p) p.remove(); break; }
+      case "tellsay": say(TELL_TEXT(tellId)); break;
       case "popopen": S.popupSeen = true; S.albumSeen = true; S.helpSaid = true; S.tab = CURRENT; S.screen = "album"; save(); render(); break;
       case "popsay": say(POP_TEXT()); break;
       case "crownok": S.crowns = []; sfx("close"); save(); render(); break;
