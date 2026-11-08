@@ -59,7 +59,7 @@
     { name: "Recognises", look: "2 of 5 pieces", ev: "matches the word (heard and written) to the picture — Memo Mix or Box Battle — with ≤ 1 mistake" },
     { name: "Says it", look: "3 of 5 pieces", ev: "produces the word — says it to Pinocchio, or spells it in Bubbles, Racing or Snake — without a hint" },
     { name: "Remembers", look: "4 of 5 pieces", ev: "names the picture again after 3+ days, first try, no hint (Quiz Corner). Then refresh after 7 → 14 → 28 days" },
-    { name: "Uses with teacher", look: "full picture + gold frame", ev: "says it to the teacher in a live lesson (teacher taps ✓)" },
+    { name: "Uses it", look: "full picture + gold frame", ev: "says it to the teacher in a live lesson (teacher taps ✓); later also in a group class or with Pandy" },
   ];
   const GAME = {
     memo: { name: "Memo Mix", col: "#D98DE3", ic: "🃏", skill: "recognise", n: 6, intro: "Find the picture for every sound." },
@@ -873,7 +873,7 @@
       <p class="sub">The album is a view of the learner model: one card = one word from the Level 1 programme, card level = the highest step with evidence. The engine decides which word goes into which existing Kids Area game, and brings remembered words back before they fade.</p>
       <div class="panel"><h3>Ladder → card → evidence → games</h3><table><thead><tr><th>Card</th><th>Level</th><th>Evidence needed</th></tr></thead><tbody>
         ${LEVELS.map((L, i) => `<tr><td>${L.look}</td><td><b>${i}. ${L.name}</b></td><td>${L.ev}</td></tr>`).join("")}</tbody></table>
-        <p class="sub" style="margin:8px 0 0">Games rotate within a level so the same word comes back in a different game. Fading: a card with 4 or 5 puzzle pieces (“Remembers” / “Uses with teacher”) needs a refresh after 7 days, then 14, 28… (the interval doubles after each success). When a refresh is due the card looks dusty; a failed refresh takes the card back to 3 pieces (“Says it”). Stars only for new progress (+${STAR_UP} level, +${STAR_REFRESH} refresh), never for replaying.</p></div>
+        <p class="sub" style="margin:8px 0 0">Games rotate within a level so the same word comes back in a different game. Fading: a card with 4 or 5 puzzle pieces (“Remembers” / “Uses it”) needs a refresh after 7 days, then 14, 28… (the interval doubles after each success). When a refresh is due the card looks dusty; a failed refresh takes the card back to 3 pieces (“Says it”). Stars only for new progress (+${STAR_UP} level, +${STAR_REFRESH} refresh), never for replaying.</p></div>
       <div class="panel"><h3>Next words the engine sends to games ${S.engine ? "" : "(engine off — games use random words, like today)"}</h3>${qRows ? `<table><thead><tr><th>#</th><th>Word</th><th>Now</th><th>Game</th><th>Why</th></tr></thead><tbody>${qRows}</tbody></table>` : `<p class="empty">Nothing queued.</p>`}
         <p class="sub" style="margin:8px 0 0">All six Kids Area games (Memo Mix, Box Battle, Bubbles, Racing, Snake, Quiz Corner) plus Pinocchio take their words from this queue instead of a random list. The real games are live PvP; in the prototype the opponent is a bot.</p></div>
       <div class="grid2"><div class="panel"><h3>By game</h3><table><thead><tr><th>Game</th><th>Skill</th><th>Solved</th><th>Avg superscore · zone</th></tr></thead><tbody>${byGame}</tbody></table></div>
