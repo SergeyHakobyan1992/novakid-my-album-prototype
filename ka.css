@@ -702,3 +702,17 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .ka-stage .gi.sn-flag { top: 14px; right: 16px; width: 40px; height: 42px; }
 /* the player widget also matches the dashboard's generic .me pill: reset it */
 .ka-stage .pw.me { display: block; background: none; box-shadow: none; padding: 0; border-radius: 0; font-weight: inherit; }
+/* avatars are clipped to the inner disc of the ring, like on the dashboard and in the original games */
+.pw .av { border: 0; box-shadow: none; overflow: visible; border-radius: 0; }
+.sn-av .av { position: relative; width: 46px; height: 46px; }
+.pw .av .bgc, .sn-av .av .bgc { position: absolute; inset: 0; left: 0; top: 0; width: 100%; height: 100%; }
+.pw .av .in, .sn-av .av .in { position: absolute; top: 12.4%; left: 12.4%; width: 75.2%; height: 75.2%; border-radius: 50%; overflow: hidden; background: #001E26; }
+.pw .av .in .ch, .sn-av .av .in .ch { position: absolute; max-width: none; width: 150%; height: auto; left: -40%; top: -14%; border: 0; border-radius: 0; object-fit: fill; }
+.pw.enemy .av .in .ch { width: 100%; left: 0; top: 4%; }
+.ka-stage .sn-av b { left: 42px; }
+/* avatar ring as in the original: dark outline, teal ring, dark inner disc */
+.pw .av, .sn-av .av { box-sizing: border-box; border: 2.5px solid #0B4F63; border-radius: 50%; background: #35B4D6; }
+.pw .av .bgc, .sn-av .av .bgc { display: none; }
+.pw .av .in, .sn-av .av .in { top: 7%; left: 7%; width: 86%; height: 86%; box-shadow: 0 0 0 1.5px #0B4F63; }
+.pw .av .in .ch, .sn-av .av .in .ch { width: 135%; left: -30%; top: -6%; }
+.pw.enemy .av .in .ch { width: 100%; left: 0; top: 4%; }

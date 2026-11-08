@@ -675,7 +675,7 @@
   function widget(side, ses, turn) {
     const me = side === "me";
     return `<div class="pw ${side} ${turn ? "turn" : ""}">
-      <div class="av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${me ? A.avatar : GA.enemyAv}" alt=""></div>
+      <div class="av"><img class="bgc" src="${GA.avBg}" alt=""><div class="in"><img class="ch" src="${me ? A.avatar : GA.enemyAv}" alt=""></div></div>
       <div class="lbl"><img src="${me ? GA.pLabel : GA.eLabel}" alt=""><span>${me ? KID : ENEMY}</span></div>
       <div class="tr"><img src="${GA.trophy}" alt=""><b ${me ? "" : `id="gbot"`}>${me ? ses.me : ses.bot}</b></div>
       ${turn ? `<div class="turnclock">0:30</div>` : ""}</div>`;
@@ -749,7 +749,7 @@
       if (!snRAF) snRAF = requestAnimationFrame(snLoop);
       return `<div class="gscene snake"></div>
         <div class="gclock sn" id="gclock">${clock(Math.max(0, WORD_SEC - Math.floor((Date.now() - it.t0) / 1000)))}</div>
-        <div class="sn-av"><img class="bgc" src="${GA.avBg}" alt=""><img class="ch" src="${A.avatar}" alt=""><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
+        <div class="sn-av"><div class="av"><img class="bgc" src="${GA.avBg}" alt=""><div class="in"><img class="ch" src="${A.avatar}" alt=""></div></div><b><img src="${CDN}FOyrbWduTsScbXsO4VMxwQ" alt="">${ses.me}</b><span>${KID.toUpperCase()}</span></div>
         <div class="sn-word">${pic(it.id)}<span class="w">${esc(shown)}</span>${listenBtn(it.id, "sn-lis")}</div>
         <div class="sn-board" id="snakeBoard"><div class="sn-field" id="snakeField"></div></div>
         ${quitBtn().replace('class="gi flag"', 'class="gi flag sn-flag"')}
