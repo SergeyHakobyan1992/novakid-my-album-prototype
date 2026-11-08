@@ -530,7 +530,7 @@
     } else { attempt(c, false, { chosen: topic }); ses.glow = { id: topic, ok: false }; say(`Oops! ${W(c).word}!`); save(); render(); setTimeout(() => { if (S.session === ses) { ses.glow = null; render(); } }, 700); }
   }
   // Bubbles — pop letter bubbles to spell the word for the picture
-  const BUB_SLOTS = [[187, 245], [247, 245], [307, 245], [367, 245], [427, 245], [217, 196], [277, 196], [337, 196], [397, 196], [247, 147], [307, 147], [367, 147]];
+  const BUB_SLOTS = [[187, 252], [247, 252], [307, 252], [367, 252], [427, 252], [217, 197], [277, 197], [337, 197], [397, 197], [247, 142], [307, 142], [367, 142]];
   function onBubble(k) {
     const it = cur(); if (it.solved) return;
     const b = it.bubbles[k], need = letters(it.id)[it.pos];
@@ -578,7 +578,7 @@
   }
   const ansHTML = (it) => Array.from({ length: 5 }, (_, k) => { const w = RACE ? RACE.wrong[k] : null; return w ? `<b class="bad">${w}</b>` : it.solved && k === (RACE ? RACE.wrong.length : 0) ? `<b class="ok">${letters(it.id)[it.miss]}</b>` : "<b>-</b>"; }).join("");
   // Snake — as in Kids Area: the snake glides after the pointer / finger; eat the egg with the first letter (30 s per word)
-  const SB = { w: 520, h: 208 }, SPEED = 82, TURN = 5.2, GAP = 9.5, HEAD = 74, WORD_SEC = 30;
+  const SB = { w: 593, h: 284 }, SPEED = 82, TURN = 5.2, GAP = 9.5, HEAD = 74, WORD_SEC = 30;
   let SN = null, snRAF = null;
   function snReset() {
     SN = { x: 110, y: 104, a: 0, tx: null, ty: null, trail: [], n: 7, last: 0, eggs: [], segEls: [], eggEls: [], eggKey: "", root: null };
@@ -587,7 +587,7 @@
   function snEggs(it) {
     const need = letters(it.id)[0]; it.need = need;
     const spots = []; let guard = 0;
-    while (spots.length < 3 && guard++ < 500) { const q = { x: 40 + Math.random() * (SB.w - 80), y: 30 + Math.random() * (SB.h - 60) }; if (Math.hypot(q.x - SN.x, q.y - SN.y) > 90 && spots.every((o) => Math.hypot(q.x - o.x, q.y - o.y) > 80)) spots.push(q); }
+    while (spots.length < 3 && guard++ < 500) { const q = { x: 70 + Math.random() * (SB.w - 120), y: 56 + Math.random() * (SB.h - 96) }; if (Math.hypot(q.x - SN.x, q.y - SN.y) > 90 && spots.every((o) => Math.hypot(q.x - o.x, q.y - o.y) > 80)) spots.push(q); }
     SN.eggs = shuffle([need, ...randLetters(2, [need])]).map((ch, k) => Object.assign({ ch, c: k % 3 }, spots[k] || { x: 300 + k * 60, y: 60 + k * 40 }));
   }
   function snAim(ev) {
@@ -694,10 +694,10 @@
         ${ico(GA.back, "qexit", `data-act="quit"`, "Leave the game")}
         ${widget("me", ses)}${widget("enemy", ses)}
         <div class="qz-q"><img class="t" src="${GA.qTile}" alt="">${pic(it.id)}</div>
-        ${it.opts.map((o, k) => `<button class="qz-o" style="left:${[106, 243, 381][k]}px" data-quiz="${esc(o)}" ${it.pick ? "disabled" : ""}><img class="t" src="${tile(o)}" alt=""><span>${esc(W(o).word)}</span></button>`).join("")}`;
+        ${it.opts.map((o, k) => `<button class="qz-o" style="left:${[105, 242, 380][k]}px" data-quiz="${esc(o)}" ${it.pick ? "disabled" : ""}><img class="t" src="${tile(o)}" alt=""><span>${esc(W(o).word)}</span></button>`).join("")}`;
     }
     if (g === "memo") {
-      const cols = 4, rows = Math.ceil(ses.cards.length / cols), tw = 64, th = 50, gap = 6, x0 = (616 - (cols * tw + (cols - 1) * gap)) / 2, y0 = 92 + (4 - rows) * 22;
+      const cols = 4, rows = Math.ceil(ses.cards.length / cols), tw = 64, th = 50, gap = 6, x0 = (616 - (cols * tw + (cols - 1) * gap)) / 2, y0 = 120 + (3 - rows) * 28;
       return `<div class="gscene sky"></div>
         <div class="mm-rib"><img src="${GA.memoTitle}" alt="">${prim("MEMO MIX", 14)}</div>
         ${quitBtn()}${widget("me", ses, ses.turn === "me" && !ses.preview)}${widget("enemy", ses, ses.turn === "bot")}
@@ -707,13 +707,13 @@
     }
     if (g === "boxes") {
       const deck = ses.deck.map((id, k) => { const isTop = k === ses.deck.length - 1; return `<div class="bx-card ${isTop ? "top" : ""}" style="left:${12 + k * 40}px"><img class="t" src="${GA.boxCard}" alt="">${pic(id)}${isTop ? listenBtn(id, "card-lis") : ""}</div>`; }).join("");
-      const slots = ses.deck.map((_, k) => `<div class="bx-slot" style="left:${364 + (k % 5) * 49}px;top:${209 + Math.floor(k / 5) * 51}px"><img src="${GA.boxSlot}" alt=""></div>`).join("");
+      const slots = ses.deck.map((_, k) => `<div class="bx-slot" style="left:${362 + (k % 5) * 49}px;top:${221 + Math.floor(k / 5) * 52}px"><img src="${GA.boxSlot}" alt=""></div>`).join("");
       const name = (u) => UNITS.find((x) => x.id === u).name.toLowerCase();
       return `<div class="gscene sky"></div>
         ${helpBtn()}${timer(ses)}${quitBtn()}${widget("me", ses)}${widget("enemy", ses)}
-        ${ses.chests.map((u, k) => `<div class="bx-lab" style="left:${[174, 320][k]}px">${prim(name(u), 19)}</div>
-          <button class="bx-chest ${ses.glow && ses.glow.id === u ? (ses.glow.ok ? "ok" : "bad") : ""}" style="left:${[174, 320][k]}px" data-box="${u}" aria-label="${name(u)} chest"><img src="${GA.box}" alt=""></button>
-          <button class="gi lis chest-lis" style="left:${[174, 320][k] + 92}px" data-sayt="${esc(name(u))}" aria-label="Listen"><img src="${GA.listen}" alt=""></button>`).join("")}
+        ${ses.chests.map((u, k) => `<div class="bx-lab" style="left:${[176, 322][k]}px">${prim(name(u), 19)}</div>
+          <button class="bx-chest ${ses.glow && ses.glow.id === u ? (ses.glow.ok ? "ok" : "bad") : ""}" style="left:${[176, 322][k]}px" data-box="${u}" aria-label="${name(u)} chest"><img src="${GA.box}" alt=""></button>
+          <button class="gi lis chest-lis" style="left:${[176, 322][k] + 100}px" data-sayt="${esc(name(u))}" aria-label="Listen"><img src="${GA.listen}" alt=""></button>`).join("")}
         <div class="bx-deck">${deck}</div>${slots}
         ${ses.over ? `<div class="g-result"><img src="${ses.win ? GA.winG : GA.winR}" alt="">${prim(ses.win ? "YOU WIN!" : "GOOD TRY!", 16)}</div>` : ""}`;
     }

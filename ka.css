@@ -649,3 +649,56 @@ html.ka, html.ka body { margin: 0; height: 100%; overflow: hidden; }
 .sn-field { z-index: 1; }
 .sn-field .egg { width: 40px; height: 40px; font-size: 16px; }
 .sn-board { background-size: 420px auto; }
+
+/* game layouts aligned with the original games (stage = 616x320) */
+.ka-stage .gscene.bub, .ka-stage .gscene.sky { width: auto; height: auto; background: none; border: 0; border-radius: 0; box-shadow: none; }
+.ka-stage .gi.help { left: 15px; top: 38px; width: 33px; height: 33px; }
+.ka-stage .gi.flag { right: 38px; top: 34px; width: 40px; height: 42px; }
+.gclock { left: 55px; top: 33px; width: 46px; height: 46px; font-size: 13px; }
+.pw { top: 95px; }
+.pw .av { width: 74px; height: 74px; }
+.pw.me .av { left: 10px; } .pw.enemy .av { right: 10px; }
+.pw .lbl { top: 87px; width: 99px; }
+.pw .tr { top: 119px; }
+.ka-root.bg-g-boxes .pw .tr { top: -8px; }
+.ka-root.bg-g-boxes .pw.me .tr { left: 84px; } .ka-root.bg-g-boxes .pw.enemy .tr { right: 84px; }
+.ka-root.bg-g-boxes .pw .tr img { width: 28px; }
+.ka-root.bg-g-boxes .pw .tr { font-size: 18px; }
+/* quiz */
+.qz-rib { top: 38px; } .qz-line { top: 94px; } .qz-q { top: 113px; left: 104px; }
+.ka-stage .qz-o { top: 221px; width: 129px; height: 95px; }
+.ka-stage .gi.qexit { right: 42px; top: 44px; width: 32px; height: 32px; }
+/* memo */
+.mm-rib { top: 38px; } .mm-hint { top: 84px; }
+/* box battle */
+.bx-lab { top: 88px; width: 118px; }
+.ka-stage .bx-chest { top: 122px; width: 118px; height: 73px; }
+.ka-stage .gi.chest-lis { top: 164px; }
+.bx-deck { top: 221px; }
+.bx-slot { width: 46px; height: 46px; }
+/* bubbles */
+.ka-root.bg-g-bubbles .pw { top: 111px; }
+.ka-root.bg-g-bubbles .pw .av { width: 60px; height: 60px; }
+.ka-root.bg-g-bubbles .pw.me .av { left: 16px; }
+.ka-root.bg-g-bubbles .pw .lbl { top: 68px; }
+.ka-root.bg-g-bubbles .pw .tr { top: -11px; }
+.ka-root.bg-g-bubbles .pw.me .tr { left: 66px; }
+.ka-root.bg-g-bubbles .gclock { left: 65px; }
+.ka-stage .bb-hint { left: 123px; top: 43px; }
+.bb-mis { top: 16px; width: 150px; height: 91px; }
+.bb-en { left: 445px; top: 16px; width: 157px; height: 94px; }
+.ka-root.bg-g-bubbles .gi.flag { top: 124px; right: 10px; }
+.bb-bar { left: 73px; top: 284px; width: 469px; height: 34px; }
+/* racing: controls grouped in one column at the right edge */
+.ka-root.bg-g-racing .gi.help { left: 10px; top: 14px; }
+.rc-arrows { left: auto; right: 15px; top: 182px; flex-direction: column; gap: 2px; }
+.ka-stage .gi.rc-flag { top: auto; bottom: 28px; right: 14px; width: 34px; height: 36px; }
+/* snake: full-bleed field with the word plate and timer on its border, as in the original */
+.sn-board { left: 23px; top: 36px; width: 593px; height: 284px; border: 0; border-top: 2px solid #fff; border-left: 2px solid #fff; border-radius: 0; box-sizing: border-box; }
+.gclock.sn { left: 11px; top: 22px; width: 45px; height: 45px; font-size: 13px; z-index: 3; }
+.sn-word { left: 186px; top: 14px; width: 225px; height: 44px; z-index: 3; pointer-events: none; }
+.ka-stage .gi.sn-lis { pointer-events: auto; }
+.sn-av { left: 12px; top: 108px; width: 46px; z-index: 3; pointer-events: none; }
+.ka-stage .gi.sn-flag { top: 14px; right: 16px; width: 40px; height: 42px; }
+/* the player widget also matches the dashboard's generic .me pill: reset it */
+.ka-stage .pw.me { display: block; background: none; box-shadow: none; padding: 0; border-radius: 0; font-weight: inherit; }
